@@ -422,7 +422,12 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
     if(menuBtn) menuBtn.classList.remove('sjs-on');
   }
 
-  if(menuBtn)  menuBtn.addEventListener('click', openDrawer);
+  // SJ CRO 23: the bottom bar's Menu opens the same shopper menu as the header (theme menu), not a second menu
+  if(menuBtn)  menuBtn.addEventListener('click', function(e){
+    var themeMenu = document.querySelector('.t4s-push-menu-btn');
+    if(themeMenu){ e.preventDefault(); themeMenu.click(); return; }
+    openDrawer();
+  });
   if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
   if(overlay)  overlay.addEventListener('click', closeDrawer);
 

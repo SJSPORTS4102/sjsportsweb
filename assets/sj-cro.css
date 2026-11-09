@@ -118,7 +118,8 @@
 .t4s-product__info-container .t4s-product-stock,.t4s-product__info-container [class*="inventory"]{font-weight:600}
 
 /* 19 clear the screen edges on phones: no bottom menu bar on product pages or behind open drawers */
-body.template-product .t4s-toolbar,html.is--opend-drawer .t4s-toolbar,html.t4s-lock-scroll .t4s-toolbar{display:none!important}
+body.template-product .t4s-toolbar,html.is--opend-drawer .t4s-toolbar,html.t4s-lock-scroll .t4s-toolbar,
+body.template-product .sjs-bnav,html.is--opend-drawer .sjs-bnav,html.t4s-lock-scroll .sjs-bnav{display:none!important}
 @media (max-width:1024px){body.template-product{padding-bottom:0!important}}
 
 /* 20 simpler phone header: no social icons bar on phones */
