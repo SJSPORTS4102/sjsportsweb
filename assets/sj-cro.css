@@ -56,6 +56,18 @@
   .page_collection_heading .t4s-page-section-heading:before,.page_collection_heading .t4s-page-section-heading:after{display:none!important}
 }
 
+/* 25 size help next to the sizes (opens in place) */
+.sj-size{margin:2px 0 12px;font-size:15px}
+.sj-size>summary{display:inline-flex!important;align-items:center;gap:8px;min-height:44px;cursor:pointer;color:var(--sj-navy);font-weight:600;text-decoration:underline;text-underline-offset:3px;list-style:none}
+.sj-size>summary::-webkit-details-marker{display:none}
+.sj-size>summary>svg.sj-size__ic{width:18px!important;height:18px!important;min-width:18px;max-width:18px;flex:none;fill:none!important;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block}
+.sj-size__body{border:1px solid var(--sj-line);border-radius:10px;padding:12px;background:var(--sj-soft)}
+.sj-size table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;margin:0}
+.sj-size th,.sj-size td{padding:7px 8px;border-bottom:1px solid var(--sj-line);text-align:left;font-size:14px}
+.sj-size th{font-weight:600}
+.sj-size p{margin:8px 0 0;line-height:1.45;font-size:15px}
+.sj-size__more a{color:var(--sj-navy);font-weight:600}
+
 /* 10 shop bats by size, drawn to scale */
 .sj-sizes{margin:0 auto 18px}
 .sj-sizes__head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
