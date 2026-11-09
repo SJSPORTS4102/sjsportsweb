@@ -1,0 +1,515 @@
+{% doc %}
+  @prompt
+    Integrate Google Customer Reviews survey opt-in module on the order confirmation page. Add the complete Google Customer Reviews opt-in code snippet that allows customers to choose whether to participate in surveys. The code should transmit necessary transaction information to Google and work on both desktop and mobile. Include proper integration with order data like order ID, email, delivery country, and estimated delivery date. Ensure the opt-in module is properly positioned and functional on the confirmation page.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-google-reviews-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    margin: {{ block.settings.margin }}px 0;
+    border: 1px solid {{ block.settings.border_color }};
+    max-width: 100%;
+  }
+
+  .ai-google-reviews-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-google-reviews-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    margin-bottom: 20px;
+  }
+
+  .ai-google-reviews-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    line-height: 1.3;
+  }
+
+  .ai-google-reviews-description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-google-reviews-widget-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: {{ block.settings.text_alignment }};
+    margin-top: 20px;
+  }
+
+  .ai-google-reviews-placeholder-{{ ai_gen_id }} {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .ai-google-reviews-placeholder-icon-{{ ai_gen_id }} {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    opacity: 0.5;
+  }
+
+  .ai-google-reviews-placeholder-title-{{ ai_gen_id }} {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+  }
+
+  .ai-google-reviews-placeholder-text-{{ ai_gen_id }} {
+    margin-bottom: 16px;
+  }
+
+  .ai-google-reviews-placeholder-steps-{{ ai_gen_id }} {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .ai-google-reviews-placeholder-step-{{ ai_gen_id }} {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .ai-google-reviews-placeholder-step-{{ ai_gen_id }}::before {
+    content: counter(step-counter);
+    counter-increment: step-counter;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #007bff;
+    color: white;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-google-reviews-placeholder-steps-{{ ai_gen_id }} {
+    counter-reset: step-counter;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-google-reviews-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding | times: 0.7 }}px;
+      margin: {{ block.settings.margin | times: 0.7 }}px 0;
+    }
+
+    .ai-google-reviews-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.9 }}px;
+    }
+
+    .ai-google-reviews-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<google-customer-reviews-{{ ai_gen_id }}
+  class="ai-google-reviews-{{ ai_gen_id }}"
+  data-merchant-id="{{ block.settings.merchant_id }}"
+  data-opt-in-style="{{ block.settings.opt_in_style }}"
+  data-badge-position="{{ block.settings.badge_position }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-google-reviews-container-{{ ai_gen_id }}">
+    {% if block.settings.show_header %}
+      <div class="ai-google-reviews-header-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h3 class="ai-google-reviews-title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+        {% endif %}
+        {% if block.settings.description != blank %}
+          <p class="ai-google-reviews-description-{{ ai_gen_id }}">{{ block.settings.description }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.merchant_id != blank %}
+      <div class="ai-google-reviews-widget-{{ ai_gen_id }}">
+        <div id="goog-gtc-unit-{{ ai_gen_id }}"></div>
+      </div>
+    {% else %}
+      <div class="ai-google-reviews-placeholder-{{ ai_gen_id }}">
+        <div class="ai-google-reviews-placeholder-icon-{{ ai_gen_id }}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div class="ai-google-reviews-placeholder-title-{{ ai_gen_id }}">
+          Google Customer Reviews Setup Required
+        </div>
+        <div class="ai-google-reviews-placeholder-text-{{ ai_gen_id }}">
+          To display the Google Customer Reviews opt-in module, complete these steps:
+        </div>
+        <div class="ai-google-reviews-placeholder-steps-{{ ai_gen_id }}">
+          <div class="ai-google-reviews-placeholder-step-{{ ai_gen_id }}">
+            Sign up for Google Customer Reviews in Google Merchant Center
+          </div>
+          <div class="ai-google-reviews-placeholder-step-{{ ai_gen_id }}">
+            Get your Merchant ID from the program settings
+          </div>
+          <div class="ai-google-reviews-placeholder-step-{{ ai_gen_id }}">
+            Enter your Merchant ID in the block settings below
+          </div>
+          <div class="ai-google-reviews-placeholder-step-{{ ai_gen_id }}">
+            Configure delivery and survey settings
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</google-customer-reviews-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GoogleCustomerReviews{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.merchantId = this.dataset.merchantId;
+        this.optInStyle = this.dataset.optInStyle;
+        this.badgePosition = this.dataset.badgePosition;
+      }
+
+      connectedCallback() {
+        if (this.merchantId && window.location.pathname.includes('/orders/')) {
+          this.loadGoogleScript();
+        }
+      }
+
+      loadGoogleScript() {
+        if (document.querySelector('script[src*="googlecommerce.com"]')) {
+          this.initializeWidget();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://apis.google.com/js/platform.js?onload=gcrInit';
+        script.async = true;
+        script.defer = true;
+        
+        window.gcrInit = () => {
+          this.initializeWidget();
+        };
+
+        document.head.appendChild(script);
+      }
+
+      initializeWidget() {
+        const orderData = this.extractOrderData();
+        
+        if (!orderData.orderId) {
+          console.warn('Google Customer Reviews: Order ID not found');
+          return;
+        }
+
+        const gcrConfig = {
+          merchant_id: parseInt(this.merchantId),
+          order_id: orderData.orderId,
+          email: orderData.email,
+          delivery_country: orderData.deliveryCountry,
+          estimated_delivery_date: orderData.estimatedDeliveryDate,
+          opt_in_style: this.optInStyle,
+          badge_position: this.badgePosition
+        };
+
+        if (window.gapi && window.gapi.load) {
+          window.gapi.load('surveyoptin', () => {
+            window.gapi.surveyoptin.render(gcrConfig);
+          });
+        }
+      }
+
+      extractOrderData() {
+        const orderData = {
+          orderId: '',
+          email: '',
+          deliveryCountry: '{{ block.settings.default_country }}',
+          estimatedDeliveryDate: ''
+        };
+
+        try {
+          const pathParts = window.location.pathname.split('/');
+          const orderIndex = pathParts.indexOf('orders');
+          if (orderIndex !== -1 && pathParts[orderIndex + 1]) {
+            orderData.orderId = pathParts[orderIndex + 1];
+          }
+
+          const metaEmail = document.querySelector('meta[name="customer-email"]');
+          if (metaEmail) {
+            orderData.email = metaEmail.getAttribute('content');
+          }
+
+          const metaCountry = document.querySelector('meta[name="shipping-country"]');
+          if (metaCountry) {
+            orderData.deliveryCountry = metaCountry.getAttribute('content');
+          }
+
+          const deliveryDays = parseInt('{{ block.settings.estimated_delivery_days }}') || 7;
+          const deliveryDate = new Date();
+          deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
+          orderData.estimatedDeliveryDate = deliveryDate.toISOString().split('T')[0];
+
+        } catch (error) {
+          console.warn('Google Customer Reviews: Error extracting order data', error);
+        }
+
+        return orderData;
+      }
+    }
+
+    customElements.define('google-customer-reviews-{{ ai_gen_id }}', GoogleCustomerReviews{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Google Customer Reviews",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Google Customer Reviews Setup"
+    },
+    {
+      "type": "paragraph",
+      "content": "To use Google Customer Reviews, you need to sign up for the program in Google Merchant Center and get your Merchant ID."
+    },
+    {
+      "type": "text",
+      "id": "merchant_id",
+      "label": "Google Merchant ID",
+      "info": "Your Google Merchant Center ID for Customer Reviews program"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show header section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Help other customers"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Share your experience with this purchase to help other customers make informed decisions."
+    },
+    {
+      "type": "header",
+      "content": "Survey Settings"
+    },
+    {
+      "type": "select",
+      "id": "opt_in_style",
+      "label": "Opt-in style",
+      "options": [
+        {
+          "value": "CENTER_DIALOG",
+          "label": "Center dialog"
+        },
+        {
+          "value": "BOTTOM_RIGHT_DIALOG",
+          "label": "Bottom right dialog"
+        },
+        {
+          "value": "BOTTOM_LEFT_DIALOG",
+          "label": "Bottom left dialog"
+        },
+        {
+          "value": "TOP_RIGHT_DIALOG",
+          "label": "Top right dialog"
+        },
+        {
+          "value": "TOP_LEFT_DIALOG",
+          "label": "Top left dialog"
+        }
+      ],
+      "default": "CENTER_DIALOG"
+    },
+    {
+      "type": "select",
+      "id": "badge_position",
+      "label": "Badge position",
+      "options": [
+        {
+          "value": "BOTTOM_RIGHT",
+          "label": "Bottom right"
+        },
+        {
+          "value": "BOTTOM_LEFT",
+          "label": "Bottom left"
+        },
+        {
+          "value": "INLINE",
+          "label": "Inline"
+        }
+      ],
+      "default": "BOTTOM_RIGHT"
+    },
+    {
+      "type": "range",
+      "id": "estimated_delivery_days",
+      "label": "Estimated delivery days",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7,
+      "info": "Number of days for estimated delivery date calculation"
+    },
+    {
+      "type": "text",
+      "id": "default_country",
+      "label": "Default delivery country",
+      "default": "US",
+      "info": "Two-letter country code (e.g., US, CA, GB)"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 300,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "margin",
+      "label": "Margin",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Google Customer Reviews"
+    }
+  ]
+}
+{% endschema %}

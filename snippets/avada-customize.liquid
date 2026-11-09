@@ -1,0 +1,16 @@
+{% comment %} SEO - Lias - 11042026 {% endcomment %}
+{%- if request.page_type == 'index' -%}
+  {%- comment -%}Each existing asset below is under Shopify's 15 KB inline limit.
+    Above-the-fold layout must be available before the first paint.{%- endcomment -%}
+  <style data-t4s-critical-slideshow>
+    {{- 'pre_flickityt4s.min.css' | inline_asset_content -}}
+    {{- 't4s-section.aio.min.css' | inline_asset_content -}}
+    {{- 't4s-slideshow.aio.min.css' | inline_asset_content -}}
+    {{- 't4s-content-position.aio.min.css' | inline_asset_content -}}
+  </style>
+  {{- 't4s-slider-settings.aio.min.css' | asset_url | stylesheet_tag -}}
+{%- else -%}
+  {{- 'pre_flickityt4s.min.css' | asset_url | stylesheet_tag -}}
+{%- endif -%}
+
+{% comment %} / SEO - Lias - 11042026 {% endcomment %}

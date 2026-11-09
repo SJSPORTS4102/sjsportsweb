@@ -1,0 +1,186 @@
+{%- assign avada_seo_ovr_product_ids = ",8426417782938,8514367389850,8591418425498,8595292848282,8591418818714,8612980424858,8612980359322,8616074346650,8682301489306,8690798592154,8709220073626,8741168414874,7899775959194,8846764736666,5690660159642," -%}
+{%- assign avada_seo_ovr_collection_ids = ",199462322330,337381589146,295155007642,299367170202,340859093146,340708851866,298600005786,295154974874,299367334042,296775712922,199462781082,305360109722,347884650650,356824809626,311553851546," -%}
+{%- assign avada_seo_ovr_article_ids = ",562344034458," -%}
+{%- assign avada_seo_ovr_page_ids = ",114358354074," -%}
+  
+{%- if request.page_type == 'product' -%}
+{%-  if avada_seo_ovr_product_ids contains product.id  -%}
+{%- if product.metafields.multilingual_meta_tag.description_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_description -%}
+{{ product.metafields.multilingual_meta_tag.description_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- if product.metafields.multilingual_meta_tag.title_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_title -%}
+{{ product.metafields.multilingual_meta_tag.title_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+  
+{%- if request.page_type == 'collection' -%}
+{%-  if avada_seo_ovr_collection_ids contains collection.id  -%}
+{%- if collection.metafields.multilingual_meta_tag.description_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_description -%}
+{{ collection.metafields.multilingual_meta_tag.description_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- if collection.metafields.multilingual_meta_tag.title_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_title -%}
+{{ collection.metafields.multilingual_meta_tag.title_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+  
+{%- if request.page_type == 'article' -%}
+{%-  if avada_seo_ovr_article_ids contains article.id  -%}
+{%- if article.metafields.multilingual_meta_tag.description_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_description -%}
+{{ article.metafields.multilingual_meta_tag.description_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- if article.metafields.multilingual_meta_tag.title_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_title -%}
+{{ article.metafields.multilingual_meta_tag.title_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+  
+{%- if request.page_type == 'page' -%}
+{%-  if avada_seo_ovr_page_ids contains page.id  -%}
+{%- if page.metafields.multilingual_meta_tag.description_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_description -%}
+{{ page.metafields.multilingual_meta_tag.description_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- if page.metafields.multilingual_meta_tag.title_tag.value[shop.locale] -%}
+{%- capture avada_seo_meta_title -%}
+{{ page.metafields.multilingual_meta_tag.title_tag.value[shop.locale] }}
+{%- endcapture -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+
+<!-- meta basic type product -->
+{%- if request.page_type == 'product' -%}
+{%- unless avada_seo_ovr_product_ids contains product.id -%}
+{%- capture avada_seo_meta_title -%}
+{%- case shop.locale -%}
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- capture avada_seo_meta_description -%}
+{%- case shop.locale -%}
+{%- when "en" -%} 
+Buy {{ collection.title }} at {{ shop.name }}
+✓ Only Genuine Products
+✓ Free Shipping on orders above $200
+✓ Trusted by Professionals & Clubs
+✓ Expert Advice Available In-Store & Online
+{%- when "pt-BR" -%} 
+
+{%- when "da" -%} 
+
+{%- when "nl" -%} 
+
+{%- when "fr" -%} 
+
+{%- when "de" -%} 
+
+{%- when "zh-CN" -%} 
+
+{%- when "es" -%} 
+
+{%- when "sv" -%} 
+
+{%- when "vi" -%} 
+
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- endunless -%}
+{%- endif -%}
+
+<!-- meta basic type collection -->
+{%- if request.page_type == 'collection' -%}
+{%- unless avada_seo_ovr_collection_ids contains collection.id -%}
+{%- capture avada_seo_meta_title -%}
+{%- case shop.locale -%}
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- capture avada_seo_meta_description -%}
+{%- case shop.locale -%}
+{%- when "en" -%} 
+
+{%- when "pt-BR" -%} 
+
+{%- when "da" -%} 
+
+{%- when "nl" -%} 
+
+{%- when "fr" -%} 
+
+{%- when "de" -%} 
+
+{%- when "zh-CN" -%} 
+
+{%- when "es" -%} 
+
+{%- when "sv" -%} 
+
+{%- when "vi" -%} 
+
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- endunless -%}
+{%- endif -%}
+
+<!-- meta basic type article -->
+{%- if request.page_type == 'article' -%}
+{%- unless avada_seo_ovr_article_ids contains article.id -%}
+{%- capture avada_seo_meta_title -%}
+{%- case shop.locale -%}
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- capture avada_seo_meta_description -%}
+{%- case shop.locale -%}
+{%- when "en" -%} 
+
+{%- when "pt-BR" -%} 
+
+{%- when "da" -%} 
+
+{%- when "nl" -%} 
+
+{%- when "fr" -%} 
+
+{%- when "de" -%} 
+
+{%- when "zh-CN" -%} 
+
+{%- when "es" -%} 
+
+{%- when "sv" -%} 
+
+{%- when "vi" -%} 
+
+{%- else -%}
+{%- endcase -%}
+{%- endcapture -%}
+{%- endunless -%}
+{%- endif -%}
+
+{%- if avada_seo_meta_title != blank -%}
+{%- assign seo_title = avada_seo_meta_title | strip_html | strip -%}
+{%- assign page_title = seo_title -%}
+{%- assign og_title = seo_title -%}
+{%- endif -%}
+{%- if avada_seo_meta_description != blank -%}
+{%- assign page_description = avada_seo_meta_description | strip_html | strip -%}
+{%- assign og_description = page_description -%}
+{%- endif -%}

@@ -1,0 +1,454 @@
+<!doctype html>
+{%- liquid
+  assign t_name = request.page_type
+  assign iso_code = request.locale.iso_code
+  assign use_rtl = settings.use_rtl
+  if use_rtl == '2'
+    assign lis_rtl = 'ar; dv; ha; he; ku; fa; ur; ug; ps; yi'
+    assign iso_code_ck = iso_code | split: '-' | first
+  else
+    assign iso_code_ck = iso_code
+    assign lis_rtl = settings.list_rtl
+  endif
+  if use_rtl == '1'
+    assign isRTL = true
+  elsif lis_rtl contains iso_code_ck and use_rtl == '2' or use_rtl == '3'
+    assign isRTL = true
+  else
+    assign isRTL = false
+  endif
+  assign body_img = settings.body_bg_image
+  if body_img != blank
+    assign class_lazy = 'lazyloadt4s'
+  endif
+-%}
+{%- capture class_html -%}
+t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_color_style_{{ settings.swatch_color_style }} pr_border_style_{{ settings.pr_border_style }} pr_img_effect_{{ settings.pr_img_effect }} enable_eff_img1_{{ settings.enable_eff_img1 }} badge_shape_{{ settings.badge_shape }} css_for_wis_app_{{ settings.enable_css_wis }}{% if settings.use_cus_lz and settings.cus_lz %} t4s-lzcus-true{% endif %} shadow_round_img_{{ settings.enable_shadow_round_img }} t4s-header__{{ settings.header_design }} is-remove-unavai-{{ settings.variant_remove }} t4_compare_{{ settings.enable_compe }}{% if settings.type_qv == '1' %} t4s-sidebar-qv{% endif %} t4s-cart-count-{{ cart.item_count }} t4s-pr-ellipsis-{{ settings.enable_pr_ellipsis }}
+{%- endcapture -%}
+{%- capture t4s_main_content -%}{{ content_for_layout }}{%- endcapture -%}
+{%- liquid
+  assign t4s_lcp_desktop_href = blank
+  assign t4s_lcp_desktop_srcset = blank
+  assign t4s_lcp_desktop_sizes = '100vw'
+  assign t4s_lcp_mobile_href = blank
+  assign t4s_lcp_mobile_srcset = blank
+
+  if t4s_main_content contains '<!-- t4s-lcp-desktop-href:'
+    assign lcp_marker_parts = t4s_main_content | split: '<!-- t4s-lcp-desktop-href:'
+    assign t4s_lcp_desktop_href = lcp_marker_parts[1] | split: ':t4s-lcp-end -->' | first | strip
+    assign lcp_marker_parts = t4s_main_content | split: '<!-- t4s-lcp-desktop-srcset:'
+    assign t4s_lcp_desktop_srcset = lcp_marker_parts[1] | split: ':t4s-lcp-end -->' | first | strip
+    assign lcp_marker_parts = t4s_main_content | split: '<!-- t4s-lcp-desktop-sizes:'
+    assign t4s_lcp_desktop_sizes = lcp_marker_parts[1] | split: ':t4s-lcp-end -->' | first | strip
+    assign lcp_marker_parts = t4s_main_content | split: '<!-- t4s-lcp-mobile-href:'
+    assign t4s_lcp_mobile_href = lcp_marker_parts[1] | split: ':t4s-lcp-end -->' | first | strip
+    assign lcp_marker_parts = t4s_main_content | split: '<!-- t4s-lcp-mobile-srcset:'
+    assign t4s_lcp_mobile_srcset = lcp_marker_parts[1] | split: ':t4s-lcp-end -->' | first | strip
+  endif
+-%}
+<html
+  class="{{ class_html }} no-js"
+  lang="{{ iso_code }}"
+  {% if isRTL %}
+    dir="rtl"
+  {% endif %}
+>
+  <head>
+    	<!-- Added by APP PLAZA -->
+	{% include 'app-plaza' %}
+  {% include 'avada-seo' %}
+	<!-- /Added by APP PLAZA -->
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, height=device-height, minimum-scale=1.0, maximum-scale=1.0"
+    >
+    <meta name="theme-color" content="{{ settings.body_bg }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    {%- if settings.font_source == '1' -%}
+      {%- unless settings.fnt_fm_sp1.system? and settings.fnt_fm_sp2.system? and settings.fnt_fm_sp3.system? -%}
+        <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+      {%- endunless -%}
+    {%- endif -%}
+    {%- if t4s_lcp_desktop_href != blank -%}
+      <link rel="preload" as="image" href="{{ t4s_lcp_desktop_href }}" imagesrcset="{{ t4s_lcp_desktop_srcset }}" imagesizes="{{ t4s_lcp_desktop_sizes }}" media="(min-width: 768px)" fetchpriority="high">
+      <link rel="preload" as="image" href="{{ t4s_lcp_mobile_href }}" imagesrcset="{{ t4s_lcp_mobile_srcset }}" imagesizes="100vw" media="(max-width: 767px)" fetchpriority="high">
+    {%- endif -%}
+    {%- render 'head_assets', t_name: t_name, isRTL: isRTL -%}
+    {%- render 'avada-customize' -%}
+    <!-- BEGIN MerchantWidget Code -->
+
+<script id='merchantWidgetScript'
+
+        src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
+
+        defer>
+
+</script>
+
+<script type="text/javascript">
+
+  merchantWidgetScript.addEventListener('load', function () {
+
+    merchantwidget.start({
+
+     position: 'RIGHT_BOTTOM'
+
+   });
+
+  });
+
+</script>
+
+<!-- END MerchantWidget Code -->
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-TJVJLDW5');
+    </script>
+    <!-- End Google Tag Manager -->
+    {%- if settings.favicon != blank -%}
+      <link rel="shortcut icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+      ><link
+        id="t4s-favico"
+        rel="apple-touch-icon-precomposed"
+        type="image/png"
+        sizes="152x152"
+        href="{{ settings.favicon | image_url: width: 152, height: 152 }}"
+      >
+    {%- endif -%}
+
+    {%- if t_name != 'list-collections' -%}
+      {%- capture seo_title -%}
+      {%- if template == 'search' and search.performed == true -%}{{ 'search.general.heading' | t: count: search.results_count }}: {{ 'search.results_with_count_and_term' | t: terms: search.terms, count: search.results_count }}{%- elsif template == 'search.wishlist' %}{{ 'wishlist_page.meta' | t }}{%- elsif template == 'search.compare' %}{{ 'compare_page.meta' | t }}{%- else -%}{{ page_title }}{%- endif -%}
+      {%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}{%- endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{%- endif -%}
+      {%- assign escaped_page_title = page_title | escape -%}
+      {%- unless escaped_page_title contains shop.name %} &ndash; {{ shop.name }}{%- endunless -%}
+    {%- endcapture -%}
+      <title>{{ seo_title | strip }}</title>
+      <meta
+        name="description"
+        content="{{ page_description | default: shop.description | default: shop.name | escape }}"
+      >
+    {%- else -%}
+      <title>{{ 'list_collections.meta_title' | t | escape }}</title
+      ><meta name="description" content="{{ 'list_collections.meta_description' | t | escape }}">
+    {%- endif -%}
+
+    {%- liquid
+      assign t_name = request.page_type
+      assign body_img = settings.body_bg_image
+      render 'meta-tags', t_name: t_name
+    -%}
+
+    <script src="{{ 'lazysizes.min.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'global.min.js' | asset_url }}" defer="defer"></script>
+    {{ content_for_header }}
+    <meta name="facebook-domain-verification" content="llvnkhr8ydgunyxlas0v8jl9grm4id" />
+    <script src="{{ 'storepickupcr.js' | asset_url }}" defer="defer"></script>
+  </head>
+  <body
+    class="
+      template-{{ request.page_type | handle }}
+      {{ class_lazy }}
+    "
+    {% if body_img != blank %}
+      data-bgset="{{ body_img | image_url: width: 1 }}" data-optimumx="2" data-sizes="auto"
+    {% endif -%}
+  >
+    <a class="skip-to-content-link visually-hidden" href="#MainContent">{{ 'accessibility.skip_to_text' | t }}</a>
+    <div class="t4s-close-overlay t4s-op-0"></div>
+
+    <div class="t4s-website-wrapper">
+      {%- render 'header', t_name: t_name -%}
+
+      <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+        {{ t4s_main_content }}
+      </main>
+
+      <footer id="t4s-footer">
+        {%- section 'footer' -%}
+        {%- section 'footer-bottom' -%}
+      </footer>
+    </div>
+
+    <ul hidden class="t4s-d-none">
+      <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
+    </ul>
+    {%- render 'render_bottom' -%}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-TJVJLDW5"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- SJ Sports: Mobile Bottom Nav v5 + Accordion Sub-menus -->
+<style>
+/* ── Bottom Nav Bar ── */
+.sjs-bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid #e5e5e5;z-index:9998;align-items:stretch;padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(max-width:767px){.sjs-bnav{display:flex}}
+@media(max-width:767px){body{padding-bottom:62px}}
+.sjs-bnav a,.sjs-bnav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#777;font-size:10px;font-family:inherit;padding:6px 4px;background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 0.15s}
+.sjs-bnav a:active,.sjs-bnav button:active,.sjs-bnav .sjs-on{color:#e05c2a}
+.sjs-bnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block}
+.sjs-bwrap{position:relative;display:flex}
+.sjs-bbadge{position:absolute;top:-5px;right:-7px;background:#e05c2a;color:#fff;border-radius:50%;min-width:16px;height:16px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 2px}
+
+/* ── Overlay ── */
+.sjs-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99997;opacity:0;transition:opacity 0.25s}
+.sjs-overlay.sjs-open{display:block;opacity:1}
+
+/* ── Drawer ── */
+.sjs-drawer{position:fixed;top:0;left:0;bottom:0;width:85%;max-width:320px;background:#fff;z-index:99998;transform:translateX(-100%);transition:transform 0.28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch}
+.sjs-drawer.sjs-open{transform:translateX(0)}
+
+/* ── Drawer Header ── */
+.sjs-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0f0;flex-shrink:0;position:sticky;top:0;background:#fff;z-index:2}
+.sjs-drawer-logo{font-size:17px;font-weight:700;color:#1a1a1a;text-decoration:none}
+.sjs-drawer-logo em{color:#e05c2a;font-style:normal}
+.sjs-close{background:none;border:none;cursor:pointer;padding:6px;color:#666;border-radius:50%;-webkit-tap-highlight-color:transparent;display:flex}
+.sjs-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* ── Search bar ── */
+.sjs-drawer-search{margin:10px 14px;display:flex;align-items:center;gap:8px;background:#f5f5f5;border-radius:20px;padding:9px 14px;font-size:13px;color:#999;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.sjs-drawer-search svg{width:15px;height:15px;stroke:#aaa;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0}
+
+/* ── Nav items ── */
+.sjs-nav{flex:1;padding-bottom:8px}
+
+/* Top level row */
+.sjs-nav-row{display:flex;align-items:stretch;border-bottom:1px solid #f2f2f2}
+.sjs-nav-row a.sjs-nav-link{flex:1;display:flex;align-items:center;padding:13px 16px;font-size:14px;font-weight:500;color:#1a1a1a;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.sjs-nav-row a.sjs-nav-link:active{color:#e05c2a}
+.sjs-nav-row a.sjs-sale{color:#e05c2a}
+
+/* Expand toggle button (only shown if has children) */
+.sjs-toggle{background:none;border:none;border-left:1px solid #f2f2f2;padding:0 16px;cursor:pointer;color:#aaa;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.sjs-toggle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;transition:transform 0.2s}
+.sjs-toggle.sjs-expanded svg{transform:rotate(180deg)}
+.sjs-toggle.sjs-expanded{color:#e05c2a}
+
+/* Sub-menu */
+.sjs-sub{display:none;background:#fafafa;border-bottom:1px solid #f2f2f2}
+.sjs-sub.sjs-open{display:block}
+.sjs-sub a{display:flex;align-items:center;gap:8px;padding:11px 16px 11px 28px;font-size:13px;color:#444;text-decoration:none;border-bottom:1px solid #f5f5f5;-webkit-tap-highlight-color:transparent}
+.sjs-sub a:last-child{border-bottom:none}
+.sjs-sub a:active{color:#e05c2a;background:#fff5f0}
+.sjs-sub a::before{content:'';width:4px;height:4px;border-radius:50%;background:#ccc;flex-shrink:0}
+
+/* ── Drawer Footer ── */
+.sjs-drawer-foot{padding:14px 16px;border-top:1px solid #f0f0f0;display:flex;gap:10px;flex-shrink:0}
+.sjs-drawer-foot a{flex:1;text-align:center;font-size:12px;color:#555;text-decoration:none;padding:9px 6px;border:1px solid #e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:5px}
+</style>
+
+<!-- Overlay -->
+<div class="sjs-overlay" id="sjs-overlay"></div>
+
+<!-- Drawer -->
+<div class="sjs-drawer" id="sjs-drawer" role="dialog" aria-label="Site navigation">
+
+  <div class="sjs-drawer-head">
+    <a href="/" class="sjs-drawer-logo">SJ <em>Sports</em></a>
+    <button class="sjs-close" id="sjs-close-btn" aria-label="Close menu">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <a href="/search" class="sjs-drawer-search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Search products, brands…
+  </a>
+
+  <nav class="sjs-nav" id="sjs-nav"></nav>
+
+  <div class="sjs-drawer-foot">
+    <a href="/account">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account
+    </a>
+    <a href="/cart">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Cart
+    </a>
+  </div>
+</div>
+
+<!-- Shopify nav data: main-menu + all child links -->
+<div id="sjs-nav-data" style="display:none">
+  {%- for link in linklists['main-menu'].links -%}
+    <div class="sjs-parent"
+         data-url="{{ link.url }}"
+         data-title="{{ link.title }}">
+      {%- for child in link.links -%}
+        <span data-url="{{ child.url }}"
+              data-title="{{ child.title }}"></span>
+      {%- endfor -%}
+    </div>
+  {%- endfor -%}
+</div>
+
+<!-- Bottom Nav Bar -->
+<nav class="sjs-bnav" aria-label="Quick navigation">
+  <a href="/" aria-label="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <button id="sjs-menu-btn" aria-label="Menu">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    Menu
+  </button>
+  <a href="/search" aria-label="Search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Search
+  </a>
+  <a href="/account" aria-label="Account">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Account
+  </a>
+  <a href="/cart" aria-label="Cart">
+    <span class="sjs-bwrap">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="sjs-bbadge" id="sjs-bbadge"></span>
+    </span>
+    Cart
+  </a>
+</nav>
+
+<script>
+(function(){
+
+  var drawer  = document.getElementById('sjs-drawer');
+  var overlay = document.getElementById('sjs-overlay');
+  var menuBtn = document.getElementById('sjs-menu-btn');
+  var closeBtn= document.getElementById('sjs-close-btn');
+  var navEl   = document.getElementById('sjs-nav');
+
+  // ── Build nav with sub-menus from Liquid data ──────
+  var parents = document.querySelectorAll('#sjs-nav-data .sjs-parent');
+  parents.forEach(function(p){
+    var url      = p.getAttribute('data-url');
+    var title    = p.getAttribute('data-title');
+    var children = p.querySelectorAll('span');
+    var isSale   = title.toLowerCase().indexOf('sale') > -1;
+
+    var row = document.createElement('div');
+    row.className = 'sjs-nav-row';
+
+    // Main link
+    var a = document.createElement('a');
+    a.href = url;
+    a.className = 'sjs-nav-link' + (isSale ? ' sjs-sale' : '');
+    a.textContent = title;
+    row.appendChild(a);
+
+    // If has children — add expand toggle + sub-menu
+    if(children.length > 0){
+
+      // Prevent main link navigating — tap toggles sub instead
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        toggleBtn.click();
+      });
+
+      // Chevron toggle button
+      var toggleBtn = document.createElement('button');
+      toggleBtn.className = 'sjs-toggle';
+      toggleBtn.setAttribute('aria-label', 'Expand ' + title);
+      toggleBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+      row.appendChild(toggleBtn);
+
+      // Sub-menu container
+      var sub = document.createElement('div');
+      sub.className = 'sjs-sub';
+
+      // "View all" link at top of sub-menu
+      var viewAll = document.createElement('a');
+      viewAll.href = url;
+      viewAll.innerHTML = '<strong>View all ' + title + '</strong>';
+      viewAll.style.fontWeight = '600';
+      viewAll.style.color = '#e05c2a';
+      sub.appendChild(viewAll);
+
+      // Child links
+      children.forEach(function(child){
+        var ca = document.createElement('a');
+        ca.href  = child.getAttribute('data-url');
+        ca.textContent = child.getAttribute('data-title');
+        sub.appendChild(ca);
+      });
+
+      // Toggle open/close
+      toggleBtn.addEventListener('click', function(){
+        var isOpen = sub.classList.contains('sjs-open');
+        // Close all other open subs first
+        document.querySelectorAll('.sjs-sub.sjs-open').forEach(function(s){ s.classList.remove('sjs-open') });
+        document.querySelectorAll('.sjs-toggle.sjs-expanded').forEach(function(b){ b.classList.remove('sjs-expanded') });
+        if(!isOpen){
+          sub.classList.add('sjs-open');
+          toggleBtn.classList.add('sjs-expanded');
+        }
+      });
+
+      navEl.appendChild(row);
+      navEl.appendChild(sub);
+
+    } else {
+      navEl.appendChild(row);
+    }
+  });
+
+  // ── Open / Close drawer ───────────────────────────
+  function openDrawer(){
+    drawer.classList.add('sjs-open');
+    overlay.classList.add('sjs-open');
+    document.body.style.overflow = 'hidden';
+    if(menuBtn) menuBtn.classList.add('sjs-on');
+  }
+  function closeDrawer(){
+    drawer.classList.remove('sjs-open');
+    overlay.classList.remove('sjs-open');
+    document.body.style.overflow = '';
+    if(menuBtn) menuBtn.classList.remove('sjs-on');
+  }
+
+  if(menuBtn)  menuBtn.addEventListener('click', openDrawer);
+  if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if(overlay)  overlay.addEventListener('click', closeDrawer);
+
+  // Swipe left to close
+  var startX = 0;
+  if(drawer){
+    drawer.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX }, {passive:true});
+    drawer.addEventListener('touchend',   function(e){ if(startX - e.changedTouches[0].clientX > 60) closeDrawer() }, {passive:true});
+  }
+
+  // ── Cart badge ────────────────────────────────────
+  var badge = document.getElementById('sjs-bbadge');
+  if(badge){
+    fetch('/cart.js').then(function(r){return r.json()}).then(function(d){
+      var n = d.item_count||0;
+      if(n>0){badge.textContent=n>99?'99+':n;badge.style.display='flex'}
+    }).catch(function(){});
+  }
+
+  // ── Active page highlight ─────────────────────────
+  var path = window.location.pathname;
+  document.querySelectorAll('.sjs-bnav a').forEach(function(a){
+    if(a.getAttribute('href')===path) a.classList.add('sjs-on');
+  });
+
+})();
+</script>
+<!-- End SJ Sports Mobile Bottom Nav v5 -->
+  </body>
+</html>
