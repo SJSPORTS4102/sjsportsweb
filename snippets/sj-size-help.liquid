@@ -1,0 +1,54 @@
+{%- comment -%}
+  SJ CRO 25 (Off Leesh, Nov 2026): size help next to the size buttons, from SJ's own
+  blog guide (blogs/news/what-size-cricket-bat-for-my-child). Opens in place, no page change.
+  Bats get the full bat chart; gloves, helmets and pads get the how-to-measure line.
+{%- endcomment -%}
+{%- liquid
+  assign t = product.type | downcase
+  assign kind = ''
+  if t contains 'cricket bat'
+    assign kind = 'bat'
+  elsif t contains 'glove'
+    assign kind = 'gloves'
+  elsif t contains 'helmet'
+    assign kind = 'helmet'
+  elsif t contains 'pad'
+    assign kind = 'pads'
+  endif
+-%}
+{%- if kind != '' -%}
+<details class="sj-size">
+  <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>Which size?</summary>
+  <div class="sj-size__body">
+    {%- case kind -%}
+      {%- when 'bat' -%}
+        <table>
+          <thead><tr><th>Bat size</th><th>Player height</th><th>Typical age</th></tr></thead>
+          <tbody>
+            <tr><td>Size 0</td><td>Under 120 cm</td><td>4 to 5</td></tr>
+            <tr><td>Size 1</td><td>120 to 129 cm</td><td>5 to 6</td></tr>
+            <tr><td>Size 2</td><td>129 to 137 cm</td><td>6 to 7</td></tr>
+            <tr><td>Size 3</td><td>137 to 144 cm</td><td>8 to 9</td></tr>
+            <tr><td>Size 4</td><td>144 to 150 cm</td><td>9 to 10</td></tr>
+            <tr><td>Size 5</td><td>150 to 157 cm</td><td>10 to 11</td></tr>
+            <tr><td>Size 6</td><td>157 to 163 cm</td><td>11 to 13</td></tr>
+            <tr><td>Harrow</td><td>163 to 168 cm</td><td>12 to 14</td></tr>
+            <tr><td>Small Adult (SM)</td><td>168 to 175 cm</td><td>14 and up</td></tr>
+            <tr><td>Short Handle (SH)</td><td>175 cm and over</td><td>Adults</td></tr>
+          </tbody>
+        </table>
+        <p>Height is the best guide; age is only a rough one. Between sizes? Go for the smaller bat.</p>
+      {%- when 'gloves' -%}
+        <p><b>How to measure:</b> wrist crease to the tip of the middle finger.</p>
+        <p>Small Junior about 16.5 cm, Junior about 17.5 cm, Youth about 19 cm.</p>
+      {%- when 'helmet' -%}
+        <p><b>How to measure:</b> head circumference with a soft tape, just above the eyebrows.</p>
+        <p>Junior Small 51 to 52 cm, Junior 53 to 54 cm, Youth 54 to 56 cm.</p>
+      {%- when 'pads' -%}
+        <p><b>How to measure:</b> centre of the kneecap to the top of the foot.</p>
+        <p>Small Junior 30 to 32 cm, Junior 32 to 34 cm, Youth 34 to 37 cm.</p>
+    {%- endcase -%}
+    <p class="sj-size__more"><a href="/blogs/news/what-size-cricket-bat-for-my-child">Full size guide</a> &middot; or call the shop on <a href="tel:0423240478">0423 240 478</a></p>
+  </div>
+</details>
+{%- endif -%}

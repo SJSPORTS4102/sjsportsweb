@@ -9,7 +9,8 @@
   assign cart_change_url  = routes.cart_change_url
   assign min_qty          = settings.min_qty | plus: 0
   assign compare_tt_price = 0
-  assign shipping_amount  = settings.free_ship_pr.metafields.theme.shipping_money.value | default: settings.free_ship_pr.price | default: -1
+  # SJ CRO 21: $200 free standard shipping when the threshold product is missing
+  assign shipping_amount  = settings.free_ship_pr.metafields.theme.shipping_money.value | default: settings.free_ship_pr.price | default: 20000
   assign total_price    = cart.total_price
 
   assign gift_pr = all_products[settings.gift_wrap_pr]

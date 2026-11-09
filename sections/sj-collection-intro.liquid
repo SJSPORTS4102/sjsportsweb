@@ -1,0 +1,37 @@
+{%- comment -%}
+  SJ CRO 11 (Off Leesh, Nov 2026): a short intro under the collection heading on the main
+  collections. Uses the collection's own description when Vik adds one, else the text here.
+{%- endcomment -%}
+{%- liquid
+  assign intro = ''
+  for block in section.blocks
+    if block.settings.collection.handle == collection.handle
+      assign intro = block.settings.text
+      break
+    endif
+  endfor
+  if collection.description != blank
+    assign intro = collection.description
+  endif
+-%}
+{%- if intro != blank -%}
+  <div class="sj-intro t4s-container">{{ intro }}</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ collection intro",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "intro",
+      "name": "Intro",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "richtext", "id": "text", "label": "Intro text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "SJ collection intro" }]
+}
+{% endschema %}

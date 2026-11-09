@@ -62,7 +62,7 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, height=device-height, minimum-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1"
     >
     <meta name="theme-color" content="{{ settings.body_bg }}">
     <link rel="canonical" href="{{ canonical_url }}">
@@ -152,6 +152,7 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
     {{ content_for_header }}
     <meta name="facebook-domain-verification" content="llvnkhr8ydgunyxlas0v8jl9grm4id" />
     <script src="{{ 'storepickupcr.js' | asset_url }}" defer="defer"></script>
+    {{ 'sj-cro.css' | asset_url | stylesheet_tag }}
   </head>
   <body
     class="

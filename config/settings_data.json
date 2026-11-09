@@ -27,7 +27,7 @@
     "mobile_nav_type": "1",
     "heading_color": "#4d5959",
     "text_color": "#000000",
-    "accent_color": "#fa0000",
+    "accent_color": "#C8102E",
     "secondary_color": "#4d5959",
     "price_primary": "#878787",
     "link_color": "#222222",
@@ -54,7 +54,7 @@
     "badge_shape": "2",
     "label_sale_style": "2",
     "use_new_badge": false,
-    "sale_badge_color": "#fa0000",
+    "sale_badge_color": "#C8102E",
     "use_link_vendor": false,
     "enable_quickview": true,
     "type_qv": "2",
@@ -84,11 +84,11 @@
     "privacy_policy_link": "privacy-policy",
     "login_side": true,
     "return_login": "",
-    "filter_type_search": true,
+    "filter_type_search": false,
     "search_types": "fullwidth",
     "unavailable_prs": "last",
-    "show_search_suggest": false,
-    "search_prs_suggest": "clothing",
+    "show_search_suggest": true,
+    "search_prs_suggest": "best-selling-collection",
     "show_search_hotkey": false,
     "currency_code_enabled": false,
     "currency_type": "1",
@@ -511,7 +511,7 @@
             "type": "announcement",
             "settings": {
               "link": "",
-              "content": "<p>Now Open Monday to Friday 10 AM to 6 PM. Saturday 9 AM to 5 PM and Sunday 9 AM to 3PM</p>",
+              "content": "<p>Free bat prep &middot; Free shipping over $200 &middot; Open 7 days in Woolloongabba</p>",
               "countdown": "2023/12/26",
               "txt_day": "days",
               "dayx": 0
@@ -525,7 +525,8 @@
               "countdown": "",
               "txt_day": "days",
               "dayx": 0
-            }
+            },
+            "disabled": true
           },
           "announcement-bar-1": {
             "type": "announcement",
@@ -535,7 +536,8 @@
               "countdown": "",
               "txt_day": "days",
               "dayx": 0
-            }
+            },
+            "disabled": true
           },
           "announcement-bar-2": {
             "type": "announcement",
@@ -545,7 +547,8 @@
               "countdown": "2023/12/26",
               "txt_day": "days",
               "dayx": 0
-            }
+            },
+            "disabled": true
           }
         },
         "block_order": [
@@ -1133,7 +1136,7 @@
           "pr_title_color_hover": "#b59677",
           "primary_price_color": "#696969",
           "secondary_price_color": "#696969",
-          "price_sale_color": "#ec0101",
+          "price_sale_color": "#C8102E",
           "vendors_color": "#696969",
           "vendors_color_hover": "#b59677",
           "countdown_color": "#b59677",
@@ -1558,7 +1561,7 @@
           "menu_X6VNHi": {
             "type": "menu",
             "settings": {
-              "title": "Cricket Bat",
+              "title": "Bats",
               "url": "",
               "open_link": "_self",
               "menu": "cricket-bat",
@@ -1623,7 +1626,7 @@
           "70ce3076-e4fe-46e4-8792-9e8df47fd7f8": {
             "type": "menu",
             "settings": {
-              "title": "Keeper Gear",
+              "title": "Keeping gear",
               "url": "",
               "open_link": "_self",
               "menu": "keeper",
@@ -1688,7 +1691,7 @@
           "926f6f52-ee13-4c4a-9754-01cd6f383d35": {
             "type": "menu",
             "settings": {
-              "title": "Bundles & Kit",
+              "title": "Bundles and kits",
               "url": "",
               "open_link": "_self",
               "menu": "bundles-kit",
@@ -1701,7 +1704,7 @@
           "1ababe25-4716-4b66-bb42-827c0ff676b6": {
             "type": "menu",
             "settings": {
-              "title": "Cricket Accessories",
+              "title": "Accessories",
               "url": "",
               "open_link": "_self",
               "menu": "cricket-accessories",
@@ -1714,7 +1717,7 @@
           "2eb8164a-abe8-4c5d-bc5e-bf00625d1ab5": {
             "type": "menu",
             "settings": {
-              "title": "TRAINING EQUIPMENTS",
+              "title": "Training equipment",
               "url": "",
               "open_link": "_self",
               "menu": "training-equipments",
@@ -1727,7 +1730,7 @@
           "aa4a575d-3257-4743-81cc-3bf7f342de40": {
             "type": "menu",
             "settings": {
-              "title": "BAT REPAIR & MAINTENANCE",
+              "title": "Bat repair and care",
               "url": "",
               "open_link": "_self",
               "menu": "bat-repair-maintenance",
@@ -1740,7 +1743,7 @@
           "31a5c9b0-864a-423f-84c4-4adeac4dfe1c": {
             "type": "menu",
             "settings": {
-              "title": "INDOOR CRICKET",
+              "title": "Indoor cricket",
               "url": "",
               "open_link": "_self",
               "menu": "indoor-cricket",
@@ -1753,7 +1756,7 @@
           "9eea86b1-214b-46d4-9700-d569debeeed2": {
             "type": "menu",
             "settings": {
-              "title": "MORE SPORTS",
+              "title": "More sports",
               "url": "",
               "open_link": "_self",
               "menu": "more-sports",
@@ -1782,28 +1785,78 @@
           "mb_nav-9": {
             "type": "cur",
             "settings": {}
+          },
+          "sj_bowling": {
+            "type": "menu",
+            "settings": {
+              "title": "Bowling machines",
+              "url": "/search?q=bowling+machine&type=product",
+              "open_link": "_self",
+              "menu": "",
+              "lb": "",
+              "lb_cl": "",
+              "icons_op": "0",
+              "icon": "las la-home"
+            }
+          },
+          "sj_junior": {
+            "type": "menu",
+            "settings": {
+              "title": "Junior kit",
+              "url": "shopify://collections/junior-small-junior-kit",
+              "open_link": "_self",
+              "menu": "",
+              "lb": "",
+              "lb_cl": "",
+              "icons_op": "0",
+              "icon": "las la-home"
+            }
+          },
+          "sj_prep": {
+            "type": "menu",
+            "settings": {
+              "title": "Free bat prep",
+              "url": "shopify://pages/free-bat-preparation-service",
+              "open_link": "_self",
+              "menu": "",
+              "lb": "",
+              "lb_cl": "",
+              "icons_op": "0",
+              "icon": "las la-home"
+            }
+          },
+          "sj_help": {
+            "type": "help",
+            "settings": {
+              "title": "Need a hand?",
+              "text": "<p>Call the shop on <a href=\"tel:0423240478\">0423 240 478</a></p><p>Mon to Fri 10am to 6pm, Sat 9am to 5pm, Sun 9am to 3pm. 60 Deshon St, Woolloongabba.</p>"
+            }
           }
         },
         "block_order": [
-          "menu_kqUpKW",
+          "mb_nav-5",
           "menu_X6VNHi",
-          "863925fe-a9a3-4b41-8fd3-f09c45d70f75",
           "8428ad32-f20d-4aae-afdb-a689ec7fd8aa",
+          "863925fe-a9a3-4b41-8fd3-f09c45d70f75",
           "b3a1fb2e-26fb-465c-8e24-100282a3f423",
+          "sj_bowling",
+          "sj_junior",
+          "sj_prep",
           "01d152df-a708-4edb-b2e8-b237df753d8d",
-          "70ce3076-e4fe-46e4-8792-9e8df47fd7f8",
           "23aec1da-9e02-4692-8be7-a8f0a38fbdd7",
           "34f8850d-50af-4f7f-97bb-04125b0edb62",
-          "750d207b-34cf-496e-82d6-e0b645a2d7d8",
+          "70ce3076-e4fe-46e4-8792-9e8df47fd7f8",
           "d987ac10-a175-4174-b338-140c2ac6fa8b",
+          "750d207b-34cf-496e-82d6-e0b645a2d7d8",
           "926f6f52-ee13-4c4a-9754-01cd6f383d35",
           "1ababe25-4716-4b66-bb42-827c0ff676b6",
           "2eb8164a-abe8-4c5d-bc5e-bf00625d1ab5",
           "aa4a575d-3257-4743-81cc-3bf7f342de40",
           "31a5c9b0-864a-423f-84c4-4adeac4dfe1c",
           "9eea86b1-214b-46d4-9700-d569debeeed2",
+          "menu_kqUpKW",
+          "sj_help",
           "mb_nav-4",
-          "mb_nav-5",
           "mb_nav-6",
           "mb_nav-8",
           "mb_nav-9"
@@ -1828,7 +1881,8 @@
           },
           "mini_cart-2": {
             "type": "agree",
-            "settings": {}
+            "settings": {},
+            "disabled": true
           },
           "mini_cart-3": {
             "type": "btnc",
@@ -1882,7 +1936,7 @@
           "enable_rates": true,
           "enable_discount": true,
           "enable_gift_wrap": true,
-          "ship_df_country": "United States"
+          "ship_df_country": "Australia"
         }
       },
       "main-qv": {
@@ -3008,7 +3062,7 @@
       },
       "8724273446096825624": {
         "type": "shopify://apps/air-reviews-1/blocks/app-embed/c4e1e9ca-4d46-4e76-bc39-7e42417cb327",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       },
       "12924379504690436420": {

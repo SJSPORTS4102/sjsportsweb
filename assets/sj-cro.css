@@ -1,0 +1,128 @@
+/* SJ Sports website changes (Off Leesh, Nov 2026). Loaded last, on the theme copy only.
+   Numbers match "SJ Sports - Black Friday website changes - before screenshots (v2).pdf".
+   Rules follow the ui-ux-pro-max checklist: 44px tap targets, 16px text on phones, 4.5:1 contrast. */
+:root{--sj-navy:#005186;--sj-ink:#0F2236;--sj-muted:#475569;--sj-red:#C8102E;--sj-green:#0B6B35;--sj-line:#E1E7EE;--sj-soft:#F3F6F9}
+
+/* 1 trust block under Add to cart */
+.sj-trust{list-style:none;margin:16px 0 0;padding:0;border:1px solid var(--sj-line);border-radius:10px;background:#fff;overflow:hidden}
+.sj-trust li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:10px 12px;font-size:15px;line-height:1.4;border-top:1px solid var(--sj-line);color:var(--sj-ink);margin:0}
+.sj-trust li:first-child{border-top:0}
+.sj-trust b{font-weight:600}
+.sj-trust__m{color:var(--sj-muted)}
+.sj-trust a{color:var(--sj-navy);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.sj-trust__ic{width:34px;height:34px;border-radius:50%;background:#E8F0F7;display:grid;place-items:center;color:var(--sj-navy)}
+.sj-trust__ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sj-trust__ic--star{background:#FFF4CC;color:#B7791F}
+.sj-trust__ic--star svg{fill:currentColor;stroke:none}
+.sj-call{margin:10px 0 0;font-size:15px;color:var(--sj-ink)}
+.sj-call a{color:var(--sj-navy);font-weight:600;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}
+
+/* 2 bat prep and preferred weight (Gecko line item properties) */
+.t4s-line-item-property__field{margin:0 0 14px}
+.t4s-line-item-property__field .t4s-line-item-property__label{font-size:14px;font-weight:600;letter-spacing:.04em;margin-bottom:8px;display:block}
+.t4s-line-item-property__field.is--type-radio label{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;margin:0 0 8px;border:1.5px solid var(--sj-line);border-radius:10px;background:#fff;font-size:15px;cursor:pointer;line-height:1.3}
+.t4s-line-item-property__field.is--type-radio label:has(input:checked){border-color:var(--sj-navy);background:#EEF4FA;box-shadow:inset 0 0 0 1px var(--sj-navy)}
+.t4s-line-item-property__field.is--type-radio input{width:20px;height:20px;flex:none;accent-color:var(--sj-navy)}
+.t4s-line-item-property__field.is--type-select select{min-height:48px;font-size:16px;border-radius:10px;border:1.5px solid var(--sj-line);padding:0 12px;width:100%;background-color:#fff}
+
+/* 4 "Goes with your bat" accessories */
+.sj-acc{margin:40px auto 10px}
+.sj-acc__h{font-size:22px;font-weight:600;text-align:center;margin:0 0 16px;letter-spacing:.5px;color:var(--sj-ink)}
+.sj-acc__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sj-acc__card{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--sj-ink);background:#fff;border:1px solid var(--sj-line);border-radius:10px;padding:10px;transition:box-shadow .2s,transform .2s}
+.sj-acc__card:hover{box-shadow:0 8px 20px rgba(10,46,77,.12);transform:translateY(-2px)}
+.sj-acc__img{aspect-ratio:1;display:grid;place-items:center;background:#fff;overflow:hidden}
+.sj-acc__img img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.sj-acc__t{font-size:15px;line-height:1.3;font-weight:500}
+.sj-acc__p{font-weight:700;font-size:16px}
+@media (min-width:768px){.sj-acc__grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}}
+
+/* 5 hide the empty reviews (blocks are switched off in the template; this catches leftovers) */
+#AirReviews-FloatButtonWrapper{display:none!important}
+
+/* 6 sticky Add to cart: Gecko "default" layout shows name and price; keep the button big */
+.t4s-sticky-atc .t4s-product-form__submit{min-height:48px}
+
+/* 8 filters: show the Filter button next to Sort on phones, drop the small side icon */
+@media (max-width:1024px){
+  .t4s-btn-sidebar{display:none!important}
+  .t4s-btn-filter-wrapper button,.t4s-btn-filter-wrapper a{min-height:44px;font-size:15px}
+}
+@media (min-width:1025px){.t4s-btn-filter-wrapper{display:none!important}}
+
+/* 9 lighter collection banner on phones: no background photo, short navy band */
+@media (max-width:767px){
+  .page_collection_heading .t4s-page-section-heading{background-image:none!important;background-color:#0A2E4D!important}
+  .page_collection_heading .t4s-page-section-heading:before,.page_collection_heading .t4s-page-section-heading:after{display:none!important}
+}
+
+/* 10 shop bats by size, drawn to scale */
+.sj-sizes{margin:0 auto 18px}
+.sj-sizes__head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.sj-sizes__h{font-size:18px;font-weight:700;margin:0;color:var(--sj-ink);letter-spacing:.3px}
+.sj-sizes__guide{min-height:44px;display:inline-flex;align-items:center;color:var(--sj-navy);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.sj-sizes__row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(92px,1fr);gap:6px;overflow-x:auto;scrollbar-width:none;align-items:end;border-bottom:2px solid var(--sj-ink);scroll-snap-type:x mandatory}
+.sj-sizes__row::-webkit-scrollbar{display:none}
+.sj-sizes__tile{scroll-snap-align:start;display:grid;justify-items:center;align-content:end;gap:6px;padding:10px 4px;text-decoration:none!important;color:var(--sj-ink);text-align:center;border-radius:10px 10px 0 0;transition:background-color .2s}
+.sj-sizes__tile:hover,.sj-sizes__tile.is-on{background:#E8F0F7}
+.sj-sizes__bat{height:calc(var(--h) * 1px);width:calc(var(--h) * .24px);fill:var(--sj-navy);transition:fill .2s}
+.sj-sizes__tile:hover .sj-sizes__bat{fill:var(--sj-red)}
+.sj-sizes__tile b{font-size:14px;line-height:1.2;font-weight:600}
+.sj-sizes__tile small{font-size:13px;color:var(--sj-muted);line-height:1.25}
+@media (min-width:1024px){
+  .sj-sizes__row{grid-auto-flow:row;grid-template-columns:repeat(5,1fr);overflow:visible}
+  .sj-sizes__bat{height:calc(var(--h) * 1.3px);width:calc(var(--h) * .31px)}
+  .sj-sizes__tile b{font-size:16px}
+}
+
+/* 11 collection intro */
+.sj-intro{margin:0 auto 16px;font-size:16px;line-height:1.55;color:var(--sj-ink)}
+.sj-intro p{margin:0;max-width:72ch}
+
+/* 13 free bat prep badge on bat cards */
+.t4s-badge-free-bat-prep{background-color:var(--sj-navy)!important;color:#fff!important}
+
+/* 15 bigger tap targets on phones and tablets */
+@media (max-width:1024px){
+  .t4s-product-form__buttons .t4s-product-form__submit{min-height:52px!important;font-size:16px!important}
+  .t4s-product-form__buttons .shopify-payment-button__button{min-height:52px!important}
+  .t4s-quantity-wrapper{min-height:52px}
+  .t4s-quantity-wrapper .t4s-quantity-selector{min-width:44px!important;min-height:44px!important}
+  .t4s-swatch__item:not(.is-sw__color){min-height:44px!important;min-width:44px!important;padding:0 14px!important;display:inline-flex!important;align-items:center;justify-content:center;font-size:15px!important}
+  .t4s-site-nav__search,.t4s-site-nav__cart{min-width:44px;min-height:44px;display:inline-flex!important;align-items:center;justify-content:center}
+  .t4s-pr-quickview{min-width:44px!important;min-height:44px!important}
+  .t4s-announcement-bar .t4s-announcement-bar__close,.t4s-announcement-bar [data-announcement-bar-close]{min-width:44px;min-height:44px}
+}
+
+/* 16 readable text on phones */
+@media (max-width:767px){
+  .t4s-tab-content,.t4s-tab-content p,.t4s-tab-content li,.t4s-tab-content span,.t4s-product__info-container .t4s-rte{font-size:16px!important;line-height:1.6!important}
+  .t4s-product__info-container .t4s-product-price{font-size:24px!important}
+  .t4s-product .t4s-product-title,.t4s-product .t4s-product-title a{font-size:14px!important;line-height:1.35!important}
+  .t4s-product .t4s-product-price{font-size:15px!important}
+}
+
+/* 17 contrast: stock text stronger; colours come from settings (#C8102E red, #0B6B35 green) */
+.t4s-product__info-container .t4s-product-stock,.t4s-product__info-container [class*="inventory"]{font-weight:600}
+
+/* 19 clear the screen edges on phones: no bottom menu bar on product pages or behind open drawers */
+body.template-product .t4s-toolbar,html.is--opend-drawer .t4s-toolbar,html.t4s-lock-scroll .t4s-toolbar{display:none!important}
+@media (max-width:1024px){body.template-product{padding-bottom:0!important}}
+
+/* 20 simpler phone header: no social icons bar on phones */
+@media (max-width:767px){[id$="top-bar"].shopify-section,#shopify-section-top-bar{display:none!important}}
+
+/* 22 price and Add to cart on the first phone screen: shorter gallery, no thumbnail row */
+@media (max-width:767px){
+  .t4s-product__media-wrapper .t4s-carousel__nav-scroller{display:none!important}
+  .t4s-product__media-wrapper .t4s-product__media-item{max-height:48vh}
+  .t4s-product__media-wrapper .t4s-product__media-item img{object-fit:contain!important}
+}
+
+/* 24 search box at 16px so iPhones don't zoom in */
+input[type="search"][name="q"]{font-size:16px!important}
+
+/* focus rings for keyboard users */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #FFC72C!important;outline-offset:2px}
+
+@media (prefers-reduced-motion:reduce){.sj-acc__card,.sj-sizes__tile,.sj-sizes__bat{transition:none}}

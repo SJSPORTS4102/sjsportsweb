@@ -1,0 +1,56 @@
+{%- comment -%}
+  SJ CRO 10 (Off Leesh, Nov 2026): shop by size tiles at the top of the bats collections.
+  Bats are drawn to scale. Links open each size collection sorted by best selling (helps 12).
+  Shows only on the collections listed in the section settings.
+{%- endcomment -%}
+{%- liquid
+  assign show = false
+  for c in section.settings.show_on
+    if c.handle == collection.handle
+      assign show = true
+      break
+    endif
+  endfor
+-%}
+{%- if show -%}
+<section class="sj-sizes t4s-container" aria-labelledby="sj-sizes-h">
+  <div class="sj-sizes__head">
+    <h2 id="sj-sizes-h" class="sj-sizes__h">{{ section.settings.heading }}</h2>
+    <a class="sj-sizes__guide" href="/blogs/news/what-size-cricket-bat-for-my-child">Which size?</a>
+  </div>
+  <div class="sj-sizes__row">
+    {%- for block in section.blocks -%}
+      {%- assign c = block.settings.collection -%}
+      {%- if c == blank %}{% continue %}{% endif -%}
+      <a class="sj-sizes__tile{% if c.handle == collection.handle %} is-on{% endif %}" href="{{ c.url }}?sort_by=best-selling" {{ block.shopify_attributes }}>
+        <svg class="sj-sizes__bat" style="--h:{{ block.settings.bat_height }}" viewBox="0 0 24 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><rect x="10.3" y="0" width="3.4" height="36" rx="1.7"/><path d="M8.5 31h7l1 4H7.5z"/><rect x="4.5" y="34" width="15" height="66" rx="4"/></svg>
+        <b>{{ block.settings.label }}</b>
+        <small>{{ block.settings.who }}</small>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ bats by size",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop bats by size" },
+    { "type": "collection_list", "id": "show_on", "label": "Show on these collections", "limit": 12 }
+  ],
+  "blocks": [
+    {
+      "type": "size",
+      "name": "Size",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "text", "id": "who", "label": "Who it suits" },
+        { "type": "range", "id": "bat_height", "label": "Bat height (to scale)", "min": 30, "max": 100, "step": 2, "default": 80 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "SJ bats by size" }]
+}
+{% endschema %}

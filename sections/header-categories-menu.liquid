@@ -504,7 +504,7 @@
               <div class="t4s-search-header_border t4s-col-auto t4s-col-item"></div>
              {%- endif -%}
               <div class="t4s-search-header__main t4s-pr t4s-oh t4s-d-flex t4s-col t4s-col-item">
-                <input data-input-search class="t4s-search-header__input t4s-input__currentcolor" autocomplete="off" type="text" name="q" placeholder="{{ 'search.general.placeholder_products' | t }}">
+                <input data-input-search class="t4s-search-header__input t4s-input__currentcolor" autocomplete="off" type="search" enterkeyhint="search" name="q" placeholder="{{ 'search.general.placeholder_products' | t }}">
                 <button class="t4s-search-header__submit{% if settings.ajax_search %} t4s-pe-none{% endif %}" type="submit">
                     <span class="t4s-search-header__submit-text">{{ 'search.general.submit' | t }}</span>
                     <span class="t4s-search-header__submit-icon t4s-d-none"><svg class="t4s-icon t4s-icon--search" aria-hidden="true" focusable="false" role="presentation"><use href="#icon-h-search"></use></svg></span>

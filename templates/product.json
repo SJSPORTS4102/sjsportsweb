@@ -45,10 +45,10 @@
             "fw_price_pr": 400,
             "primary_price_color": "#696969",
             "secondary_price_color": "#696969",
-            "price_sale": "#ec0101",
+            "price_sale": "#C8102E",
             "show_available": true,
             "show_inline": true,
-            "primary_stock_color": "#4eb0be",
+            "primary_stock_color": "#0B6B35",
             "secondary_stock_color": "#696969",
             "rating": true,
             "review_liquid": ""
@@ -192,7 +192,8 @@
           "settings": {
             "title": "Reviews",
             "review_liquid": ""
-          }
+          },
+          "disabled": true
         },
         "aov_ai_bundle_upsell_mix_match_offer_inline_wdaxg7": {
           "type": "shopify://apps/aov-ai-bundle/blocks/mix-match-offer-inline/0335d423-143c-4ad7-b224-99a1db74a9ee",
@@ -201,13 +202,59 @@
         "aov_ai_bundle_offer_volume_KFCc3J": {
           "type": "shopify://apps/aov-ai-bundle/blocks/offer-volume/0335d423-143c-4ad7-b224-99a1db74a9ee",
           "settings": {}
+        },
+        "sj_size_help": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'sj-size-help' %}"
+          }
+        },
+        "sj_prep": {
+          "type": "properties",
+          "settings": {
+            "type": "radio",
+            "heading": "Bat prep",
+            "options": "Prepare my bat (free, adds up to 3 days),Ship it unprepared (30-day returns if unused)",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "type",
+            "type_based": "Cricket Bat - Senior SH Bat,Cricket Bat - Harrow / SM Bats,Cricket Bat - Junior English Willow,Cricket Bat - Junior Bats,Cricket Bats - Senior LB/LH Bats",
+            "tag_based": "",
+            "collection_based": [],
+            "product_based": []
+          }
+        },
+        "sj_weight": {
+          "type": "properties",
+          "settings": {
+            "type": "select",
+            "heading": "Preferred weight",
+            "options": "No preference,Lighter end,Middle,Heavier end",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "type",
+            "type_based": "Cricket Bat - Senior SH Bat,Cricket Bat - Harrow / SM Bats,Cricket Bat - Junior English Willow,Cricket Bat - Junior Bats,Cricket Bats - Senior LB/LH Bats",
+            "tag_based": "",
+            "collection_based": [],
+            "product_based": []
+          }
+        },
+        "sj_trust": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'sj-trust' %}"
+          }
         }
       },
       "block_order": [
         "title",
         "price_review",
         "description",
+        "sj_size_help",
+        "sj_prep",
+        "sj_weight",
         "form",
+        "sj_trust",
         "aov_ai_bundle_offer_inline_M6UHVg",
         "23551ebc-3be1-40d6-81b2-30f03478cccb",
         "daffa30d-b8c4-4638-b717-db06e6ff429b",
@@ -245,7 +292,7 @@
         "btn_cl": "dark",
         "btn_size": "small",
         "btn_hidden_mobile": false,
-        "nav_dot": false,
+        "nav_dot": true,
         "dot_owl": "default",
         "dots_cl": "dark",
         "dots_round": true,
@@ -254,14 +301,14 @@
         "tabs_design": "tab",
         "tabs_accordion_mb": true,
         "tabs_position": "external",
-        "enable_first_tab": false,
+        "enable_first_tab": true,
         "tabs_layout": "full",
         "bg": "#f6f6f8",
         "bg_mb": "#ffffff",
         "product_list": [],
         "sticky_mode": "2",
         "sticky_show": "2",
-        "sticky_layout_mb": "minimal",
+        "sticky_layout_mb": "default",
         "enable_select": true,
         "ani": "none",
         "time": 6
@@ -482,19 +529,32 @@
             "air_blockreviews_layout": "list",
             "air_blockreviews_singleStarColor": "#16a086",
             "air_blockreviews_primaryColor": "#121212"
-          }
+          },
+          "disabled": true
         }
       },
       "block_order": [
         "air_product_reviews_app_block_review_list_CimCVA"
       ],
       "settings": {}
+    },
+    "sj-bat-accessories": {
+      "type": "sj-bat-accessories",
+      "settings": {
+        "heading": "Goes with your bat",
+        "sources": [
+          "bat-grips",
+          "bat-care"
+        ],
+        "limit": 8
+      }
     }
   },
   "order": [
     "breadcrumb",
     "main",
     "sidebar",
+    "sj-bat-accessories",
     "product-recommendations",
     "recently-viewed-products",
     "1775978883c56159df"

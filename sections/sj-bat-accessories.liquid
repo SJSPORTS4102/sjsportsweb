@@ -1,0 +1,46 @@
+{%- comment -%}
+  SJ CRO 4 (Off Leesh, Nov 2026): on bat pages, "Goes with your bat" shows grips, bat oil
+  and mallets instead of more bats. Pulls from the existing Bat Grips and Bat Care collections.
+  Renders nothing on other products, so the theme's own recommendations show there.
+{%- endcomment -%}
+{%- if product.type contains 'Cricket Bat' -%}
+  {%- liquid
+    assign shown = 0
+    assign max = section.settings.limit | default: 8
+  -%}
+  {%- capture cards -%}
+    {%- for src in section.settings.sources -%}
+      {%- for p in src.products limit: 20 -%}
+        {%- if shown >= max %}{% break %}{% endif -%}
+        {%- if p.available == false or p.id == product.id %}{% continue %}{% endif -%}
+        {%- assign tl = p.title | downcase -%}
+        {%- if tl contains 'knocking service' or tl contains 'shoe' or p.type contains 'Cricket Bat' %}{% continue %}{% endif -%}
+        <a class="sj-acc__card" href="{{ p.url }}">
+          <span class="sj-acc__img">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 360 | image_tag: loading: 'lazy', widths: '180, 270, 360', sizes: '(min-width: 1024px) 220px, 45vw', alt: p.title }}{%- endif -%}</span>
+          <span class="sj-acc__t">{{ p.title }}</span>
+          <span class="sj-acc__p">{{ p.price | money }}</span>
+        </a>
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- if shown > 0 -%}
+    <style>[id$="__product-recommendations"]{display:none}</style>
+    <section class="sj-acc t4s-container" aria-labelledby="sj-acc-h">
+      <h2 id="sj-acc-h" class="sj-acc__h">{{ section.settings.heading }}</h2>
+      <div class="sj-acc__grid">{{ cards }}</div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ bat accessories",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Goes with your bat" },
+    { "type": "collection_list", "id": "sources", "label": "Collections to pull from", "limit": 4 },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 8 }
+  ],
+  "presets": [{ "name": "SJ bat accessories" }]
+}
+{% endschema %}

@@ -12,7 +12,7 @@
          <input type="hidden" name="type" value="product">
          <input type="hidden" name="options[unavailable_products]" value="{{ settings.unavailable_prs }}">
          <input type="hidden" name="options[prefix]" value="last">
-         <input type="text" name="q" value="{{ search_terms }}" placeholder="{{ 'search.general.placeholder' | t }}" class="t4s-search-form__input js_iput_search col" />
+         <input type="search" enterkeyhint="search" name="q" value="{{ search_terms }}" placeholder="{{ 'search.general.placeholder' | t }}" class="t4s-search-form__input js_iput_search col" />
        <button type="reset" class="t4s-search-form__clear-action"><i class="las la-times"></i></button>
      </div>
      <button type="submit" class="t4s-search-form__connected-submit js_btn_search"><i class="las la-search"></i></button>

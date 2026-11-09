@@ -47,6 +47,11 @@ else
       assign arr_badge_handle = arr_badge_tags | handle | split: 'nt-t4s'
    endif
 endif
+# SJ CRO 13: free bat prep badge on English willow and junior bats (not Kashmir willow)
+if arr_badge == blank and product.type contains 'Cricket Bat' and product.type != 'Cricket Bat - Junior Kashmir Willow'
+   assign arr_badge = 'Free bat prep' | split: 'nt-t4s'
+   assign arr_badge_handle = 'free-bat-prep' | split: 'nt-t4s'
+endif
 
 assign countdown = time_meta | default: meta_theme.countdown | date: '%Y/%m/%d %H:%M:%S'
 unless placeholder_img

@@ -98,7 +98,7 @@
         "169f514a-3483-4e10-8698-964f7a612e97": {
           "type": "1",
           "settings": {
-            "tag": "h3",
+            "tag": "h1",
             "fontf": "2",
             "text_cl": "#ffffff",
             "text_fs": 20,
@@ -161,14 +161,14 @@
         "padding_bottom": 50,
         "padding_top_tb": 50,
         "padding_bottom_tb": 50,
-        "padding_top_mb": 50,
-        "padding_bottom_mb": 50,
+        "padding_top_mb": 18,
+        "padding_bottom_mb": 18,
         "bg_pos": "center center",
         "bg_repeat": "no-repeat",
         "bg_size": "cover",
         "mgb": 40,
         "mgb_tb": 40,
-        "mgb_mb": 30
+        "mgb_mb": 16
       }
     },
     "main": {
@@ -176,9 +176,8 @@
       "blocks": {
         "filter_id": {
           "type": "filter",
-          "disabled": true,
           "settings": {
-            "style_filters": "area"
+            "style_filters": "sidebar"
           }
         },
         "740319a4-8e19-4c70-b8a9-ada7cf235cbc": {
@@ -320,11 +319,130 @@
         "avada_seo_suite_avada_after_collection_block_RC3a7D"
       ],
       "settings": {}
+    },
+    "sj-bat-sizes": {
+      "type": "sj-bat-sizes",
+      "settings": {
+        "heading": "Shop bats by size",
+        "show_on": [
+          "cricket-bat",
+          "cricket-bat-cricket-bat-seniors",
+          "cricket-bat-senior-lb-lh-bats",
+          "cricket-bat-harrow-sm-bats",
+          "cricket-bat-cricket-bat-juniors",
+          "cricket-bat-junior-kashmir-willow",
+          "cricket-bat-junior-english-willow"
+        ]
+      },
+      "blocks": {
+        "lh": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-senior-lb-lh-bats",
+            "label": "Long handle",
+            "who": "Taller adults",
+            "bat_height": 96
+          }
+        },
+        "sh": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-cricket-bat-seniors",
+            "label": "Senior",
+            "who": "Most adults",
+            "bat_height": 90
+          }
+        },
+        "sm": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-harrow-sm-bats",
+            "label": "Harrow and SM",
+            "who": "Teens, smaller adults",
+            "bat_height": 80
+          }
+        },
+        "jr": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-cricket-bat-juniors",
+            "label": "Junior",
+            "who": "Kids, sizes 0 to 6",
+            "bat_height": 62
+          }
+        },
+        "kw": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-junior-kashmir-willow",
+            "label": "Kashmir willow",
+            "who": "Junior, great value",
+            "bat_height": 56
+          }
+        }
+      },
+      "block_order": [
+        "lh",
+        "sh",
+        "sm",
+        "jr",
+        "kw"
+      ]
+    },
+    "sj-collection-intro": {
+      "type": "sj-collection-intro",
+      "settings": {},
+      "blocks": {
+        "bats": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-bat",
+            "text": "<p>Senior, Harrow and junior bats from SS, Kookaburra, Gray Nicolls, MRF, GM and DSC. English willow bats can be prepped free in our Woolloongabba workshop before they ship.</p>"
+          }
+        },
+        "pads": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-batting-pads",
+            "text": "<p>Batting pads for seniors, youth and juniors. Not sure of the size? Measure from the centre of the kneecap to the top of the foot.</p>"
+          }
+        },
+        "gloves": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-batting-gloves",
+            "text": "<p>Batting gloves in senior, youth and junior sizes. Measure from the wrist crease to the tip of the middle finger to find your size.</p>"
+          }
+        },
+        "helmets": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-helmets",
+            "text": "<p>Cricket helmets from Masuri, Shrey and more. Measure around the head just above the eyebrows to find your size.</p>"
+          }
+        },
+        "shoes": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-shoes",
+            "text": "<p>Spike and rubber sole cricket shoes from ASICS, adidas and more.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "bats",
+        "pads",
+        "gloves",
+        "helmets",
+        "shoes"
+      ]
     }
   },
   "order": [
     "top",
     "collection-heading-template",
+    "sj-collection-intro",
+    "sj-bat-sizes",
     "main",
     "sidebar",
     "175465064785f3566c"

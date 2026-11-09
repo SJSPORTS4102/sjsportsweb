@@ -405,8 +405,8 @@
     },
     "shipping_threshold": {
       "text_1_html": "Free Shipping for all orders over <span class=\"t4s-cr\">{{ money }}</span>",
-      "text_2_html": "Almost there, add <span class=\"t4s-cr\">{{ money }}</span> more to get <span class=\"t4s-ch\">FREE SHIPPING!</span>",
-      "text_3": "[Congratulations!] You've got free shipping!"
+      "text_2_html": "Add <span class=\"t4s-cr\">{{ money }}</span> more for <span class=\"t4s-ch\">free standard shipping</span>",
+      "text_3": "[Nice!] Free standard shipping unlocked (bulky items excluded)"
     },
     "mini_cart": {
       "title": "Shopping cart",
