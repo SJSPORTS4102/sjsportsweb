@@ -1,6 +1,6 @@
 {%- comment -%}
   SJ CRO 11 (Off Leesh, Nov 2026): a short intro under the collection heading on the main
-  collections. Uses the collection's own description when Vik adds one, else the text here.
+  collections. Uses the text here; falls back to the collection description only when it is short.
 {%- endcomment -%}
 {%- liquid
   assign intro = ''
@@ -10,8 +10,11 @@
       break
     endif
   endfor
-  if collection.description != blank
-    assign intro = collection.description
+  if intro == blank and collection.description != blank
+    assign plain = collection.description | strip_html | strip
+    if plain.size < 260
+      assign intro = '<p>' | append: plain | append: '</p>'
+    endif
   endif
 -%}
 {%- if intro != blank -%}

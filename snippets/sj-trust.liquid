@@ -31,3 +31,11 @@
   </li>
 </ul>
 <p class="sj-call">Not sure what to choose? Call the shop on <a href="tel:0423240478">0423 240 478</a></p>
+<script id="sj-preselect">
+  /* SJ CRO 2: preselect "Prepare my bat" so the free prep is saved on every bat order unless the shopper changes it */
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.t4s-line-item-property__field.is--type-radio').forEach(function (f) {
+      if (!f.querySelector('input:checked')) { var r = f.querySelector('input[type=radio]'); if (r) r.checked = true; }
+    });
+  });
+</script>

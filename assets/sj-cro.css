@@ -52,7 +52,7 @@
 
 /* 9 lighter collection banner on phones: no background photo, short navy band */
 @media (max-width:767px){
-  .page_collection_heading .t4s-page-section-heading{background-image:none!important;background-color:#0A2E4D!important}
+  .page_collection_heading .t4s-page-section-heading{background-image:none!important;background-color:#0A2E4D!important;z-index:0!important;position:relative}
   .page_collection_heading .t4s-page-section-heading:before,.page_collection_heading .t4s-page-section-heading:after{display:none!important}
 }
 

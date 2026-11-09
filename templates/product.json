@@ -214,7 +214,7 @@
           "settings": {
             "type": "radio",
             "heading": "Bat prep",
-            "options": "Prepare my bat (free, adds up to 3 days),Ship it unprepared (30-day returns if unused)",
+            "options": "Prepare my bat for free (ready in up to 3 days),Ship it unprepared (30-day returns if unused)",
             "required": false,
             "show_at_checkout": true,
             "visibility": "type",
