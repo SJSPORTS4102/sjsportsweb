@@ -1,0 +1,24 @@
+{%- comment -%}
+  SJ mega nav best sellers (Off Leesh, Nov 2026). Never placed on a page: the nav fetches it with
+  /collections/<handle>?sort_by=best-selling&section_id=sj-nav-best, so collection.products comes back
+  in Shopify's own best-selling order. Renders the top 6 available products as small cards.
+{%- endcomment -%}
+{%- if collection -%}
+  {%- assign shown = 0 -%}
+  <div class="sjn-cards">
+    {%- for p in collection.products limit: 12 -%}
+      {%- if shown >= 6 %}{% break %}{% endif -%}
+      {%- if p.available == false %}{% continue %}{% endif -%}
+      {%- assign v = p.selected_or_first_available_variant -%}{%- assign cap3 = v.price | times: 3 -%}
+      <a class="sjn-card" href="{{ p.url }}">
+        <span class="sjn-card__im">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 400 | image_tag: loading: 'eager', decoding: 'async', widths: '200, 300, 400', sizes: '(min-width: 1025px) 190px, 40vw', alt: '' }}{%- endif -%}</span>
+        <span class="sjn-card__t">{{ p.title }}</span>
+        <span class="sjn-card__p">{% if p.price_varies %}From {% endif %}{{ p.price_min | money_without_trailing_zeros }}{% if v.compare_at_price > v.price and v.compare_at_price <= cap3 %} <s>{{ v.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}</span>
+      </a>
+      {%- assign shown = shown | plus: 1 -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+{% schema %}
+{ "name": "SJ nav best sellers", "settings": [] }
+{% endschema %}

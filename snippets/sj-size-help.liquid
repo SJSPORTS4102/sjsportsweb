@@ -6,10 +6,13 @@
 {%- liquid
   assign t = product.type | downcase
   assign kind = ''
-  if t contains 'cricket bat'
-    assign kind = 'bat'
-  elsif t contains 'glove'
+  # "cricket batting pads/gloves" contain "cricket bat", so check those first
+  if t contains 'glove'
     assign kind = 'gloves'
+  elsif t contains 'batting pad'
+    assign kind = 'pads'
+  elsif t contains 'cricket bat'
+    assign kind = 'bat'
   elsif t contains 'helmet'
     assign kind = 'helmet'
   elsif t contains 'pad'

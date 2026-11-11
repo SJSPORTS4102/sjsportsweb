@@ -1,0 +1,506 @@
+{%- comment -%}
+  SJ product page v3 (Off Leesh, Nov 2026). Built from the approved mockups in
+  "SJ Sports CRO Mockups" (bat + bowling machine pages, design-system/sj-sports/MASTER.md).
+  Theme copy only. Replaces the Gecko main-product section in templates/product.json
+  (that section is switched off, not deleted, so it can be turned back on).
+  Specs and features come from each product's own description (list items with a bold label
+  become spec rows, plain list items become features), so it works for every product.
+  Bat prep and preferred weight save as the same line item properties as before:
+  "Bat prep" and "Preferred weight".
+{%- endcomment -%}
+{%- liquid
+  assign cv = product.selected_or_first_available_variant
+  assign t = product.type | downcase
+  assign tl = product.title | downcase
+  assign is_bat = false
+  assign has_prep = false
+  assign is_machine = false
+  assign is_525 = false
+  # "cricket batting pads" and "cricket batting gloves" also contain "cricket bat"
+  if t contains 'cricket bat'
+    unless t contains 'batting'
+      assign is_bat = true
+      assign has_prep = true
+      if t contains 'kashmir' or tl contains 'kashmir'
+        assign has_prep = false
+      endif
+    endunless
+  endif
+  if tl contains 'bowling machine'
+    unless tl contains ' ball' or tl contains 'bucket'
+      assign is_machine = true
+      if tl contains 'paceman' and tl contains '525'
+        assign is_525 = true
+      endif
+    endunless
+  endif
+  assign kind = 'other'
+  if is_bat
+    assign kind = 'bat'
+  elsif is_machine
+    assign kind = 'machine'
+  endif
+
+  if is_bat
+    if tl contains 'english willow' or has_prep
+      assign t_label = 'English willow'
+    else
+      assign t_label = 'Kashmir willow'
+    endif
+  elsif is_machine
+    assign t_label = 'Bowling machine'
+  else
+    assign t_label = product.type | split: ' - ' | last | remove_first: 'Cricket ' | strip
+  endif
+
+  # description: lead paragraph, spec rows (bold label: value) and plain features
+  assign desc = product.description | replace: '&nbsp;', ' '
+  assign main_desc = desc | split: 'Preparation Includes' | first
+  assign lead = ''
+  assign paras = main_desc | split: '<p'
+  for pp in paras offset: 1
+    assign pbody = pp | split: '</p>' | first
+    assign txt = '<p' | append: pbody | strip_html | strip
+    if txt.size > 40
+      assign lead = txt | replace: ' – ', ', ' | replace: '–', ' to ' | replace: ' — ', ', ' | replace: '—', ', '
+      break
+    endif
+  endfor
+  assign spec_rows = ''
+  assign feat_rows = ''
+  assign n_spec = 0
+  assign n_feat = 0
+  assign lis = main_desc | split: '<li'
+  for li in lis offset: 1
+    assign body = li | split: '</li>' | first
+    assign full = '<li' | append: body
+    assign plain = full | strip_html | strip | replace: ' – ', ', ' | replace: '–', ' to ' | replace: ' — ', ', ' | replace: '—', ', '
+    if plain == blank
+      continue
+    endif
+    assign done = false
+    if body contains '</strong>'
+      assign kp = full | split: '</strong>'
+      assign key = kp[0] | strip_html | strip | remove: ':' | strip
+      assign val = full | remove_first: kp[0] | strip_html | strip | remove_first: ':' | strip | replace: ' – ', ', ' | replace: '–', ' to ' | replace: ' — ', ', ' | replace: '—', ', '
+      if key != blank and val != blank and n_spec < 10
+        assign spec_rows = spec_rows | append: '<tr><th scope="row">' | append: key | append: '</th><td>' | append: val | append: '</td></tr>'
+        assign n_spec = n_spec | plus: 1
+        assign done = true
+      endif
+    endif
+    if done == false and n_feat < 10
+      assign feat_rows = feat_rows | append: '<li>' | append: plain | append: '</li>'
+      assign n_feat = n_feat | plus: 1
+    endif
+  endfor
+
+  # Paceman ball add-ons and the "takes all Paceman balls" line only apply to the 525
+  assign addon_kind = kind
+  if is_machine and is_525 == false
+    assign addon_kind = 'none'
+  endif
+  assign media_count = product.media.size
+  assign form_id = 'sjp-form-' | append: section.id
+  assign google_url = 'https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba'
+-%}
+{{ 'sj-pdp.css' | asset_url | stylesheet_tag }}
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="{{ 'sj-pdp.js' | asset_url }}" defer></script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sjp-star" viewBox="0 0 24 24"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></symbol>
+  <symbol id="sjp-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="sjp-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="sjp-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="sjp-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="sjp-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+  <symbol id="sjp-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="sjp-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="sjp-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="sjp-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="sjp-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="sjp-spark" viewBox="0 0 24 24"><path d="M9.94 14.06 4 20"/><path d="m14 4 6 6"/><path d="M15 3 3 15l6 6L21 9z"/></symbol>
+  <symbol id="sjp-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="sjp-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+  <symbol id="sjp-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="sjp-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+</svg>
+
+<div class="sjp" data-sjp data-kind="{{ kind }}" data-section="{{ section.id }}">
+  <div class="sjp-wrap">
+    <div class="sjp-top">
+
+      {%- comment -%} 1 gallery {%- endcomment -%}
+      <div class="sjp-gal">
+        <div class="sjp-main">
+          <div class="sjp-track" data-track tabindex="0" aria-label="Product images">
+            {%- for media in product.media -%}
+              <div class="sjp-slide" data-media-id="{{ media.id }}" data-i="{{ forloop.index0 }}">
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    {%- if forloop.first %}{% assign ld = 'eager' %}{% else %}{% assign ld = 'lazy' %}{% endif -%}
+                    {%- assign malt = media.alt | default: product.title -%}
+                    <div class="sjp-zoom">
+                      {{ media | image_url: width: 1200 | image_tag: widths: '400, 600, 800, 1000, 1200', sizes: '(min-width: 1024px) 50vw, 100vw', loading: ld, alt: malt }}
+                    </div>
+                  {%- when 'video' -%}
+                    {{ media | video_tag: controls: true, playsinline: true, preload: 'metadata', image_size: '1200x' }}
+                  {%- when 'external_video' -%}
+                    {{ media | external_video_tag }}
+                  {%- else -%}
+                    {{ media | media_tag }}
+                {%- endcase -%}
+              </div>
+            {%- else -%}
+              <div class="sjp-slide">{{ 'product-1' | placeholder_svg_tag }}</div>
+            {%- endfor -%}
+          </div>
+          {%- if has_prep -%}<span class="sjp-flag"><svg class="i"><use href="#sjp-spark"/></svg>Free bat prep included</span>{%- endif -%}
+          {%- if media_count > 1 -%}<span class="sjp-count" aria-hidden="true"><span data-count>1</span> / {{ media_count }}</span>{%- endif -%}
+        </div>
+        {%- if media_count > 1 -%}
+          <div class="sjp-thumbs" role="list">
+            {%- for media in product.media -%}
+              <button type="button" class="{% if forloop.first %}on{% endif %}" data-thumb="{{ forloop.index0 }}" aria-label="Show image {{ forloop.index }}" role="listitem">
+                {{ media.preview_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: '' }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} 2 buy box {%- endcomment -%}
+      <div class="sjp-buy">
+        <div class="sjp-eyebrow">{{ product.vendor }}{% if t_label != blank %}<span class="sep">/</span>{{ t_label }}{% endif %}</div>
+        <h1 class="sjp-title">{{ product.title }}</h1>
+        <div class="sjp-rate">
+          <span class="sjp-stars" aria-hidden="true">{% for i in (1..5) %}<svg class="i"><use href="#sjp-star"/></svg>{% endfor %}</span>
+          <b>4.9</b><a href="{{ google_url }}" target="_blank" rel="noopener">110 Google reviews of our store</a>
+        </div>
+
+        <div class="sjp-price" data-price>
+          <span class="now" data-now>{{ cv.price | money_without_trailing_zeros }}</span>
+          <span class="was" data-was{% unless cv.compare_at_price > cv.price %} hidden{% endunless %}>{{ cv.compare_at_price | money_without_trailing_zeros }}</span>
+          <span class="save" data-save{% unless cv.compare_at_price > cv.price %} hidden{% endunless %}>Save {{ cv.compare_at_price | minus: cv.price | money_without_trailing_zeros }}</span>
+        </div>
+
+        {%- form 'product', product, id: form_id, class: 'sjp-form', novalidate: 'novalidate', data-sjp-form: '' -%}
+          <input type="hidden" name="id" value="{{ cv.id }}" data-vid>
+          <div class="sjp-paylater">{{ form | payment_terms }}</div>
+          {%- liquid
+            assign stocked = true
+            if cv.inventory_management != blank and cv.inventory_quantity <= 0
+              assign stocked = false
+            endif
+          -%}
+          <div class="sjp-stock{% unless cv.available %} is-out{% endunless %}" data-stock>
+            {%- if cv.available == false -%}Sold out{%- elsif stocked == false -%}Available to order{%- elsif has_prep -%}In stock, ready to prep{%- else -%}In stock{%- endif -%}
+          </div>
+          <div class="sjp-hr"></div>
+
+          {%- assign size_help_done = false -%}
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign oname = option.name | downcase -%}
+              <fieldset class="sjp-opt" data-opt="{{ forloop.index0 }}">
+                <legend class="lab"><span>{{ option.name }}</span><span class="val" data-optval>{{ option.selected_value }}</span></legend>
+                <div class="sjp-chips{% if option.values.size == 1 %} one{% endif %}">
+                  {%- for value in option.values -%}
+                    {%- liquid
+                      assign sub = ''
+                      if is_bat
+                        case value
+                          when 'SH'
+                            assign sub = 'Short Handle'
+                          when 'LH'
+                            assign sub = 'Long Handle'
+                        endcase
+                      endif
+                    -%}
+                    <label class="sjp-chip"><input type="radio" name="sjp-o{{ forloop.parentloop.index0 }}" value="{{ value | escape }}"{% if option.selected_value == value %} checked{% endif %}><span>{{ value }}{% if sub != '' %} <small>{{ sub }}</small>{% endif %}</span></label>
+                  {%- endfor -%}
+                </div>
+                {%- if size_help_done == false and oname contains 'size' -%}
+                  {%- render 'sj-size-help' -%}{%- assign size_help_done = true -%}
+                {%- endif -%}
+              </fieldset>
+            {%- endfor -%}
+          {%- endunless -%}
+          {%- if size_help_done == false -%}{%- render 'sj-size-help' -%}{%- endif -%}
+
+          {%- if has_prep -%}
+            <fieldset class="sjp-opt">
+              <legend class="lab"><span>Preferred weight</span><em>Optional</em></legend>
+              <div class="sjp-chips four">
+                {%- assign weights = 'Lighter end,Middle,Heavier end,No preference' | split: ',' -%}
+                {%- for w in weights -%}
+                  <label class="sjp-chip"><input type="radio" name="properties[Preferred weight]" value="{{ w }}"{% if w == 'No preference' %} checked{% endif %}><span>{{ w }}</span></label>
+                {%- endfor -%}
+              </div>
+              <p class="sjp-help"><svg class="i"><use href="#sjp-info"/></svg><span>Every bat is different. We'll pick the closest one we have in stock.</span></p>
+            </fieldset>
+
+            <fieldset class="sjp-opt">
+              <legend class="lab"><span>Bat prep</span></legend>
+              <div class="sjp-prep">
+                <label class="sjp-card"><input type="radio" name="properties[Bat prep]" value="Prepare my bat for free (ready in up to 3 days)" checked><span class="radio"></span><span><b>Prepare my bat <span class="tag">FREE</span></b><span class="d">Oiled, machine knocked, edges prepped, face sheet and edge tape. Ready to play. Adds up to 3 days.</span></span></label>
+                <label class="sjp-card"><input type="radio" name="properties[Bat prep]" value="Ship it unprepared (30-day returns if unused)"><span class="radio"></span><span><b>Ship it unprepared</b><span class="d">Knock it in yourself. 30-day returns if it's unused.</span></span></label>
+              </div>
+            </fieldset>
+          {%- endif -%}
+
+          {%- capture addons -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'addon' -%}
+                {%- assign ap = block.settings.product -%}
+                {%- if ap != blank and ap.available and ap.id != product.id and block.settings.show_on == addon_kind -%}
+                  {%- assign av = ap.selected_or_first_available_variant -%}
+                  <label class="sjp-addon" {{ block.shopify_attributes }}>
+                    <input type="checkbox" value="{{ av.id }}" data-addon data-price="{{ av.price }}">
+                    <span class="box"><svg class="i"><use href="#sjp-check"/></svg></span>
+                    {%- if ap.featured_media -%}{{ ap.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}{%- else -%}<span></span>{%- endif -%}
+                    <span class="n">{{ ap.title }}{% unless ap.has_only_default_variant %} <span class="vt">({{ av.title }})</span>{% endunless %}{% if block.settings.note != blank %}<small>{{ block.settings.note }}</small>{% endif %}</span>
+                    <span class="p">{{ av.price | money_without_trailing_zeros }}</span>
+                  </label>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if addons != blank -%}
+            <fieldset class="sjp-opt">
+              <legend class="lab"><span>{% if is_machine %}Complete the set{% else %}Add to your bat{% endif %}</span><em>Optional</em></legend>
+              <div class="sjp-addons">{{ addons }}</div>
+              {%- if is_machine -%}<p class="sjp-help"><svg class="i"><use href="#sjp-info"/></svg><span>The machine takes all Paceman balls.</span></p>{%- endif -%}
+            </fieldset>
+          {%- endif -%}
+
+          <div class="sjp-atc" data-atc-row>
+            <div class="sjp-qty">
+              <button type="button" data-qty="-1" aria-label="Fewer">&minus;</button>
+              <input type="number" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Quantity" data-qty-input>
+              <button type="button" data-qty="1" aria-label="More">+</button>
+            </div>
+            <button type="submit" name="add" class="sjp-btn" data-atc{% unless cv.available %} disabled{% endunless %}>
+              <svg class="i"><use href="#sjp-bag"/></svg><span data-atc-label>{% if cv.available %}Add to cart <span class="dot">&middot;</span> {{ cv.price | money_without_trailing_zeros }}{% else %}Sold out{% endif %}</span>
+            </button>
+          </div>
+          <div class="sjp-dyn">{{ form | payment_button }}</div>
+          <p class="sjp-err" data-err role="alert" hidden></p>
+        {%- endform -%}
+
+        <ul class="sjp-trust" role="list">
+          <li><span class="ic"><svg class="i"><use href="#sjp-clock"/></svg></span><span>{% if has_prep %}<b>Prepped and sent in up to 3 business days</b>{% else %}<b>Sent in 1 to 3 business days</b>{% endif %}</span></li>
+          <li><span class="ic"><svg class="i"><use href="#sjp-truck"/></svg></span><span><b>Free standard shipping</b> on orders over $200 <span class="m">(bulky items excluded)</span></span></li>
+          <li><span class="ic"><svg class="i"><use href="#sjp-pin"/></svg></span><span><b>Or pick up</b> at 60 Deshon St, Woolloongabba. <span class="m">Open 7 days</span></span></li>
+          <li><span class="ic"><svg class="i"><use href="#sjp-shield"/></svg></span><span><b>Warranty and exchange</b> <a href="/pages/warranty-exchange">What's covered</a></span></li>
+        </ul>
+        <p class="sjp-call"><svg class="i"><use href="#sjp-phone"/></svg><span>{% if is_bat %}Not sure on weight or size?{% elsif is_machine %}Want to talk it through first?{% else %}Not sure what to choose?{% endif %} Call the shop on <a href="tel:0423240478">0423 240 478</a></span></p>
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}<div class="sjp-app">{% render block %}</div>{%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} 3 about it (under the gallery on desktop) {%- endcomment -%}
+      {%- if lead != '' or spec_rows != '' or feat_rows != '' -%}
+        <div class="sjp-info">
+          <section class="sjp-sec">
+            <h2>{% if is_bat %}Why players <span class="acc">pick it</span>{% elsif is_machine %}What it <span class="acc">does</span>{% else %}The <span class="acc">details</span>{% endif %}</h2>
+            {%- if lead != '' -%}<p class="sjp-lead">{{ lead }}</p>{%- endif -%}
+            {%- if is_machine and feat_rows != '' -%}<ul class="sjp-feats">{{ feat_rows }}</ul>{%- endif -%}
+          </section>
+          {%- if spec_rows != '' or feat_rows != '' and is_machine == false -%}
+            <section class="sjp-sec">
+              <h2>The specs</h2>
+              {%- if spec_rows != '' -%}<table class="sjp-specs">{{ spec_rows }}</table>{%- endif -%}
+              {%- if is_machine == false and feat_rows != '' -%}<ul class="sjp-feats">{{ feat_rows }}</ul>{%- endif -%}
+            </section>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 4 the story band {%- endcomment -%}
+    {%- if has_prep -%}
+      <section class="sjp-band">
+        <div class="in{% if section.settings.prep_video == blank %} no-media{% endif %}">
+          <div class="txt">
+            <div class="eye">Free with every English willow bat</div>
+            <h2>Ready to play when it lands</h2>
+            <p>Our team preps every bat by hand and machine in Woolloongabba, so you can walk out to the middle with it.</p>
+            <a class="more" href="/pages/free-bat-preparation-service">How we prep your bat</a>
+          </div>
+          <ol class="sjp-steps">
+            <li>Oiled to protect the willow</li>
+            <li>Machine knocked, thousands of knocks</li>
+            <li>Edges prepped by hand</li>
+            <li>Extratec face sheet fitted</li>
+            <li>Edge tape for extra protection</li>
+          </ol>
+          {%- if section.settings.prep_video != blank -%}
+            <div class="media">{{ section.settings.prep_video | video_tag: controls: true, playsinline: true, muted: true, preload: 'metadata' }}</div>
+          {%- endif -%}
+          <p class="fine">Takes up to 3 days. A few marks on the face are normal: it means the bat is nearly match ready.</p>
+        </div>
+      </section>
+    {%- elsif is_525 -%}
+      <section class="sjp-band">
+        <div class="in{% if section.settings.machine_video == blank %} no-media{% endif %}">
+          <div class="txt">
+            <div class="eye">See it bowl</div>
+            <h2>A net session in your backyard</h2>
+            <p>Fully portable. Set it up wherever you train and face ball after ball at the pace you choose.</p>
+          </div>
+          <ol class="sjp-steps">
+            <li>Pick your pace, up to 150kph with Paceman Original balls</li>
+            <li>Set full or short, swing or spin</li>
+            <li>Load 12 balls in the auto feeder</li>
+            <li>Plug into mains, or a battery at the nets</li>
+          </ol>
+          {%- if section.settings.machine_video != blank -%}
+            <div class="media">{{ section.settings.machine_video | video_tag: controls: true, playsinline: true, muted: true, preload: 'metadata' }}</div>
+          {%- endif -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- comment -%} 5 reviews + guides {%- endcomment -%}
+    <div class="sjp-two">
+      <section class="sjp-sec">
+        <h2>What our customers say</h2>
+        <div class="sjp-rev">
+          <div class="big"><span class="score">4.9</span><span><span class="sjp-stars" aria-hidden="true">{% for i in (1..5) %}<svg class="i"><use href="#sjp-star"/></svg>{% endfor %}</span><small>From 110 Google reviews of the SJ Sports store</small></span></div>
+          <div class="row"><a href="{{ google_url }}" target="_blank" rel="noopener">Read them on Google</a></div>
+        </div>
+      </section>
+      <section class="sjp-sec">
+        <h2>{% if is_machine %}Not sure which machine?{% else %}Need a hand choosing?{% endif %}</h2>
+        <div class="sjp-guides">
+          {%- if is_bat -%}
+            <a href="/blogs/news/what-size-cricket-bat-for-my-child"><span class="ic"><svg class="i"><use href="#sjp-ruler"/></svg></span><span>Cricket bat size guide<small>Find the right size by height</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+            <a href="/pages/free-bat-preparation-service"><span class="ic"><svg class="i"><use href="#sjp-spark"/></svg></span><span>How we prepare your bat<small>What the free prep includes</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+          {%- elsif is_machine -%}
+            <a href="/search?q=bowling+machine&type=product"><span class="ic"><svg class="i"><use href="#sjp-search"/></svg></span><span>All bowling machines<small>Compare every machine we sell</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+            <a href="/pages/shipping-delivery"><span class="ic"><svg class="i"><use href="#sjp-truck"/></svg></span><span>Delivery for big items<small>How shipping works for machines</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+          {%- else -%}
+            <a href="/pages/size-chart"><span class="ic"><svg class="i"><use href="#sjp-ruler"/></svg></span><span>Size chart<small>Find the right fit</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+            <a href="/pages/shipping-delivery"><span class="ic"><svg class="i"><use href="#sjp-truck"/></svg></span><span>Shipping and delivery<small>Costs and timing</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+          {%- endif -%}
+          <a href="/pages/warranty-exchange"><span class="ic"><svg class="i"><use href="#sjp-shield"/></svg></span><span>Warranty and exchange<small>What's covered</small></span><svg class="i"><use href="#sjp-chev"/></svg></a>
+        </div>
+      </section>
+    </div>
+
+    {%- comment -%} 6 goes with (bats and bowling machines; other products keep the theme's recommendations) {%- endcomment -%}
+    {%- liquid
+      assign rail_h = ''
+      assign shown = 0
+      assign seen = ','
+      if is_bat
+        assign rail_h = 'Goes with <span class="acc">this bat</span>'
+        assign rail_cols = section.settings.bat_rail
+      elsif is_machine
+        assign rail_h = 'Balls and <span class="acc">extras</span>'
+        assign rail_cols = section.settings.machine_rail
+      endif
+    -%}
+    {%- if rail_h != '' -%}
+      {%- capture rail -%}
+        {%- for src in rail_cols -%}
+          {%- for p in src.products limit: 24 -%}
+            {%- if shown >= 8 %}{% break %}{% endif -%}
+            {%- assign pid = ',' | append: p.id | append: ',' -%}
+            {%- if p.available == false or p.id == product.id or seen contains pid %}{% continue %}{% endif -%}
+            {%- assign seen = seen | append: p.id | append: ',' -%}
+            {%- assign ptl = p.title | downcase -%}
+            {%- if ptl contains 'knocking service' or p.type contains 'Cricket Bat' %}{% continue %}{% endif -%}
+            {%- if is_machine and ptl contains 'bowling machine' %}{% continue %}{% endif -%}
+            <div class="sjp-pc">
+              <a class="im" href="{{ p.url }}" tabindex="-1">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '(min-width: 1024px) 300px, 45vw', alt: p.title }}{%- endif -%}</a>
+              <div class="bd">
+                <a class="n" href="{{ p.url }}">{{ p.title }}</a>
+                <div class="pr">{{ p.price | money_without_trailing_zeros }}</div>
+                {%- if p.has_only_default_variant -%}
+                  <button type="button" data-quick-add="{{ p.selected_or_first_available_variant.id }}">Add</button>
+                {%- else -%}
+                  <a class="choose" href="{{ p.url }}">Choose options</a>
+                {%- endif -%}
+              </div>
+            </div>
+            {%- assign shown = shown | plus: 1 -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if shown > 0 -%}
+        <style>[id$="__product-recommendations"]{display:none}</style>
+        <section class="sjp-sec">
+          <h2>{{ rail_h }}</h2>
+          <div class="sjp-rail">{{ rail }}</div>
+        </section>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%} 7 folded details {%- endcomment -%}
+    <section class="sjp-sec">
+      <div class="sjp-acc">
+        {%- if product.description != blank -%}
+          <details><summary>Full description<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte">{{ product.description }}</div></details>
+        {%- endif -%}
+        <details><summary>Shipping and returns<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte"><p>Free standard shipping on orders over $200, bulky items excluded. Or pick up free from 60 Deshon St, Woolloongabba, open 7 days.</p><p><a href="/pages/shipping-delivery">Shipping and delivery</a> &middot; <a href="/policies/refund-policy">Returns policy</a></p></div></details>
+        {%- assign why = pages['why-buy-from-us'] -%}
+        {%- if why != blank and why.content != blank -%}
+          <details><summary>Why buy from SJ Sports<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte">{{ why.content }}</div></details>
+        {%- endif -%}
+      </div>
+    </section>
+  </div>
+
+  {%- comment -%} 8 sticky add to cart on phones {%- endcomment -%}
+  <div class="sjp-sticky" data-sticky aria-hidden="true">
+    {%- if product.featured_media -%}{{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
+    <div><b>{{ product.title }}</b><small><span data-sticky-price>{{ cv.price | money_without_trailing_zeros }}</span>{% if has_prep %} &middot; free prep{% endif %}</small></div>
+    <button type="button" class="sjp-btn" data-sticky-atc tabindex="-1"{% unless cv.available %} disabled{% endunless %}>{% if cv.available %}Add to cart{% else %}Sold out{% endif %}</button>
+  </div>
+
+
+  <script type="application/json" data-sjp-json>
+    {"prep": {{ has_prep }}, "cartType": {{ settings.cart_type | default: 'drawer' | json }}, "variants": [
+      {%- for v in product.variants -%}
+        {%- liquid
+          assign vs = true
+          if v.inventory_management != blank and v.inventory_quantity <= 0
+            assign vs = false
+          endif
+        -%}
+        {"id": {{ v.id }}, "options": {{ v.options | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "available": {{ v.available }}, "stocked": {{ vs }}, "media": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]}
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": "SJ product page",
+  "class": "sjp-section",
+  "settings": [
+    { "type": "video", "id": "prep_video", "label": "Bat prep video", "info": "Shows in the bat prep band on English willow bats. Leave empty until the store shoot is edited." },
+    { "type": "video", "id": "machine_video", "label": "Paceman 525 demo video" },
+    { "type": "collection_list", "id": "bat_rail", "label": "Goes with this bat: collections", "limit": 4 },
+    { "type": "collection_list", "id": "machine_rail", "label": "Bowling machines: balls and extras collections", "limit": 4 }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    {
+      "type": "addon",
+      "name": "Add-on",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "note", "label": "Short note" },
+        { "type": "select", "id": "show_on", "label": "Show on", "default": "bat", "options": [ { "value": "bat", "label": "Cricket bats" }, { "value": "machine", "label": "Bowling machines" }, { "value": "other", "label": "Everything else" } ] }
+      ]
+    }
+  ]
+}
+{% endschema %}

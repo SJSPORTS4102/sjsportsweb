@@ -1,0 +1,155 @@
+{%- comment -%}
+  SJ mega nav (Off Leesh, Nov 2026). Approved mockup: "SJ Sports CRO Mockups/Final/Images" 13 to 15,
+  design-system/sj-sports/pages/mega-nav.md (ui-ux-pro-max). Theme copy only.
+  Desktop: a category row under the header; each category opens a panel with up to three link groups
+  (with live product counts) and that category's best sellers, loaded on first open from
+  /collections/<handle>?sort_by=best-selling&section_id=sj-nav-best (Shopify's own best-selling order).
+  Phones: a search row under the header and a drawer menu (opens from the theme's menu button) with
+  a best sellers row and categories that drill down. Links are edited in the theme editor
+  ("Label|/url" per line).
+{%- endcomment -%}
+{%- liquid
+  assign path = request.path
+  assign groups_html = ''
+-%}
+<div class="sjn" data-sjn>
+  <form class="sjn-msearch" action="{{ routes.search_url }}" method="get" role="search">
+    <label class="sjn-search"><span class="sjn-sr">Search the store</span>
+      <svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" name="q" placeholder="Search bats, gloves, pads, brands" enterkeyhint="search" autocomplete="off">
+      <input type="hidden" name="type" value="product">
+    </label>
+  </form>
+
+  <nav class="sjn-bar" aria-label="Shop by category">
+    <div class="sjn-wrap">
+      <ul class="sjn-list" role="list">
+        <li class="sjn-hot"><a class="sjn-top" href="{{ routes.collections_url }}/best-selling-collection?sort_by=best-selling" aria-expanded="false" aria-controls="sjn-p-best" data-sjn-open="best"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></svg>Best sellers</a></li>
+        {%- for block in section.blocks -%}
+          {%- assign bu = block.settings.url | split: '?' | first -%}
+          <li {{ block.shopify_attributes }}><a class="sjn-top{% if bu != blank and path == bu %} is-active{% endif %}" href="{{ block.settings.url }}" aria-expanded="false" aria-controls="sjn-p-{{ block.id }}" data-sjn-open="{{ block.id }}">{{ block.settings.title }}<svg class="sjn-i sjn-dn" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></li>
+        {%- endfor -%}
+        <li class="sjn-prep"><a href="/pages/free-bat-preparation-service"><span>Free bat prep</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sjn-panel" id="sjn-p-best" data-sjn-panel="best" hidden>
+      <div class="sjn-wrap sjn-in sjn-in--best">
+        <div><p class="sjn-h">Best sellers by category</p><ul role="list" class="sjn-links">
+          {%- for block in section.blocks -%}{%- if block.settings.best != blank -%}<li><a href="{{ routes.collections_url }}/{{ block.settings.best }}?sort_by=best-selling">{{ block.settings.title }}</a></li>{%- endif -%}{%- endfor -%}
+        </ul></div>
+        <div><p class="sjn-h">Our best sellers right now</p><div class="sjn-best sjn-best--4" data-sjn-best="best-selling-collection" data-limit="4" aria-live="polite"></div>
+          <a class="sjn-more" href="{{ routes.collections_url }}/best-selling-collection?sort_by=best-selling">See all best sellers</a></div>
+      </div>
+    </div>
+    {%- for block in section.blocks -%}
+      {%- capture groups -%}
+        {%- for g in (1..3) -%}
+          {%- liquid
+            assign tkey = 'g' | append: g | append: '_title'
+            assign lkey = 'g' | append: g | append: '_links'
+            assign gt = block.settings[tkey]
+            assign gl = block.settings[lkey]
+          -%}
+          {%- if gl != blank -%}
+            {%- assign lines = gl | newline_to_br | split: '<br />' -%}
+            <div class="sjn-g sjn-g{{ g }}"><p class="sjn-h">{{ gt }}</p><ul role="list" class="sjn-links">
+              {%- for line in lines -%}
+                {%- assign parts = line | strip | split: '|' -%}
+                {%- if parts.size == 2 -%}
+                  {%- liquid
+                    assign u = parts[1] | strip
+                    assign cnt = 0
+                    if u contains '/collections/'
+                      assign h = u | split: '/collections/' | last | split: '?' | first | downcase
+                      assign col = collections[h]
+                      if col != blank
+                        assign cnt = col.products_count
+                      endif
+                    endif
+                  -%}
+                  <li><a href="{{ u }}"><span>{{ parts[0] | strip }}</span>{% if cnt > 0 %}<small>{{ cnt }}</small>{% endif %}<svg class="sjn-i sjn-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul></div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign groups_html = groups_html | append: '<template data-sjn-groups="' | append: block.id | append: '">' | append: groups | append: '</template>' -%}
+      <div class="sjn-panel" id="sjn-p-{{ block.id }}" data-sjn-panel="{{ block.id }}" hidden>
+        <div class="sjn-wrap sjn-in">
+          {{ groups }}
+          {%- if block.settings.best != blank -%}
+            <div class="sjn-bestcol"><p class="sjn-h">Best sellers in {{ block.settings.title | downcase }}</p>
+              <div class="sjn-best" data-sjn-best="{{ block.settings.best }}" data-limit="3" aria-live="polite"></div>
+              <a class="sjn-more" href="{{ block.settings.url }}{% if block.settings.url contains '?' %}&{% else %}?{% endif %}sort_by=best-selling">See all {{ block.settings.title | downcase }}, best sellers first</a></div>
+          {%- endif -%}
+        </div>
+        <div class="sjn-usp"><div class="sjn-wrap"><span>Free bat prep on English willow</span><span>Free shipping over $200</span><span>Pick up in Woolloongabba, open 7 days</span></div></div>
+      </div>
+    {%- endfor -%}
+  </nav>
+
+  <div class="sjn-scrim" data-sjn-close hidden></div>
+  <div class="sjn-drawer" id="sjn-drawer" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <div class="sjn-view" data-view="main">
+      <div class="sjn-dh"><p class="sjn-dt">Menu</p><button type="button" class="sjn-x" data-sjn-close aria-label="Close menu"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="sjn-db">
+        <form action="{{ routes.search_url }}" method="get" role="search"><label class="sjn-search"><span class="sjn-sr">Search the store</span><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" name="q" placeholder="Search bats, gloves, pads, brands" enterkeyhint="search" autocomplete="off"><input type="hidden" name="type" value="product"></label></form>
+        <p class="sjn-h2"><svg class="sjn-i sjn-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></svg>Best sellers</p>
+        <div class="sjn-best sjn-best--row" data-sjn-best="best-selling-collection" data-limit="6" aria-live="polite"></div>
+        <p class="sjn-h2">Shop by category</p>
+        <ul role="list" class="sjn-links sjn-cats">
+          {%- for block in section.blocks -%}<li><button type="button" data-sjn-go="{{ block.id }}"><span>{{ block.settings.title }}</span><svg class="sjn-i sjn-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></li>{%- endfor -%}
+        </ul>
+        <ul role="list" class="sjn-quick">
+          <li><a href="/pages/free-bat-preparation-service"><b>Free bat prep</b><small>English willow bats</small></a></li>
+          <li><a href="/blogs/news/what-size-cricket-bat-for-my-child"><b>Bat size guide</b></a></li>
+          <li><a href="https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba" target="_blank" rel="noopener"><b>Visit the shop</b><small>Woolloongabba, open 7 days</small></a></li>
+          <li><a href="tel:0423240478"><b>Call 0423 240 478</b></a></li>
+        </ul>
+      </div>
+    </div>
+    {%- for block in section.blocks -%}
+      <div class="sjn-view" data-view="{{ block.id }}" hidden>
+        <div class="sjn-dh"><button type="button" class="sjn-back" data-sjn-go="main"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>All categories</button><button type="button" class="sjn-x" data-sjn-close aria-label="Close menu"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="sjn-db">
+          <p class="sjn-vt">{{ block.settings.title }}</p>
+          {%- if block.settings.best != blank -%}
+            <p class="sjn-h2"><svg class="sjn-i sjn-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></svg>Best sellers in {{ block.settings.title | downcase }}</p>
+            <div class="sjn-best sjn-best--row" data-sjn-best="{{ block.settings.best }}" data-limit="5" aria-live="polite"></div>
+          {%- endif -%}
+          <div class="sjn-vgroups" data-sjn-fill="{{ block.id }}"></div>
+          <a class="sjn-all" href="{{ block.settings.url }}">See all {{ block.settings.title | downcase }}</a>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+  {{ groups_html }}
+</div>
+
+{% schema %}
+{
+  "name": "SJ mega nav",
+  "class": "sjn-section",
+  "max_blocks": 16,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "cat",
+      "name": "Category",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Name", "default": "Bats" },
+        { "type": "text", "id": "url", "label": "Link", "default": "/collections/cricket-bat" },
+        { "type": "text", "id": "best", "label": "Best sellers collection handle", "info": "Its 3 best sellers show in the panel, in Shopify's best-selling order." },
+        { "type": "text", "id": "g1_title", "label": "Group 1 heading" },
+        { "type": "textarea", "id": "g1_links", "label": "Group 1 links", "info": "One per line: Label|/collections/handle" },
+        { "type": "text", "id": "g2_title", "label": "Group 2 heading" },
+        { "type": "textarea", "id": "g2_links", "label": "Group 2 links" },
+        { "type": "text", "id": "g3_title", "label": "Group 3 heading" },
+        { "type": "textarea", "id": "g3_links", "label": "Group 3 links" }
+      ]
+    }
+  ]
+}
+{% endschema %}

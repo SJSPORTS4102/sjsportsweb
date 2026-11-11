@@ -169,7 +169,8 @@
         "mgb": 40,
         "mgb_tb": 40,
         "mgb_mb": 16
-      }
+      },
+      "disabled": true
     },
     "main": {
       "type": "main-collection",
@@ -236,7 +237,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "sidebar": {
       "type": "sidebar-collection",
@@ -304,7 +306,8 @@
         "brcolor": "#222222",
         "sidebar_bdr": 0,
         "sidebar_pd": 15
-      }
+      },
+      "disabled": true
     },
     "175465064785f3566c": {
       "type": "apps",
@@ -387,7 +390,8 @@
         "sm",
         "jr",
         "kw"
-      ]
+      ],
+      "disabled": true
     },
     "sj-collection-intro": {
       "type": "sj-collection-intro",
@@ -435,7 +439,196 @@
         "gloves",
         "helmets",
         "shoes"
-      ]
+      ],
+      "disabled": true
+    },
+    "sj_main": {
+      "type": "sj-main-collection",
+      "blocks": {
+        "intro_bats": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-bat",
+            "text": "<p>Senior, Harrow and junior bats from SS, Kookaburra, Gray Nicolls, MRF, GM and DSC. English willow bats can be prepped free in our Woolloongabba workshop before they ship.</p>"
+          }
+        },
+        "intro_pads": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-batting-pads",
+            "text": "<p>Batting pads for seniors, youth and juniors. Not sure of the size? Measure from the centre of the kneecap to the top of the foot.</p>"
+          }
+        },
+        "intro_gloves": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-batting-gloves",
+            "text": "<p>Batting gloves in senior, youth and junior sizes. Measure from the wrist crease to the tip of the middle finger to find your size.</p>"
+          }
+        },
+        "intro_helmets": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-helmets",
+            "text": "<p>Cricket helmets from Masuri, Shrey and more. Measure around the head just above the eyebrows to find your size.</p>"
+          }
+        },
+        "intro_shoes": {
+          "type": "intro",
+          "settings": {
+            "collection": "cricket-shoes",
+            "text": "<p>Spike and rubber sole cricket shoes from ASICS, adidas and more.</p>"
+          }
+        },
+        "size_lh": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-senior-lb-lh-bats",
+            "label": "Long handle",
+            "who": "Taller adults",
+            "bat_height": 96
+          }
+        },
+        "size_sh": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-cricket-bat-seniors",
+            "label": "Senior",
+            "who": "Most adults",
+            "bat_height": 90
+          }
+        },
+        "size_sm": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-harrow-sm-bats",
+            "label": "Harrow and SM",
+            "who": "Teens, smaller adults",
+            "bat_height": 80
+          }
+        },
+        "size_jr": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-cricket-bat-juniors",
+            "label": "Junior",
+            "who": "Kids, sizes 0 to 6",
+            "bat_height": 62
+          }
+        },
+        "size_kw": {
+          "type": "size",
+          "settings": {
+            "collection": "cricket-bat-junior-kashmir-willow",
+            "label": "Kashmir willow",
+            "who": "Junior, great value",
+            "bat_height": 56
+          }
+        },
+        "chips_1": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-bat,cricket-bat-cricket-bat-seniors,cricket-bat-senior-lb-lh-bats,cricket-bat-harrow-sm-bats,cricket-bat-cricket-bat-juniors,cricket-bat-junior-kashmir-willow,junior-cricket-bat,gray-nicolls-bat,kookaburra-bat,ss,gm,mrf,dsc-bat",
+            "links": "All bats|/collections/cricket-bat\nSenior|/collections/cricket-bat-cricket-bat-seniors\nLong handle|/collections/cricket-bat-senior-lb-lh-bats\nHarrow and SM|/collections/cricket-bat-harrow-sm-bats\nJunior|/collections/cricket-bat-cricket-bat-juniors\nKashmir willow|/collections/cricket-bat-junior-kashmir-willow\n---|-\nGray Nicolls|/collections/gray-nicolls-bat\nKookaburra|/collections/kookaburra-bat\nSS|/collections/ss\nGM|/collections/gm\nMRF|/collections/mrf\nDSC|/collections/dsc-bat"
+          }
+        },
+        "chips_2": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-batting-gloves,gloves,cricket-batting-gloves-senior-gloves,cricket-batting-gloves-youth-gloves,cricket-batting-gloves-junior-gloves,batting-inners,gray-nicolls-gloves,kookaburra-gloves,gm-gloves,ss-gloves,mrf-gloves,dsc-gloves,sj-sports-gloves",
+            "links": "All gloves|/collections/cricket-batting-gloves\nSenior|/collections/cricket-batting-gloves-senior-gloves\nYouth|/collections/cricket-batting-gloves-youth-gloves\nJunior|/collections/cricket-batting-gloves-junior-gloves\nInners|/collections/batting-inners\n---|-\nGray Nicolls|/collections/gray-nicolls-gloves\nKookaburra|/collections/kookaburra-gloves\nGM|/collections/gm-gloves\nSS|/collections/ss-gloves\nMRF|/collections/mrf-gloves\nDSC|/collections/dsc-gloves"
+          }
+        },
+        "chips_3": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-batting-pads,pads,batting-pads,cricket-batting-pads-senior-pads,cricket-batting-pads-youth-pads,cricket-batting-pads-junior-pads,gray-nicolls-pads,kookaburra-pads,gm-pads,ss-pads,mrf-pads,dsc-pads,masuri-pads",
+            "links": "All pads|/collections/cricket-batting-pads\nSenior|/collections/cricket-batting-pads-senior-pads\nYouth|/collections/cricket-batting-pads-youth-pads\nJunior|/collections/cricket-batting-pads-junior-pads\n---|-\nGray Nicolls|/collections/gray-nicolls-pads\nKookaburra|/collections/kookaburra-pads\nGM|/collections/gm-pads\nSS|/collections/ss-pads\nMRF|/collections/mrf-pads\nDSC|/collections/dsc-pads\nMasuri|/collections/masuri-pads"
+          }
+        },
+        "chips_4": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-helmets,cricket-helmets-senior-helmets,youth-helmets,cricket-helmets-junior-helmets,gray-nicolls-helmet,masuri-helmet,shrey-helmet,ss-helmet,neck-protectors-stem-guard",
+            "links": "All helmets|/collections/cricket-helmets\nSenior|/collections/cricket-helmets-senior-helmets\nYouth|/collections/youth-helmets\nJunior|/collections/cricket-helmets-junior-helmets\nNeck guards|/collections/neck-protectors-stem-guard\n---|-\nGray Nicolls|/collections/gray-nicolls-helmet\nMasuri|/collections/masuri-helmet\nShrey|/collections/shrey-helmet\nSS|/collections/ss-helmet"
+          }
+        },
+        "chips_5": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-balls,senior-156gms-balls,junior-142gms-balls,bowling-machine-balls,cricket-tennis-balls,soft-balls,indoor-cricket-balls,kookaburra-balls,gray-nicolls-balls,paceman-balls,sj-sports-balls",
+            "links": "All balls|/collections/cricket-balls\nSenior 156g|/collections/senior-156gms-balls\nJunior 142g|/collections/junior-142gms-balls\nMachine balls|/collections/bowling-machine-balls\nTennis balls|/collections/cricket-tennis-balls\nSoft balls|/collections/soft-balls\n---|-\nKookaburra|/collections/kookaburra-balls\nGray Nicolls|/collections/gray-nicolls-balls\nPaceman|/collections/paceman-balls"
+          }
+        },
+        "chips_6": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-shoes,shoes,spike-shoes,rubber-shoes,shoes-accessories,asics-shoes,kookaburra-shoes,gray-nicolls-shoes,new-balance-shoes,kelme-shoes",
+            "links": "All shoes|/collections/cricket-shoes\nSpikes|/collections/spike-shoes\nRubber soles|/collections/rubber-shoes\nAccessories|/collections/shoes-accessories\n---|-\nAsics|/collections/asics-shoes\nKookaburra|/collections/kookaburra-shoes\nGray Nicolls|/collections/gray-nicolls-shoes\nNew Balance|/collections/new-balance-shoes\nKelme|/collections/kelme-shoes"
+          }
+        },
+        "chips_7": {
+          "type": "chips",
+          "settings": {
+            "handles": "kit-bags,wheelie-bags,duffle-bags,non-wheelie-bags,gray-nicolls-bags,kookaburra-bags,gm-bags,ss-bags,mrf-bags,dsc-bags,sj-sports-bags",
+            "links": "All kit bags|/collections/kit-bags\nWheelie|/collections/wheelie-bags\nDuffle|/collections/duffle-bags\nNon wheelie|/collections/non-wheelie-bags\n---|-\nGray Nicolls|/collections/gray-nicolls-bags\nKookaburra|/collections/kookaburra-bags\nGM|/collections/gm-bags\nSS|/collections/ss-bags\nMRF|/collections/mrf-bags\nDSC|/collections/dsc-bags"
+          }
+        },
+        "chips_8": {
+          "type": "chips",
+          "settings": {
+            "handles": "keeper,keeper-cricket-wicket-keeping-gloves,keeping-pads-senior,keeping-inners,keeping-gloves-senior,keeping-gloves-youth,keeping-gloves-junior-small-juniors,kookaburra-keeping,gray-nicolls-keeping,ss-keeping,dsc-keeping,masuri-keeping",
+            "links": "All keeping|/collections/keeper\nKeeping gloves|/collections/keeper-cricket-wicket-keeping-gloves\nKeeping pads|/collections/keeping-pads-senior\nInners|/collections/keeping-inners\n---|-\nKookaburra|/collections/kookaburra-keeping\nGray Nicolls|/collections/gray-nicolls-keeping\nSS|/collections/ss-keeping\nDSC|/collections/dsc-keeping\nMasuri|/collections/masuri-keeping"
+          }
+        },
+        "chips_9": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-protectives,cricket-protection,cricket-protectives-abdominal-guards,cricket-protectives-thigh-guards,cricket-protectives-combo-thigh-guards,cricket-protectives-arm-guards,cricket-protectives-chest-guards",
+            "links": "All protection|/collections/cricket-protectives\nAbdominal guards|/collections/cricket-protectives-abdominal-guards\nThigh guards|/collections/cricket-protectives-thigh-guards\nCombo thigh guards|/collections/cricket-protectives-combo-thigh-guards\nArm guards|/collections/cricket-protectives-arm-guards\nChest guards|/collections/cricket-protectives-chest-guards"
+          }
+        },
+        "chips_10": {
+          "type": "chips",
+          "settings": {
+            "handles": "cricket-training-aids,batting-aids,bowling-aids,fielding-aids,coaching-aids,stumps,backyard-bundles",
+            "links": "All training|/collections/cricket-training-aids\nBatting aids|/collections/batting-aids\nBowling aids|/collections/bowling-aids\nFielding|/collections/fielding-aids\nCoaching aids|/collections/coaching-aids\nStumps|/collections/stumps\nBackyard bundles|/collections/backyard-bundles"
+          }
+        }
+      },
+      "block_order": [
+        "intro_bats",
+        "intro_pads",
+        "intro_gloves",
+        "intro_helmets",
+        "intro_shoes",
+        "size_lh",
+        "size_sh",
+        "size_sm",
+        "size_jr",
+        "size_kw",
+        "chips_1",
+        "chips_2",
+        "chips_3",
+        "chips_4",
+        "chips_5",
+        "chips_6",
+        "chips_7",
+        "chips_8",
+        "chips_9",
+        "chips_10"
+      ],
+      "settings": {
+        "sizes_on": [
+          "cricket-bat",
+          "cricket-bat-cricket-bat-seniors",
+          "cricket-bat-senior-lb-lh-bats",
+          "cricket-bat-harrow-sm-bats",
+          "cricket-bat-cricket-bat-juniors",
+          "cricket-bat-junior-kashmir-willow",
+          "cricket-bat-junior-english-willow"
+        ]
+      }
     }
   },
   "order": [
@@ -443,6 +636,7 @@
     "collection-heading-template",
     "sj-collection-intro",
     "sj-bat-sizes",
+    "sj_main",
     "main",
     "sidebar",
     "175465064785f3566c"

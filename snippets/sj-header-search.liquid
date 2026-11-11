@@ -1,0 +1,8 @@
+{%- comment -%} SJ mega nav: the big search box in the desktop header row (replaces the old menu links there). {%- endcomment -%}
+<form class="sjh-search" action="{{ routes.search_url }}" method="get" role="search">
+  <label class="sjn-search"><span class="sjn-sr">Search the store</span>
+    <svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="search" name="q" placeholder="Search bats, gloves, pads, brands" enterkeyhint="search" autocomplete="off">
+    <input type="hidden" name="type" value="product">
+  </label>
+</form>

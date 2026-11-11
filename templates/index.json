@@ -583,7 +583,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "3a014e44-1045-444e-9cd0-7113d3526f91": {
       "type": "custom-html",
@@ -598,7 +599,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "ab2b7cd8-cdbc-4551-a052-a6ddfa8a65e5": {
       "type": "collections-list-manual",
@@ -829,7 +831,8 @@
         "pd_tb": "",
         "mg_mb": ",,60px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "dc3d15b0-6e4b-48a3-9323-2041bdd39c74": {
       "type": "featured-collection",
@@ -900,7 +903,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "2a92e6a7-a637-42ba-8c69-77b48090c3de": {
       "type": "hero-image",
@@ -1350,7 +1354,8 @@
         "pd_tb": "",
         "mg_mb": ",,60px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "f307cf0b-fa94-4f08-9d68-306a1cacad34": {
       "type": "blog-post",
@@ -1433,7 +1438,8 @@
         "pd_tb": "85px,0,85px,0",
         "mg_mb": ",,60px,",
         "pd_mb": "60px,0,60px,0"
-      }
+      },
+      "disabled": true
     },
     "3b66f5e5-7492-4c73-9159-cf34116ae350": {
       "type": "logo-list",
@@ -1583,7 +1589,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "684b5816-d3e8-4e7c-b8cc-5794888c0817": {
       "type": "instagram-feed",
@@ -2116,7 +2123,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "9f417840-d94f-4511-adfe-1e3d6b7474f4": {
       "type": "custom-html",
@@ -2132,14 +2140,40 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "1757335394e96ff7b5": {
       "type": "_blocks",
       "settings": {}
+    },
+    "sj_bfcm": {
+      "type": "sj-bfcm-banner",
+      "settings": {
+        "eyebrow": "SJ Sports, Woolloongabba",
+        "heading": "Black Friday",
+        "heading_2": "at SJ Sports",
+        "offer": "Up to 40% off",
+        "btn1_label": "Shop the sale",
+        "btn1_url": "shopify://collections/black-friday-sale",
+        "btn2_label": "Shop bats",
+        "btn2_url": "",
+        "fine": ""
+      }
+    },
+    "sj_home": {
+      "type": "sj-home",
+      "settings": {
+        "deals": "black-friday-sale",
+        "deals_eyebrow": "Best sellers in the sale",
+        "deals_title": "Black Friday",
+        "deals_hl": "deals"
+      }
     }
   },
   "order": [
+    "sj_bfcm",
+    "sj_home",
     "1646028739ae283905",
     "3a014e44-1045-444e-9cd0-7113d3526f91",
     "ab2b7cd8-cdbc-4551-a052-a6ddfa8a65e5",

@@ -1,0 +1,233 @@
+{%- comment -%}
+  SJ homepage v4 (Off Leesh, Nov 2026). Approved mockups: "SJ Sports CRO Mockups/Final/Images" 7 to 9 (v3)
+  and 16 to 18 (v4), design-system/sj-sports/pages/homepage.md (ui-ux-pro-max). Theme copy only.
+  Sits under the Black Friday banner (sections/sj-bfcm-banner). Product rows show Shopify's own best-selling
+  order: rendered from the collection on load, then swapped for the best-selling list if the collection's
+  default sort is something else (sections/sj-card-row). Facts checked against SJ's own pages (10 Nov 2026):
+  started 2016 in a Brisbane family garage, shop at 60 Deshon St since late 2023, opening hours from Contact us.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign deals = collections[s.deals]
+  assign best = collections['best-selling-collection']
+  assign pace = all_products['paceman-525-cricket-bowling-machine']
+  assign g1 = all_products['pitch-it-up-christmas-gift-bundle']
+  assign g2 = all_products['summit-rapid-rebounder']
+  assign maps = 'https://www.google.com/maps/dir/?api=1&destination=SJ+Sports+60+Deshon+St+Woolloongabba+QLD+4102'
+-%}
+{{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+{{ 'sj-home.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sj-home.js' | asset_url }}" defer></script>
+{%- render 'sj-home-sprite' -%}
+
+<div class="sjh" data-sjh>
+
+  {%- comment -%} Trust bar: loops on phones and tablets (a second, hidden copy makes the loop seamless), still on desktop. {%- endcomment -%}
+  <section class="usp3" aria-label="Why shop with us">
+    <div class="wrap"><div class="usp-track">
+      {%- for copy in (1..2) -%}
+        <div class="usp-set"{% if copy == 2 %} aria-hidden="true"{% endif %}>
+          <div class="it"><span class="ic"><svg class="i"><use href="#sjh-spark"/></svg></span><span><b>Free bat prep</b>Oiled, knocked, ready to play</span></div>
+          <div class="it"><span class="ic"><svg class="i"><use href="#sjh-truck"/></svg></span><span><b>Free shipping over $200</b>Sent in 1 to 3 business days</span></div>
+          <div class="it"><span class="ic"><svg class="i"><use href="#sjh-pin"/></svg></span><span><b>Pick up in Woolloongabba</b>60 Deshon St, open 7 days</span></div>
+          <div class="it"><span class="ic"><svg class="i"><use href="#sjh-phone"/></svg></span><span><b>Talk to the shop</b><a href="tel:0423240478"{% if copy == 2 %} tabindex="-1"{% endif %}>0423 240 478</a>, open 7 days</span></div>
+        </div>
+      {%- endfor -%}
+    </div></div>
+  </section>
+
+  {%- if deals != blank and deals.products_count > 0 -%}
+  <section class="blk first sjh-deals" aria-labelledby="sjh-deals-h">
+    <div class="wrap">
+      <div class="head-row"><div><p class="eyebrow">{{ s.deals_eyebrow }}</p><h2 class="h2" id="sjh-deals-h">{{ s.deals_title }} <span class="hl">{{ s.deals_hl }}</span></h2></div><a class="more" href="{{ deals.url }}?sort_by=best-selling">See all deals<svg class="i"><use href="#sjh-arrow"/></svg></a></div>
+      <ul class="sjh-grid sjh-rail" role="list"{% if deals.default_sort_by != 'best-selling' %} data-sjh-swap="{{ deals.handle }}"{% endif %}>
+        {%- assign shown = 0 -%}
+        {%- for p in deals.products limit: 24 -%}
+          {%- if shown >= 8 %}{% break %}{% endif -%}
+          {%- unless p.available %}{% continue %}{% endunless -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- render 'sj-card', product: p, rank: 0, eager: false -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <section class="blk" aria-labelledby="sjh-cat-h">
+    <div class="wrap">
+      <div class="head-row"><h2 class="h2" id="sjh-cat-h">Shop by <span class="hl">category</span></h2><a class="more" href="{{ routes.collections_url }}/best-selling-collection?sort_by=best-selling">See all<span class="d-only">&nbsp;products</span><svg class="i"><use href="#sjh-arrow"/></svg></a></div>
+      <div class="cats3">
+        {%- assign cats = 'Bats|/collections/cricket-bat|sj-home-cat-bats.webp,Pads|/collections/cricket-batting-pads|sj-home-cat-pads.webp,Gloves|/collections/cricket-batting-gloves|sj-home-cat-gloves.webp,Helmets|/collections/cricket-helmets|sj-home-cat-helmets.webp,Shoes|/collections/cricket-shoes|sj-home-cat-shoes.webp,Kit bags|/collections/kit-bags|sj-home-cat-bags.webp,Bowling machines|/search?q=bowling+machine&type=product|sj-home-cat-machines.webp,Junior|/collections/junior-cricket-super-deals|sj-home-cat-junior.webp' | split: ',' -%}
+        {%- for c in cats -%}
+          {%- assign cp = c | split: '|' -%}
+          <a class="card-l" href="{{ cp[1] }}{% if cp[1] contains '/collections/' %}?sort_by=best-selling{% endif %}"><div class="ph"><img src="{{ cp[2] | asset_url }}" alt="" width="600" height="600" loading="lazy"></div><span class="nm">{{ cp[0] }}</span></a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <section class="blk best4" aria-labelledby="sjh-best-h">
+    <div class="wrap">
+      <div class="head-row"><div><p class="eyebrow">Ranked by what SJ customers buy</p><h2 class="h2" id="sjh-best-h">Best sellers <span class="hl">right now</span></h2></div><a class="more" href="{{ routes.collections_url }}/best-selling-collection?sort_by=best-selling" data-sjh-all>See all best sellers<svg class="i"><use href="#sjh-arrow"/></svg></a></div>
+      <div class="tabs4" role="tablist" aria-label="Best sellers by category">
+        {%- assign tabs = 'All|best-selling-collection,Bats|cricket-bat,Gloves|cricket-batting-gloves,Pads|cricket-batting-pads,Helmets|cricket-helmets,Training|cricket-training-aids' | split: ',' -%}
+        {%- for t in tabs -%}{%- assign tp = t | split: '|' -%}<button type="button" role="tab" id="sjh-tab-{{ forloop.index }}" aria-controls="sjh-best-panel" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" data-sjh-tab="{{ tp[1] }}">{{ tp[0] }}</button>{%- endfor -%}
+      </div>
+      <ul class="sjh-grid" role="tabpanel" id="sjh-best-panel" aria-labelledby="sjh-tab-1" aria-live="polite"{% if best.default_sort_by != 'best-selling' %} data-sjh-swap="best-selling-collection"{% endif %}>
+        {%- assign shown = 0 -%}
+        {%- for p in best.products limit: 24 -%}
+          {%- if shown >= 8 %}{% break %}{% endif -%}
+          {%- unless p.available %}{% continue %}{% endunless -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- render 'sj-card', product: p, rank: shown, eager: false -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+
+  <section class="blk sizer" aria-labelledby="sjh-size-h">
+    <div class="wrap">
+      <p class="eyebrow">Bat sizes</p>
+      <h2 class="h2" id="sjh-size-h">Find your <span class="hl">bat size</span></h2>
+      <p class="lede">Bats drawn to scale. Pick the size that fits and see every bat we stock in it.</p>
+      <div class="scale">
+        {%- assign sz = 'Long handle|Taller adults|150|cricket-bat-senior-lb-lh-bats;Senior|Most adults|138|cricket-bat-cricket-bat-seniors;Small adult|Shorter adults|124|small-adult-bats;Harrow|Teens|108|cricket-bat-harrow-sm-bats;Junior|Kids, by size|86|junior-cricket-bat' | split: ';' -%}
+        {%- for z in sz -%}{%- assign zp = z | split: '|' -%}
+          <a href="{{ routes.collections_url }}/{{ zp[3] }}?sort_by=best-selling"><svg style="--h:{{ zp[2] }}" viewBox="0 0 24 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><use href="#sjh-cbat"/></svg><b>{{ zp[0] }}<small>{{ zp[1] }}</small></b></a>
+        {%- endfor -%}
+      </div>
+      <div class="after"><p>Not sure? Our size chart goes by height and age.</p><a class="b b-line" href="/blogs/news/what-size-cricket-bat-for-my-child"><svg class="i"><use href="#sjh-ruler"/></svg>Bat size guide</a></div>
+    </div>
+  </section>
+
+  <section class="brandbar" aria-label="Brands we stock">
+    <div class="track"><span>SS</span><span>Kookaburra</span><span>Gray Nicolls</span><span>MRF</span><span>SG</span><span>GM</span><span>DSC</span><span>Masuri</span><span>Shrey</span><span>Asics</span><span aria-hidden="true">SS</span><span aria-hidden="true">Kookaburra</span><span aria-hidden="true">Gray Nicolls</span><span aria-hidden="true">MRF</span><span aria-hidden="true">SG</span><span aria-hidden="true">GM</span><span aria-hidden="true">DSC</span><span aria-hidden="true">Masuri</span><span aria-hidden="true">Shrey</span><span aria-hidden="true">Asics</span></div>
+  </section>
+
+  <section class="blk prep3" aria-labelledby="sjh-prep-h">
+    <div class="wrap grid">
+      <div class="media">
+        {%- if s.prep_video != blank -%}
+          {{ s.prep_video | video_tag: controls: true, playsinline: true, muted: true, preload: 'metadata' }}
+        {%- else -%}
+          <img src="{{ 'sj-home-prep.webp' | asset_url }}" alt="Cricket bats on the rack in the SJ Sports shop" width="978" height="591" loading="lazy">
+        {%- endif -%}
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Free with your bat</p>
+        <h2 class="h2" id="sjh-prep-h">Bat prep, done in our workshop</h2>
+        <p class="lede">Our team preps English willow bats by hand and machine in Woolloongabba, so yours is ready for the nets when it arrives.</p>
+        <ol class="steps3">
+          <li>Oiled to protect the willow</li>
+          <li>Machine knocked, 15,000+ knocks</li>
+          <li>Edges prepped by hand</li>
+          <li>Extratec face sheet fitted</li>
+          <li>Edge tape for extra protection</li>
+        </ol>
+        <a class="more" href="/pages/free-bat-preparation-service">How we prep your bat<svg class="i"><use href="#sjh-arrow"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk pace3" aria-labelledby="sjh-pace-h">
+    <div class="wrap grid">
+      <div class="art"><img src="{{ 'sj-home-paceman.webp' | asset_url }}" alt="Paceman 525 Express bowling machine on its tripod" width="900" height="1497" loading="lazy"></div>
+      <div class="copy">
+        <p class="eyebrow">Bowling machines</p>
+        <h2 class="h2" id="sjh-pace-h">Backyard nets, <span class="hl">sorted</span></h2>
+        <p class="lede">The Paceman 525 Express bowls pace, swing and spin from a 12-ball auto feeder. Plug it into the mains, or a battery at the nets.</p>
+        <div class="specs3"><span><svg class="i"><use href="#sjh-zap"/></svg>Up to 150kph</span><span><svg class="i"><use href="#sjh-box"/></svg>12-ball auto feeder</span><span><svg class="i"><use href="#sjh-check"/></svg>Pace, swing and spin</span></div>
+        {%- if pace != blank -%}
+          {%- assign cap3 = pace.price | times: 3 -%}
+          <div class="pline3"><span class="now">{{ pace.price | money_without_trailing_zeros }}</span>{% if pace.compare_at_price > pace.price and pace.compare_at_price <= cap3 %}<span class="was">{{ pace.compare_at_price | money_without_trailing_zeros }}</span>{% endif %}</div>
+        {%- endif -%}
+        <div class="acts3"><a class="b b-cta" href="{{ pace.url | default: '/search?q=bowling+machine&type=product' }}">Shop the Paceman 525<svg class="i"><use href="#sjh-arrow"/></svg></a><a class="b b-line" href="/blogs/news/how-to-choose-a-cricket-bowling-machine"><svg class="i"><use href="#sjh-book"/></svg>Buyer's guide</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk gift3" aria-labelledby="sjh-gift-h">
+    <div class="wrap grid">
+      <div class="copy">
+        <p class="eyebrow">Christmas</p>
+        <h2 class="h2" id="sjh-gift-h">Gifts for cricketers</h2>
+        <div class="budgets">
+          <a href="{{ routes.collections_url }}/best-selling-collection?filter.v.price.lte=50&sort_by=best-selling"><span>Under $50<small>Grips, balls, socks</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+          <a href="{{ routes.collections_url }}/best-selling-collection?filter.v.price.lte=100&sort_by=best-selling"><span>Under $100<small>Gloves, bags, aids</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+          <a href="{{ routes.collections_url }}/best-selling-collection?filter.v.price.lte=250&sort_by=best-selling"><span>Under $250<small>Pads, helmets, shoes</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+          <a href="{{ routes.collections_url }}/junior-cricket-super-deals?sort_by=best-selling"><span>For juniors<small>Bats and kits</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+        </div>
+        <a class="cut" href="/pages/shipping-delivery"><svg class="i"><use href="#sjh-truck"/></svg>Christmas delivery times</a>
+      </div>
+      <div class="gprods3">
+        {%- for gp in (1..2) -%}
+          {%- if gp == 1 %}{% assign p = g1 %}{% else %}{% assign p = g2 %}{% endif -%}
+          {%- if p != blank and p.available -%}
+            <div class="card-l"><div class="ph">{{ p.featured_media | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 1024px) 300px, 45vw', alt: p.title, class: 'full' }}</div>
+              <div class="bd"><span class="br">{{ p.vendor }}</span><a class="tt" href="{{ p.url }}">{{ p.title }}</a>
+                <div class="pr-row"><span class="pr">{{ p.price | money_without_trailing_zeros }}</span>
+                  {%- if p.has_only_default_variant -%}<button class="addb" type="button" data-sjh-add="{{ p.selected_or_first_available_variant.id }}" aria-label="Add {{ p.title | escape }} to cart"><svg class="i"><use href="#sjh-bag"/></svg></button>{%- endif -%}
+                </div></div></div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <section class="blk proof" aria-labelledby="sjh-proof-h">
+    <div class="wrap">
+      <div class="head-row"><h2 class="h2" id="sjh-proof-h">Why cricketers <span class="hl">come back</span></h2></div>
+      <div class="grid">
+        <div class="score3"><span class="n">4.9</span><span class="stars" role="img" aria-label="5 stars">{% for i in (1..5) %}<svg class="i"><use href="#sjh-star"/></svg>{% endfor %}</span><p>From 110 Google reviews of the SJ Sports store</p><a class="b b-line" href="https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba" target="_blank" rel="noopener">Read them on Google</a></div>
+        <div class="facts">
+          <div class="fact"><b>Since 2016</b><span>Started in a family garage in Brisbane. Now a full shop in Woolloongabba.</span></div>
+          <div class="fact"><b>15,000+</b><span>Machine knocks in our free bat prep, before you face a ball.</span></div>
+          <div class="fact"><b>7 days</b><span>Open every day of the week. Come in and pick up a bat.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk tight" aria-labelledby="sjh-help-h">
+    <div class="wrap">
+      <div class="head-row"><h2 class="h2" id="sjh-help-h">Help <span class="hl">choosing</span></h2></div>
+      <div class="guides3">
+        <a href="/blogs/news/what-size-cricket-bat-for-my-child"><span class="ic"><svg class="i"><use href="#sjh-ruler"/></svg></span><span>What size cricket bat for my child?<small>Junior bat size chart</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+        <a href="/blogs/news/how-to-choose-a-cricket-bowling-machine"><span class="ic"><svg class="i"><use href="#sjh-book"/></svg></span><span>How to choose a bowling machine<small>Our buyer's guide</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+        <a href="/pages/free-bat-preparation-service"><span class="ic"><svg class="i"><use href="#sjh-spark"/></svg></span><span>How we prepare your bat<small>What the free prep includes</small></span><svg class="i"><use href="#sjh-chev"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk visit3" aria-labelledby="sjh-visit-h">
+    <div class="wrap grid">
+      <div class="copy">
+        <p class="eyebrow">Visit the shop</p>
+        <h2 class="h2" id="sjh-visit-h">Pick your bat in person</h2>
+        <p class="addr">60 Deshon St, Woolloongabba QLD 4102</p>
+        <table class="hours3"><caption class="sr">Opening hours</caption><tr><td>Monday to Friday</td><td>10am to 6pm</td></tr><tr><td>Saturday</td><td>9am to 5pm</td></tr><tr><td>Sunday</td><td>9am to 3pm</td></tr></table>
+        <p class="fine3">Closed public holidays unless we say otherwise.</p>
+        <div class="acts"><a class="b b-sun" href="{{ maps }}" target="_blank" rel="noopener"><svg class="i"><use href="#sjh-nav"/></svg>Get directions</a><a class="b b-line-w" href="tel:0423240478"><svg class="i"><use href="#sjh-phone"/></svg>0423 240 478</a></div>
+      </div>
+      <div class="whys">
+        <div><span class="ic"><svg class="i"><use href="#sjh-store"/></svg></span><span><b>Try bats in hand</b>Feel the pick-up before you buy.</span></div>
+        <div><span class="ic"><svg class="i"><use href="#sjh-ruler"/></svg></span><span><b>Get sized in store</b>We'll match the bat to the player.</span></div>
+        <div><span class="ic"><svg class="i"><use href="#sjh-box"/></svg></span><span><b>Pick up online orders</b>Order online, collect in Woolloongabba.</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "SJ homepage",
+  "class": "sjh-section",
+  "settings": [
+    { "type": "text", "id": "deals", "label": "Deals collection handle", "default": "black-friday-sale" },
+    { "type": "text", "id": "deals_eyebrow", "label": "Deals small line", "default": "Best sellers in the sale" },
+    { "type": "text", "id": "deals_title", "label": "Deals heading", "default": "Black Friday" },
+    { "type": "text", "id": "deals_hl", "label": "Deals heading, pink word", "default": "deals" },
+    { "type": "video", "id": "prep_video", "label": "Bat prep video", "info": "Replaces the photo once the store shoot is edited." }
+  ]
+}
+{% endschema %}

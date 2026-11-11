@@ -1,0 +1,252 @@
+{%- comment -%}
+  SJ cart drawer upsell (Off Leesh, Nov 2026). Rendered inside [data-cart-items] so Gecko's
+  refresh re-renders it after every cart change.
+
+  How it picks (rule based, all in the theme, no store settings):
+  1. Each cart line gets a kind from its product type and title (bat, bowling machine, batting
+     gloves, pads, helmet, keeping, shoes, protective, other). Most valuable line first.
+  2. Each kind has the collections that go with it and a price cap, so add-ons stay add-ons:
+       bat      -> bat-grips, bat-care, bat-repair-maintenance            (up to $60)
+       machine  -> paceman-balls, bowling-machine-balls                    (up to $110)
+       gloves   -> batting-inners, sweat-bands                              (up to $40)
+       pads     -> thigh guards, combo thigh guards, abdo guards, pad covers (up to $80)
+       helmet   -> neck-protectors-stem-guard, helmet-accessories           (up to $60)
+       keeping  -> keeping-inners, keeper-keeping-inners                    (up to $50)
+       shoes    -> shoes-accessories, cricket-socks                         (up to $40)
+       protect  -> underwear-lower-compressions, abdominal guards           (up to $60)
+       other    -> Griptec, bat-grips, cricket-balls                        (up to $40, always last)
+  3. Skips anything sold out, already in the cart, another bat or machine, services and gift items.
+  4. Under the $200 free shipping line, items that take the cart over $200 go first.
+  5. Up to 2 from each collection, mixed so a bat gets a grip and bat care, not three grips.
+  6. Takes one from each matching kind in turn until it has 3. The general list (Griptec, grips,
+     balls) only fills slots the matching kinds could not.
+  Adds go in with a hidden line property _sj_upsell so drawer adds can be counted in orders.
+{%- endcomment -%}
+{%- liquid
+  assign gap = shipping_amount | minus: total_price
+  assign in_cart = ','
+  for it in cart.items
+    assign in_cart = in_cart | append: it.product_id | append: ','
+  endfor
+
+  assign sorted = cart.items | sort: 'final_line_price' | reverse
+  assign kinds = ''
+  for it in sorted
+    assign ty = it.product.type | downcase
+    assign ti = it.product.title | downcase
+    assign k = 'other'
+    assign mach = false
+    if ti contains 'bowling machine'
+      unless ti contains ' ball' or ti contains 'bucket'
+        assign mach = true
+      endunless
+    endif
+    if mach
+      assign k = 'machine'
+    elsif ty contains 'keeping' or ti contains 'keeping' or ti contains 'keeper'
+      assign k = 'keeping'
+    elsif ty contains 'glove' or ti contains 'batting glove'
+      assign k = 'gloves'
+    elsif ty contains 'pad' or ti contains 'batting pad' or ti contains 'leg guard' or ti contains 'legguard'
+      assign k = 'pads'
+    elsif ty contains 'cricket bat'
+      assign k = 'bat'
+    elsif ty contains 'helmet' or ti contains 'helmet'
+      assign k = 'helmet'
+    elsif ty contains 'shoe' or ti contains 'shoe' or ti contains 'spike'
+      assign k = 'shoes'
+    elsif ty contains 'protective' or ti contains 'abdominal' or ti contains 'thigh' or ti contains 'guard'
+      assign k = 'protect'
+    endif
+    assign ktok = ',' | append: k | append: ','
+    assign kcheck = ',' | append: kinds
+    unless kcheck contains ktok
+      assign kinds = kinds | append: k | append: ','
+    endunless
+  endfor
+  assign kcheck = ',' | append: kinds
+  unless kcheck contains ',other,'
+    assign kinds = kinds | append: 'other,'
+  endunless
+  assign kind_list = kinds | split: ','
+
+  # candidates per kind, max 2 from each source collection, interleaved so a bat gets a grip AND bat care,
+  # then items that take the cart over $200 move to the front. Refs are "collection:index:product_id:price".
+  assign lists = ''
+  assign other_list = ''
+  for k in kind_list
+    case k
+      when 'bat'
+        assign src = 'bat-grips,bat-care,bat-repair-maintenance'
+        assign cap = 6000
+      when 'machine'
+        assign src = 'paceman-balls,bowling-machine-balls'
+        assign cap = 11000
+      when 'gloves'
+        assign src = 'batting-inners,sweat-bands'
+        assign cap = 4000
+      when 'pads'
+        assign src = 'cricket-protectives-thigh-guards,cricket-protectives-abdominal-guards,clads-pad-cover,cricket-protectives-combo-thigh-guards'
+        assign cap = 8000
+      when 'helmet'
+        assign src = 'neck-protectors-stem-guard,helmet-accessories'
+        assign cap = 6000
+      when 'keeping'
+        assign src = 'keeping-inners,keeper-keeping-inners'
+        assign cap = 5000
+      when 'shoes'
+        assign src = 'shoes-accessories,cricket-socks'
+        assign cap = 4000
+      when 'protect'
+        assign src = 'underwear-lower-compressions,cricket-protectives-abdominal-guards'
+        assign cap = 6000
+      else
+        assign src = 'griptec-griptec-superior-grip,bat-grips,cricket-balls'
+        assign cap = 4000
+    endcase
+    assign seen_k = ','
+    assign per_src = ''
+    assign src_list = src | split: ','
+    for h in src_list
+      assign col = collections[h]
+      assign got = ''
+      assign n = 0
+      if col != blank
+        for p in col.products limit: 20
+          if n >= 2
+            break
+          endif
+          assign ptok = ',' | append: p.id | append: ','
+          if p.available == false or p.price > cap or in_cart contains ptok or seen_k contains ptok
+            continue
+          endif
+          assign ptl = p.title | downcase
+          assign pty = p.type | downcase
+          assign pmach = false
+          if ptl contains 'bowling machine'
+            unless ptl contains ' ball' or ptl contains 'bucket'
+              assign pmach = true
+            endunless
+          endif
+          if pmach or ptl contains 'knocking service' or ptl contains 'preparation' or ptl contains 'gift' or p.handle == 'free-shipping-amount'
+            continue
+          endif
+          if pty contains 'cricket bat'
+            unless pty contains 'batting'
+              continue
+            endunless
+          endif
+          assign got = got | append: h | append: ':' | append: forloop.index0 | append: ':' | append: p.id | append: ':' | append: p.price | append: ','
+          assign seen_k = seen_k | append: p.id | append: ','
+          assign n = n | plus: 1
+        endfor
+      endif
+      assign per_src = per_src | append: got | append: '|'
+    endfor
+    # interleave: first pick from each source, then the second from each
+    assign mixed = ''
+    assign src_lists = per_src | split: '|'
+    for r in (0..1)
+      for sl in src_lists
+        assign srefs = sl | split: ','
+        if srefs[r] != blank
+          assign mixed = mixed | append: srefs[r] | append: ','
+        endif
+      endfor
+    endfor
+    assign closers = ''
+    assign rest = ''
+    assign mrefs = mixed | split: ','
+    for ref in mrefs
+      assign rp = ref | split: ':'
+      assign pr = rp[3] | plus: 0
+      if gap > 0 and pr >= gap
+        assign closers = closers | append: ref | append: ','
+      else
+        assign rest = rest | append: ref | append: ','
+      endif
+    endfor
+    if k == 'other'
+      assign other_list = closers | append: rest
+    else
+      assign lists = lists | append: closers | append: rest | append: ';'
+    endif
+  endfor
+
+  # one from each matching kind in turn; the general list only fills what is left. Max 3, no duplicates.
+  assign picks = ''
+  assign picked_ids = ','
+  assign n_picks = 0
+  assign kind_lists = lists | split: ';'
+  for r in (0..5)
+    for kl in kind_lists
+      if n_picks >= 3
+        break
+      endif
+      assign refs = kl | split: ','
+      assign ref = refs[r]
+      if ref == blank
+        continue
+      endif
+      assign rp = ref | split: ':'
+      assign ptok = ',' | append: rp[2] | append: ','
+      if picked_ids contains ptok
+        continue
+      endif
+      assign picks = picks | append: ref | append: ','
+      assign picked_ids = picked_ids | append: rp[2] | append: ','
+      assign n_picks = n_picks | plus: 1
+    endfor
+  endfor
+  if n_picks < 3
+    assign orefs = other_list | split: ','
+    for ref in orefs
+      if n_picks >= 3
+        break
+      endif
+      assign rp = ref | split: ':'
+      assign ptok = ',' | append: rp[2] | append: ','
+      if picked_ids contains ptok
+        continue
+      endif
+      assign picks = picks | append: ref | append: ','
+      assign picked_ids = picked_ids | append: rp[2] | append: ','
+      assign n_picks = n_picks | plus: 1
+    endfor
+  endif
+-%}
+{%- if n_picks > 0 -%}
+  {%- assign pick_list = picks | split: ',' -%}
+  <div class="sjc-up" aria-labelledby="sjc-up-h">
+    <p class="sjc-up__h" id="sjc-up-h">Goes with your order</p>
+    <ul class="sjc-up__list" role="list">
+      {%- for ref in pick_list -%}
+        {%- liquid
+          assign rp = ref | split: ':'
+          assign idx = rp[1] | plus: 0
+          assign p = collections[rp[0]].products[idx]
+          assign v = p.selected_or_first_available_variant
+        -%}
+        {%- if p != blank -%}
+        <li class="sjc-up__row" data-sjc-up>
+          <a class="sjc-up__img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</a>
+          <div class="sjc-up__info">
+            <a class="sjc-up__t" href="{{ p.url }}">{{ p.title }}</a>
+            <span class="sjc-up__p">{{ v.price | money_without_trailing_zeros }}</span>
+            {%- if gap > 0 and v.price >= gap -%}<span class="sjc-up__ship">Takes you over $200</span>{%- endif -%}
+            {%- unless p.has_only_default_variant -%}
+              {%- assign sel_id = 'sjc-up-v-' | append: p.id -%}
+              <label class="sjc-up__lab" for="{{ sel_id }}">{{ p.options.first }}</label>
+              <select id="{{ sel_id }}" class="sjc-up__sel" data-sjc-variant>
+                {%- for vv in p.variants -%}{%- if vv.available -%}<option value="{{ vv.id }}"{% if vv.id == v.id %} selected{% endif %}>{{ vv.title }}</option>{%- endif -%}{%- endfor -%}
+              </select>
+            {%- endunless -%}
+            <span class="sjc-up__err" role="alert" hidden></span>
+          </div>
+          <button type="button" class="sjc-up__add" data-sjc-add data-vid="{{ v.id }}" aria-label="Add {{ p.title | escape }} to cart">Add</button>
+        </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

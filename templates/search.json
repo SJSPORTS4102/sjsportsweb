@@ -89,7 +89,8 @@
         "pd_tb": "",
         "mg_mb": "",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "heading_template": {
       "type": "heading-static",
@@ -140,7 +141,8 @@
         "mgb": 0,
         "mgb_tb": 0,
         "mgb_mb": 0
-      }
+      },
+      "disabled": true
     },
     "main": {
       "type": "main-search",
@@ -203,7 +205,8 @@
         "pd_tb": "",
         "mg_mb": "50px,,50px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "sidebar": {
       "type": "sidebar-collection",
@@ -243,9 +246,14 @@
         "sidebar_bdr": 0,
         "sidebar_pd": 5
       }
+    },
+    "sj_search": {
+      "type": "sj-main-search",
+      "settings": {}
     }
   },
   "order": [
+    "sj_search",
     "top",
     "heading_template",
     "main",

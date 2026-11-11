@@ -312,7 +312,8 @@
         "enable_select": true,
         "ani": "none",
         "time": 6
-      }
+      },
+      "disabled": true
     },
     "sidebar": {
       "type": "sidebar-product",
@@ -458,7 +459,8 @@
         "pd_tb": "",
         "mg_mb": ",,30px,",
         "pd_mb": ""
-      }
+      },
+      "disabled": true
     },
     "recently-viewed-products": {
       "type": "recently_viewed",
@@ -547,14 +549,94 @@
           "bat-care"
         ],
         "limit": 8
+      },
+      "disabled": true
+    },
+    "sj_main": {
+      "type": "sj-main-product",
+      "blocks": {
+        "addon_grip": {
+          "type": "addon",
+          "settings": {
+            "product": "gunn-moore-hexa-bat-grips",
+            "note": "A spare grip for the season",
+            "show_on": "bat"
+          }
+        },
+        "addon_repair": {
+          "type": "addon",
+          "settings": {
+            "product": "dsc-bat-repair-kit",
+            "note": "Fixes small cracks and chips",
+            "show_on": "bat"
+          }
+        },
+        "addon_balls_orig": {
+          "type": "addon",
+          "settings": {
+            "product": "paceman-original-light-balls-12-pack",
+            "note": "Paceman's original machine ball",
+            "show_on": "machine"
+          }
+        },
+        "addon_balls_hard": {
+          "type": "addon",
+          "settings": {
+            "product": "paceman-reg-hard-balls-12pk",
+            "note": "Harder ball, about 130kph",
+            "show_on": "machine"
+          }
+        },
+        "aov_ai_bundle_offer_inline_M6UHVg": {
+          "type": "shopify://apps/aov-ai-bundle/blocks/offer-inline/0335d423-143c-4ad7-b224-99a1db74a9ee",
+          "settings": {}
+        },
+        "avada_seo_suite_avada_faqs_4VQjFF": {
+          "type": "shopify://apps/avada-seo-suite/blocks/avada-faqs/15507c6e-1aa3-45d3-b698-7e175e033440",
+          "settings": {}
+        },
+        "aov_ai_bundle_upsell_mix_match_offer_inline_wdaxg7": {
+          "type": "shopify://apps/aov-ai-bundle/blocks/mix-match-offer-inline/0335d423-143c-4ad7-b224-99a1db74a9ee",
+          "settings": {}
+        },
+        "aov_ai_bundle_offer_volume_KFCc3J": {
+          "type": "shopify://apps/aov-ai-bundle/blocks/offer-volume/0335d423-143c-4ad7-b224-99a1db74a9ee",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "addon_grip",
+        "addon_repair",
+        "addon_balls_orig",
+        "addon_balls_hard",
+        "aov_ai_bundle_offer_inline_M6UHVg",
+        "avada_seo_suite_avada_faqs_4VQjFF",
+        "aov_ai_bundle_upsell_mix_match_offer_inline_wdaxg7",
+        "aov_ai_bundle_offer_volume_KFCc3J"
+      ],
+      "settings": {
+        "bat_rail": [
+          "bat-grips",
+          "bat-care"
+        ],
+        "machine_rail": [
+          "paceman-balls",
+          "bowling-machine-balls"
+        ]
       }
+    },
+    "sj_recs": {
+      "type": "sj-recommendations",
+      "settings": {}
     }
   },
   "order": [
     "breadcrumb",
+    "sj_main",
     "main",
     "sidebar",
     "sj-bat-accessories",
+    "sj_recs",
     "product-recommendations",
     "recently-viewed-products",
     "1775978883c56159df"

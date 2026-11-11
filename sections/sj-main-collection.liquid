@@ -1,0 +1,265 @@
+{%- comment -%}
+  SJ collection page (Off Leesh, Nov 2026). Approved mockup: "SJ Sports CRO Mockups/Final/Images" 10 to 12,
+  design-system/sj-sports/pages/collection-page.md (ui-ux-pro-max). Theme copy only; replaces the Gecko
+  main-collection, heading banner, intro and size sections in templates/collection.json (switched off, not deleted).
+  Filters come from Shopify (collection.filters), so they show whatever Search & Discovery has switched on.
+  Load more fetches the next page of this section and appends it; the plain link still works without JS.
+{%- endcomment -%}
+{%- liquid
+  assign h = collection.handle
+  assign t = collection.title
+  assign cnt = collection.products_count
+  assign sort = collection.sort_by | default: collection.default_sort_by
+  assign is_best = false
+  if sort == 'best-selling'
+    assign is_best = true
+  endif
+
+  # bats? (size tiles, bat USPs, prep tile)
+  assign show_sizes = false
+  for c in section.settings.sizes_on
+    if c.handle == h
+      assign show_sizes = true
+      break
+    endif
+  endfor
+  assign is_bats = show_sizes
+  if h contains 'cricket-bat'
+    unless h contains 'batting'
+      assign is_bats = true
+    endunless
+  endif
+  assign noun = 'products'
+  if is_bats
+    assign noun = 'bats'
+  endif
+
+  assign intro = ''
+  assign chips = ''
+  for block in section.blocks
+    case block.type
+      when 'intro'
+        if block.settings.collection.handle == h and intro == ''
+          assign intro = block.settings.text
+        endif
+      when 'chips'
+        assign hs = block.settings.handles | split: ','
+        for x in hs
+          assign xs = x | strip
+          if xs == h and chips == ''
+            assign chips = block.settings.links
+          endif
+        endfor
+    endcase
+  endfor
+  if intro == blank and collection.description != blank
+    assign plain = collection.description | strip_html | strip
+    if plain.size < 220
+      assign intro = '<p>' | append: plain | append: '</p>'
+    endif
+  endif
+  assign active_n = 0
+  for f in collection.filters
+    assign active_n = active_n | plus: f.active_values.size
+    if f.type == 'price_range'
+      if f.min_value.value != nil or f.max_value.value != nil
+        assign active_n = active_n | plus: 1
+      endif
+    endif
+  endfor
+-%}
+{{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sj-collection.js' | asset_url }}" defer></script>
+
+<div class="sjcol" data-sjcol data-section="{{ section.id }}">
+  <div class="sjcol-wrap">
+    <nav class="sjcol-crumb" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">/</span><span aria-current="page">{{ t }}</span></nav>
+
+    <div class="sjcol-head">
+      <div>
+        <h1 class="sjcol-title">{{ t }} <span class="sjcol-count">{{ cnt }} {{ noun }}</span></h1>
+        {%- if intro != blank -%}<div class="sjcol-intro">{{ intro }}</div>{%- endif -%}
+      </div>
+      <ul class="sjcol-usp" role="list">
+        {%- if is_bats -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 14.06 4 20"/><path d="m14 4 6 6"/><path d="M15 3 3 15l6 6L21 9z"/></svg>Free bat prep on English willow</li>{%- endif -%}
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Free shipping over $200</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>{% if is_bats %}Try them in Woolloongabba{% else %}Pick up in Woolloongabba{% endif %}</li>
+      </ul>
+    </div>
+
+    {%- if show_sizes -%}
+      <section class="sjcol-sizes" aria-labelledby="sjcol-sz">
+        <div class="hd"><h2 id="sjcol-sz">Shop by size</h2><a href="/blogs/news/what-size-cricket-bat-for-my-child"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>Which size?</a></div>
+        <div class="tiles">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'size' -%}
+              {%- assign c = block.settings.collection -%}
+              {%- if c == blank %}{% continue %}{% endif -%}
+              <a class="{% if c.handle == h %}on{% endif %}" href="{{ c.url }}?sort_by=best-selling" {{ block.shopify_attributes }}>
+                <svg style="--h:{{ block.settings.bat_height }}" viewBox="0 0 24 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><rect x="10.3" y="0" width="3.4" height="36" rx="1.7"/><path d="M8.5 31h7l1 4H7.5z"/><rect x="4.5" y="34" width="15" height="66" rx="4"/></svg>
+                <b>{{ block.settings.label }}</b><small>{{ block.settings.who }}</small>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    {%- if chips != blank -%}
+      {%- assign lines = chips | newline_to_br | split: '<br />' -%}
+      <div class="sjcol-chips" role="list">
+        {%- for line in lines -%}
+          {%- assign parts = line | strip | split: '|' -%}
+          {%- if parts.size == 2 -%}
+            {%- assign u = parts[1] | strip -%}{%- assign up = u | split: '?' | first -%}
+            {%- if parts[0] == '---' -%}<span class="sep" role="presentation"></span>{%- else -%}
+            <a role="listitem" href="{{ u }}{% unless u contains '?' %}?sort_by=best-selling{% endunless %}"{% if up == collection.url %} class="on" aria-current="page"{% endif %}>{{ parts[0] | strip }}</a>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="sjcol-layout{% if collection.filters.size == 0 %} no-filters{% endif %}">
+      {%- if collection.filters.size > 0 -%}
+        <aside class="sjcol-filters" id="sjcol-filters" aria-label="Filters" data-sjcol-filters>
+          <div class="fh"><p class="ft">Filter</p><button type="button" class="fx" data-sjcol-fclose aria-label="Close filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          <form class="fbody" action="{{ collection.url }}" method="get" data-sjcol-form>
+            <input type="hidden" name="sort_by" value="{{ sort }}">
+            {%- for f in collection.filters -%}
+              <fieldset class="fg">
+                <legend>{{ f.label }}</legend>
+                {%- case f.type -%}
+                  {%- when 'price_range' -%}
+                    <div class="price">
+                      <label><span>Min</span><input type="number" inputmode="numeric" name="{{ f.min_value.param_name }}" value="{{ f.min_value.value | money_without_currency | remove: ',' | remove: '.00' }}" placeholder="0" min="0"></label>
+                      <label><span>Max</span><input type="number" inputmode="numeric" name="{{ f.max_value.param_name }}" value="{{ f.max_value.value | money_without_currency | remove: ',' | remove: '.00' }}" placeholder="{{ f.range_max | money_without_currency | remove: ',' | remove: '.00' }}" min="0"></label>
+                    </div>
+                  {%- else -%}
+                    {%- for val in f.values limit: 30 -%}
+                      {%- if val.count == 0 and val.active == false %}{% continue %}{% endif -%}
+                      <label class="opt"><input type="checkbox" name="{{ val.param_name }}" value="{{ val.value }}"{% if val.active %} checked{% endif %}><span>{{ val.label }}</span><small>{{ val.count }}</small></label>
+                    {%- endfor -%}
+                {%- endcase -%}
+              </fieldset>
+            {%- endfor -%}
+            <div class="fbtns"><button type="submit" class="apply">Show results</button>{% if active_n > 0 %}<a class="clear" href="{{ collection.url }}?sort_by={{ sort }}">Clear all</a>{% endif %}</div>
+          </form>
+        </aside>
+        <div class="sjcol-fscrim" data-sjcol-fclose hidden></div>
+      {%- endif -%}
+
+      <div class="sjcol-main">
+        <div class="sjcol-bar">
+          {%- if collection.filters.size > 0 -%}<button type="button" class="fbtn" data-sjcol-fopen aria-controls="sjcol-filters" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M21 12h-9"/><path d="M8 12H3"/><path d="M21 20h-5"/><path d="M12 20H3"/><path d="M14 2v4"/><path d="M8 10v4"/><path d="M16 18v4"/></svg>Filter{% if active_n > 0 %}<span class="n">{{ active_n }}</span>{% endif %}</button>{%- endif -%}
+          <span class="cnt" aria-live="polite">{{ collection.products_count }} {{ noun }}</span>
+          <label class="sort"><span>Sort:</span>
+            <select data-sjcol-sort aria-label="Sort by">
+              {%- for o in collection.sort_options -%}<option value="{{ o.value }}"{% if o.value == sort %} selected{% endif %}>{{ o.name }}</option>{%- endfor -%}
+            </select>
+          </label>
+        </div>
+
+        {%- if active_n > 0 -%}
+          <div class="sjcol-active">
+            {%- for f in collection.filters -%}{%- for val in f.active_values -%}<a href="{{ val.url_to_remove }}">{{ val.label }}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg><span class="sjn-sr">Remove filter</span></a>{%- endfor -%}{%- if f.type == 'price_range' -%}{%- if f.min_value.value != nil or f.max_value.value != nil -%}<a href="{{ f.url_to_remove }}">Price<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>{%- endif -%}{%- endif -%}{%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- paginate collection.products by 24 -%}
+          <ul class="sjcol-grid" role="list" data-sjcol-grid>
+            {%- for p in collection.products -%}
+              {%- liquid
+                assign rank = 0
+                if is_best and paginate.current_page == 1 and active_n == 0
+                  assign rank = forloop.index
+                endif
+                assign eager = false
+                if forloop.index <= 4 and paginate.current_page == 1
+                  assign eager = true
+                endif
+              -%}
+              {%- render 'sj-card', product: p, rank: rank, eager: eager -%}
+              {%- if paginate.current_page == 1 -%}
+                {%- if forloop.index == 4 -%}
+                  <li class="sjcol-tile tile-size">
+                    {%- if is_bats -%}
+                      <p class="th">Not sure on size?</p><p>Go by height, not age. Our chart covers Size 0 to Short Handle.</p><a href="/blogs/news/what-size-cricket-bat-for-my-child">Bat size guide</a>
+                    {%- else -%}
+                      <p class="th">Need a hand?</p><p>Our team fits players in the Woolloongabba shop every day. Ask us anything.</p>
+                    {%- endif -%}
+                    <a href="tel:0423240478">Call 0423 240 478</a>
+                  </li>
+                {%- endif -%}
+                {%- if forloop.index == 8 and is_bats -%}
+                  <li class="sjcol-tile tile-prep"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9.94 14.06 4 20"/><path d="m14 4 6 6"/><path d="M15 3 3 15l6 6L21 9z"/></svg></span><div><p class="th">Free bat prep</p><p>Every English willow bat: oiled, machine knocked, edges done by hand, face sheet and tape. Ready in up to 3 days.</p><a href="/pages/free-bat-preparation-service">How we prep your bat</a></div></li>
+                {%- endif -%}
+              {%- endif -%}
+            {%- else -%}
+              <li class="sjcol-empty"><p class="th">Nothing matches those filters</p><p><a href="{{ collection.url }}">Clear the filters</a> or call the shop on <a href="tel:0423240478">0423 240 478</a>.</p></li>
+            {%- endfor -%}
+          </ul>
+          {%- liquid
+            assign shown = paginate.current_page | times: paginate.page_size
+            if shown > paginate.items
+              assign shown = paginate.items
+            endif
+            assign pct = shown | times: 100 | divided_by: paginate.items
+          -%}
+          {%- if paginate.items > 0 -%}
+            <div class="sjcol-more" data-sjcol-more>
+              <p><span data-sjcol-shown>{{ shown }}</span> of {{ paginate.items }} {{ noun }}</p>
+              <div class="bar"><span style="width:{{ pct }}%"></span></div>
+              {%- if paginate.next -%}<a class="btn" href="{{ paginate.next.url }}" data-sjcol-next data-total="{{ paginate.items }}">Show {{ paginate.page_size }} more {{ noun }}</a>{%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </div>
+
+    <section class="sjcol-help" aria-labelledby="sjcol-help-h">
+      <div>
+        <h2 id="sjcol-help-h">Need a hand choosing?</h2>
+        <div class="gl">
+          {%- if is_bats -%}
+            <a href="/blogs/news/what-size-cricket-bat-for-my-child"><span>Cricket bat size guide<small>Find the right size by height</small></span></a>
+            <a href="/pages/free-bat-preparation-service"><span>How we prepare your bat<small>What the free prep includes</small></span></a>
+          {%- else -%}
+            <a href="/pages/size-chart"><span>Size chart<small>Find the right fit</small></span></a>
+            <a href="/pages/shipping-delivery"><span>Shipping and delivery<small>Costs and timing</small></span></a>
+          {%- endif -%}
+          <a href="tel:0423240478"><span>Talk to the shop<small>0423 240 478, open 7 days</small></span></a>
+        </div>
+      </div>
+      <div class="rv">
+        <a class="sjcol-rev" href="https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba" target="_blank" rel="noopener"><span class="sc">4.9</span><span><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><small>110 Google reviews of the shop</small></span><b>Read them</b></a>
+        {%- if collection.description != blank -%}
+          <details class="sjcol-about"><summary>About our {{ t | downcase }}</summary><div class="rte">{{ collection.description }}</div></details>
+        {%- endif -%}
+      </div>
+    </section>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "SJ collection page",
+  "class": "sjcol-section",
+  "settings": [
+    { "type": "collection_list", "id": "sizes_on", "label": "Show bat size tiles on these collections", "limit": 12 }
+  ],
+  "blocks": [
+    { "type": "intro", "name": "Intro", "settings": [
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "richtext", "id": "text", "label": "Intro text" } ] },
+    { "type": "size", "name": "Bat size tile", "settings": [
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "text", "id": "label", "label": "Label" },
+      { "type": "text", "id": "who", "label": "Who it suits" },
+      { "type": "range", "id": "bat_height", "label": "Bat height (to scale)", "min": 30, "max": 100, "step": 2, "default": 80 } ] },
+    { "type": "chips", "name": "Quick links", "settings": [
+      { "type": "text", "id": "handles", "label": "Show on collections (handles, comma separated)" },
+      { "type": "textarea", "id": "links", "label": "Links", "info": "One per line: Label|/collections/handle. A line with ---|- adds a divider." } ] }
+  ]
+}
+{% endschema %}

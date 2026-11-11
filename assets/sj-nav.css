@@ -1,0 +1,129 @@
+/* SJ mega nav (Off Leesh, Nov 2026). Approved mockup 13 to 15, design-system/sj-sports/pages/mega-nav.md.
+   Tokens match sj-pdp.css. Desktop panels open on click, keyboard and hover; phones get a drawer.
+   z-index: header 460 (Gecko), nav row 455, panel 470, scrim 1000, drawer 1001. */
+.sjn{--navy:#005186;--navy-deep:#0A2E4D;--cta:#A81C60;--ink:#0F2236;--muted:#475569;--line:#E1E7EE;--soft:#F4F7FA;--soft-2:#EAF1F7;--magenta:#E2317F;
+  --head:'Barlow Condensed',system-ui,sans-serif;--body:'Barlow',system-ui,sans-serif;font-family:var(--body);color:var(--ink)}
+.sjn *,.sjn *::before,.sjn *::after{box-sizing:border-box}
+.sjn :where(p,ul,li){margin:0;padding:0}
+.sjn ul{list-style:none}
+.sjn :focus-visible{outline:3px solid #FFC72C;outline-offset:2px}
+.sjn .sjn-i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sjn-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sjn-wrap{max-width:1464px;margin:0 auto;padding:0 32px}
+.sjn template{display:none}
+
+/* search box (phones under the header, desktop inside the header row) */
+.sjn-search{display:flex;align-items:center;gap:10px;height:48px;border-radius:10px;background:var(--soft,#F4F7FA);border:1.5px solid var(--line,#E1E7EE);padding:0 14px;margin:0;transition:border-color .2s,box-shadow .2s;color:#0F2236;font-family:'Barlow',system-ui,sans-serif}
+.sjn-search:focus-within{border-color:#005186;box-shadow:0 0 0 3px #00518633}
+.sjn-search input[type=search]{border:0!important;background:none!important;font:inherit;font-size:16px!important;color:#0F2236;width:100%;outline:none;padding:0!important;height:auto!important;min-height:0!important;box-shadow:none!important}
+.sjn-search input::placeholder{color:#475569;opacity:1}
+.sjn-search .sjn-i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.sjn-msearch{padding:10px 16px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.sjh-search{width:100%;max-width:640px;margin:0 auto}
+.sjn-bar{display:none}
+/* the old custom-html block pulled the page up 49px over the header area; the new rows need that space */
+html body section#shopify-section-custom-html{margin-top:0!important}
+
+/* ---------- phone drawer ---------- */
+.sjn-scrim{position:fixed;inset:0;background:rgba(10,20,32,.55);z-index:1000}
+.sjn-drawer{position:fixed;top:0;bottom:0;left:0;width:min(92vw,420px);background:#fff;z-index:1001;display:flex;flex-direction:column;box-shadow:0 24px 48px rgba(10,46,77,.18);transform:translateX(-102%);transition:transform .25s ease}
+.sjn-drawer.is-open{transform:none}
+.sjn-drawer[hidden]{display:none}
+.sjn-view{display:flex;flex-direction:column;height:100%;min-height:0}
+.sjn-view[hidden]{display:none}
+.sjn-dh{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:60px;padding:0 8px 0 16px;border-bottom:1px solid var(--line);flex:none}
+.sjn-dt{font-family:var(--head);font-weight:800;font-size:24px;text-transform:uppercase;letter-spacing:.01em}
+.sjn-x,.sjn-back{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:44px;min-height:44px;border:0;background:none;border-radius:999px;color:var(--ink);cursor:pointer;font:600 15px var(--body)}
+.sjn-back{color:var(--navy);padding:0 8px 0 0}
+.sjn-x:hover{background:var(--soft)}
+.sjn-db{overflow-y:auto;padding:12px 16px 28px;flex:1;-webkit-overflow-scrolling:touch}
+.sjn-h2{font-family:var(--head);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.01em;margin:18px 0 10px!important;display:flex;align-items:center;gap:6px}
+.sjn-h2 .sjn-star{width:18px;height:18px;color:var(--cta)}
+.sjn-vt{font-family:var(--head);font-weight:800;font-size:30px;text-transform:uppercase;line-height:1;margin:6px 0 0!important}
+.sjn-cats button,.sjn-drawer .sjn-links a{display:flex;align-items:center;width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;text-decoration:none;font:600 16px var(--body);color:var(--ink);cursor:pointer;padding:0}
+.sjn-cats{border-top:1px solid var(--line)}
+.sjn-drawer .sjn-links a span,.sjn-cats button span{flex:1}
+.sjn-drawer .sjn-links small{margin-left:auto;margin-right:10px;min-width:34px;text-align:right;font-weight:400;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sjn-chev{width:18px!important;height:18px!important;color:var(--muted)}
+.sjn-drawer .sjn-g{margin-top:6px}
+.sjn-drawer .sjn-g .sjn-h{font-family:var(--head);font-weight:800;font-size:19px;text-transform:uppercase;margin:16px 0 8px!important;color:var(--ink)}
+.sjn-drawer .sjn-g .sjn-links{border-top:1px solid var(--line)}
+.sjn-quick{margin-top:18px!important;padding:8px 12px!important;border-radius:12px;background:var(--soft);display:grid;gap:2px}
+.sjn-quick a{display:flex;align-items:baseline;gap:8px;min-height:44px;padding:10px 0;text-decoration:none;color:var(--ink);font-size:15px}
+.sjn-quick b{font-weight:600}
+.sjn-quick small{color:var(--muted)}
+.sjn-all{display:flex;align-items:center;justify-content:center;min-height:52px;margin-top:18px;border-radius:8px;background:var(--cta);color:#fff!important;font:600 16px var(--body);text-decoration:none}
+
+/* best seller cards */
+.sjn-best:empty{min-height:150px;border-radius:10px;background:linear-gradient(90deg,var(--soft) 0,#fff 50%,var(--soft) 100%);background-size:200% 100%;animation:sjnPulse 1.4s ease infinite}
+@keyframes sjnPulse{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.sjn-cards{display:grid;gap:12px}
+.sjn-best--row .sjn-cards{grid-auto-flow:column;grid-auto-columns:42%;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.sjn-best--row .sjn-cards::-webkit-scrollbar{display:none}
+.sjn-card{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);min-width:0;position:relative}
+.sjn-card__im{display:block;aspect-ratio:1;border-radius:10px;background:var(--soft);position:relative;overflow:hidden}
+.sjn-card__im img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;mix-blend-mode:multiply}
+.sjn-card__t{font-size:14px;font-weight:600;line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sjn-card__p{font-size:15px;font-weight:700}
+.sjn-card__p s{font-weight:400;font-size:13px;color:var(--muted);margin-left:4px}
+.sjn-card:hover .sjn-card__t{color:var(--navy)}
+body.sjn-lock{overflow:hidden}
+/* hide on scroll down, show on scroll up (sj-nav.js sets html.sjn-up and --sjn-stack) */
+.t4s-section-header{transition:transform .25s ease}
+html.sjn-up .t4s-section-header{transform:translateY(-100%)}
+body.sjn-lock .sjs-bnav{display:none!important}
+
+/* ---------- desktop ---------- */
+@media (min-width:1025px){
+  .sjn-msearch{display:none}
+  #shopify-section-sj-mega-nav{position:sticky;top:var(--sjn-top,60px);z-index:455;transition:transform .25s ease}
+  html.sjn-up #shopify-section-sj-mega-nav{transform:translateY(calc(-1 * var(--sjn-top,60px) - 100%))}
+  .sjn-bar{display:block;position:relative;background:#fff;border-bottom:1px solid var(--line);z-index:455}
+  .sjn-list{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
+  .sjn-top{display:flex;align-items:center;gap:5px;height:50px;padding:0 11px;font:600 15.5px var(--body);color:var(--ink);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+  .sjn-top .sjn-dn{width:14px;height:14px;color:var(--muted);transition:transform .2s}
+  .sjn-top:hover,.sjn-top[aria-expanded=true],.sjn-top.is-active{color:var(--navy);border-bottom-color:var(--navy)}
+  .sjn-top[aria-expanded=true] .sjn-dn{transform:rotate(180deg)}
+  .sjn-hot .sjn-top{color:var(--cta)}
+  .sjn-hot .sjn-top .sjn-i{width:16px;height:16px}
+  .sjn-prep{margin-left:auto;display:flex;align-items:center}
+  .sjn-prep a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:var(--soft-2);color:var(--navy);font:600 15px var(--body);text-decoration:none;white-space:nowrap}
+  .sjn-prep a:hover{background:#DCE8F3}
+  .sjn-panel{position:absolute;left:0;right:0;top:100%;z-index:470;background:#fff;border-top:1px solid var(--line);box-shadow:0 24px 40px rgba(10,46,77,.16)}
+  .sjn-panel[hidden]{display:none}
+  .sjn-in{display:grid;grid-template-columns:repeat(3,minmax(0,.8fr)) minmax(0,2.4fr);gap:36px;padding-top:26px;padding-bottom:24px;max-height:calc(100vh - 200px);overflow-y:auto}
+  .sjn-in--best{grid-template-columns:minmax(0,.9fr) minmax(0,3.1fr)}
+  .sjn-panel .sjn-h{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cta);margin-bottom:10px!important}
+  .sjn-panel .sjn-links{display:grid;gap:2px}
+  .sjn-panel .sjn-links a{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;font-size:15.5px;font-weight:500;color:var(--ink);text-decoration:none;border-radius:6px;padding:0 8px;margin:0 -8px;transition:background-color .2s,color .2s}
+  .sjn-panel .sjn-links a:hover{background:var(--soft-2);color:var(--navy)}
+  .sjn-panel .sjn-links small{margin-left:auto;color:var(--muted);font-size:13px;min-width:28px;text-align:right;font-variant-numeric:tabular-nums}
+  .sjn-panel .sjn-chev{display:none}
+  .sjn-bestcol{grid-column:4}
+  .sjn-panel .sjn-cards{grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:rk}
+  .sjn-best--4 .sjn-cards{grid-template-columns:repeat(4,1fr)}
+  .sjn-panel .sjn-card:nth-child(n+4){display:none}
+  .sjn-best--4 .sjn-card:nth-child(4){display:flex}
+  .sjn-panel .sjn-card::before{counter-increment:rk;content:"No. " counter(rk);position:absolute;top:8px;left:8px;z-index:2;background:var(--navy);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px}
+  .sjn-panel .sjn-best:empty{min-height:220px}
+  .sjn-more{display:inline-flex;align-items:center;min-height:40px;margin-top:8px;font-weight:700;font-size:14.5px;color:var(--navy)!important;text-decoration:underline;text-underline-offset:3px}
+  .sjn-usp{border-top:1px solid var(--line);background:var(--soft)}
+  .sjn-usp .sjn-wrap{display:flex;gap:28px;align-items:center;min-height:46px;font-size:14px;font-weight:600}
+  .sjn-scrim.is-desk{top:auto}
+  .sjn-drawer,.sjn-scrim{display:none!important}
+  /* the old second menu row is replaced by this one */
+  .submain-menu-cus{display:none!important}
+  #shopify-section-top-bar{display:none!important}
+  #shopify-section-custom-html{min-height:0!important}
+  /* the header search box replaces the old menu links; the search icon is no longer needed on desktop */
+  .t4s-section-header .t4s-site-nav__search{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){.sjn *{transition:none!important;animation:none!important}.sjn-drawer,.t4s-section-header,#shopify-section-sj-mega-nav{transition:none!important}}
+
+/* (old Gecko footer restyle removed: the SJ footer section replaces it) */
+
+/* phones: the theme squeezed the logo into a 38px column; give it room (approved mockup shows a full-size logo) */
+@media (max-width:1024px){
+  .t4s-section-header [data-header-height] > .t4s-col-6{flex:1 1 auto;width:auto;max-width:none;min-width:80px}
+  .t4s-section-header .header__mobile-logo{width:56px!important;max-width:none!important;height:auto}
+}

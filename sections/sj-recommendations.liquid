@@ -1,0 +1,210 @@
+{%- comment -%}
+  SJ "You may also like" (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/product-recommendations.md.
+  Replaces the Gecko product-recommendations section in templates/product.json on the theme copy (that one is switched off).
+  On the product page it renders a heading and skeleton cards, then loads Shopify's related products from
+  {{ routes.product_recommendations_url }}?product_id=...&section_id=...&intent=related and swaps them in.
+  Cards are the shared SJ card (snippets/sj-card), so they match the collection page and homepage.
+{%- endcomment -%}
+{%- liquid
+  assign p = product
+  assign t = p.type | downcase
+  assign tl = p.title | downcase
+  assign h_a = 'You may'
+  assign h_b = 'also like'
+  if t contains 'cricket bat'
+    unless t contains 'batting'
+      assign h_a = 'Compare'
+      assign h_b = 'similar bats'
+    endunless
+  endif
+  if tl contains 'bowling machine'
+    unless tl contains ' ball' or tl contains 'bucket'
+      assign h_a = 'Compare'
+      assign h_b = 'bowling machines'
+    endunless
+  endif
+-%}
+{%- if recommendations.performed? -%}
+  {%- comment -%} Fetched by the product page: just the cards. {%- endcomment -%}
+  <ul class="sjr-track" role="list" data-sjr-cards>
+    {%- assign shown = 0 -%}
+    {%- for rp in recommendations.products -%}
+      {%- if shown >= 10 %}{% break %}{% endif -%}
+      {%- if rp.available == false or rp.featured_media == blank %}{% continue %}{% endif -%}
+      {%- assign shown = shown | plus: 1 -%}
+      {%- render 'sj-card', product: rp, rank: 0, eager: false -%}
+    {%- endfor -%}
+  </ul>
+{%- else -%}
+  {{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+  {%- liquid
+    assign kind = 'other'
+    if h_b == 'similar bats'
+      assign kind = 'bat'
+    elsif h_b == 'bowling machines'
+      assign kind = 'machine'
+    endif
+  -%}
+  <section class="sjr" data-sjr data-kind="{{ kind }}" data-pid="{{ product.id }}" data-url="{{ routes.product_recommendations_url }}?product_id={{ product.id }}&limit=12&intent=related&section_id={{ section.id }}" aria-labelledby="sjr-h-{{ section.id }}">
+    <div class="sjr-wrap">
+      <div class="sjr-head">
+        <h2 class="sjr-h" id="sjr-h-{{ section.id }}">{{ h_a }} <span>{{ h_b }}</span></h2>
+        <div class="sjr-nav">
+          <button type="button" data-sjr-prev aria-label="Previous products" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button type="button" data-sjr-next aria-label="More products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      {%- if kind != 'other' -%}
+        {%- comment -%} Top-up when Shopify's related list has few of the same kind: best sellers of the same kind, similar price first (0.6x to 1.5x). Inert until used. {%- endcomment -%}
+        {%- liquid
+          if kind == 'bat'
+            assign pool = collections['cricket-bat'].products
+          else
+            assign pool = product.collections.first.products
+            for c in product.collections offset: 1
+              assign pool = pool | concat: c.products
+            endfor
+          endif
+          assign lo = product.price | times: 6 | divided_by: 10
+          assign hi = product.price | times: 15 | divided_by: 10
+          assign seen = ',' | append: product.id | append: ','
+          assign n = 0
+        -%}
+        <template data-sjr-more>
+          {%- for pass in (1..2) -%}
+            {%- for rp in pool -%}
+              {%- if n >= 12 %}{% break %}{% endif -%}
+              {%- liquid
+                assign key = ',' | append: rp.id | append: ','
+                assign ok = true
+                if seen contains key or rp.available == false or rp.featured_media == blank
+                  assign ok = false
+                endif
+                assign rt = rp.type | downcase
+                assign rtl = rp.title | downcase
+                if kind == 'bat'
+                  unless rt contains 'cricket bat'
+                    assign ok = false
+                  endunless
+                  if rt contains 'batting'
+                    assign ok = false
+                  endif
+                else
+                  unless rtl contains 'bowling machine'
+                    assign ok = false
+                  endunless
+                  if rtl contains ' ball' or rtl contains 'bucket'
+                    assign ok = false
+                  endif
+                endif
+                assign band = false
+                if rp.price >= lo and rp.price <= hi
+                  assign band = true
+                endif
+                if pass == 1 and band == false
+                  assign ok = false
+                endif
+                if pass == 2 and band
+                  assign ok = false
+                endif
+              -%}
+              {%- unless ok %}{% continue %}{% endunless -%}
+              {%- assign seen = seen | append: rp.id | append: ',' -%}
+              {%- assign n = n | plus: 1 -%}
+              {%- render 'sj-card', product: rp, rank: 0, eager: false -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        </template>
+      {%- endif -%}
+      <div class="sjr-viewport" data-sjr-viewport>
+        <ul class="sjr-track" role="list" aria-busy="true">
+          {%- for i in (1..5) -%}<li class="sjr-skel" aria-hidden="true"><span class="im"></span><span class="l1"></span><span class="l2"></span><span class="l3"></span></li>{%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <script>
+    (function () {
+      var root = document.querySelector('[data-sjr]'); if (!root) return;
+      var vp = root.querySelector('[data-sjr-viewport]'), prev = root.querySelector('[data-sjr-prev]'), next = root.querySelector('[data-sjr-next]');
+      function edges() {
+        var max = vp.scrollWidth - vp.clientWidth - 2;
+        prev.disabled = vp.scrollLeft <= 2; next.disabled = vp.scrollLeft >= max;
+        root.classList.toggle('no-scroll', max <= 0);
+      }
+      function step(dir) { vp.scrollBy({ left: dir * vp.clientWidth * 0.9, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+      prev.addEventListener('click', function () { step(-1); }); next.addEventListener('click', function () { step(1); });
+      vp.addEventListener('scroll', function () { window.requestAnimationFrame(edges); }, { passive: true });
+      window.addEventListener('resize', edges);
+      function load() {
+        fetch(root.dataset.url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html'), cards = doc.querySelector('[data-sjr-cards]');
+          if (!cards || !cards.children.length) { root.remove(); return; }
+          /* bats compare with bats, machines with machines (when there are at least 2), otherwise show everything related */
+          [].slice.call(cards.children).forEach(function (c) { if (c.dataset.pid === root.dataset.pid) c.remove(); });
+          var kind = root.dataset.kind;
+          if (kind !== 'other') {
+            var all = [].slice.call(cards.children), have = {};
+            var match = all.filter(function (c) { return c.dataset.kind === kind; });
+            match.forEach(function (c) { have[c.dataset.pid] = 1; });
+            var tpl = root.querySelector('template[data-sjr-more]');
+            var extra = tpl ? [].slice.call(tpl.content.children).filter(function (c) { return !have[c.dataset.pid]; }) : [];
+            if (match.length + extra.length >= 2) {
+              all.forEach(function (c) { if (c.dataset.kind !== kind) c.remove(); });
+              for (var i = 0; i < extra.length && cards.children.length < 8; i++) cards.appendChild(document.importNode(extra[i], true));
+            } else root.querySelector('.sjr-h').innerHTML = 'You may <span>also like</span>';
+          }
+          var track = vp.querySelector('.sjr-track'); track.replaceWith(cards); edges();
+        }).catch(function () { root.remove(); });
+      }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+        io.observe(root);
+      } else { load(); }
+    })();
+  </script>
+  <style>
+    .sjr{--navy:#005186;--navy-deep:#0A2E4D;--cta:#A81C60;--ink:#0F2236;--muted:#475569;--line:#E1E7EE;--soft:#F4F7FA;--soft-2:#EAF1F7;--ok:#147A4B;
+      font-family:'Barlow',system-ui,sans-serif;color:var(--ink);background:#fff;padding:36px 0 44px;border-top:1px solid var(--line)}
+    .sjr *,.sjr *::before,.sjr *::after{box-sizing:border-box}
+    .sjr :where(h2,ul,li,p){margin:0;padding:0}
+    .sjr ul{list-style:none}
+    .sjr-wrap{max-width:1464px;margin:0 auto;padding:0 16px}
+    .sjr-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .sjr-h{font-family:'Barlow Condensed',system-ui,sans-serif!important;font-weight:800!important;font-size:30px!important;line-height:1!important;text-transform:uppercase;letter-spacing:.01em!important;color:var(--ink)!important}
+    .sjr-h span{color:var(--cta)}
+    .sjr-nav{display:none;gap:8px}
+    .sjr-nav button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:border-color .2s,background-color .2s}
+    .sjr-nav button:hover:not([disabled]){border-color:var(--navy);background:var(--soft-2)}
+    .sjr-nav button[disabled]{opacity:.35;cursor:default}
+    .sjr-nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sjr :focus-visible{outline:3px solid #FFC72C;outline-offset:2px}
+    .sjr.no-scroll .sjr-nav{visibility:hidden}
+    .sjr-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px;scroll-padding:0 16px}
+    .sjr-viewport::-webkit-scrollbar{display:none}
+    .sjr-track{display:grid;grid-auto-flow:column;grid-auto-columns:44%;gap:12px}
+    .sjr-track > *{scroll-snap-align:start}
+    .sjr-skel .im{display:block;aspect-ratio:1;border-radius:12px;background:var(--soft)}
+    .sjr-skel span:not(.im){display:block;height:12px;border-radius:6px;background:var(--soft);margin-top:10px}
+    .sjr-skel .l1{width:40%}.sjr-skel .l2{width:90%}.sjr-skel .l3{width:55%}
+    @media (min-width:768px){ .sjr-wrap{padding:0 24px} .sjr-viewport{margin:0 -24px;padding:0 24px 4px;scroll-padding:0 24px} .sjr-track{grid-auto-columns:calc((100% - 36px) / 3.3)} }
+    @media (min-width:1025px){
+      .sjr{padding:48px 0 56px}
+      .sjr-wrap{padding:0 32px}
+      .sjr-h{font-size:34px!important}
+      .sjr-nav{display:flex}
+      .sjr-viewport{margin:0;padding:0 0 4px;scroll-padding:0}
+      .sjr-track{grid-auto-columns:calc((100% - 60px) / 4);gap:20px}
+    }
+    @media (min-width:1440px){ .sjr-track{grid-auto-columns:calc((100% - 80px) / 5)} }
+    @media (prefers-reduced-motion:reduce){ .sjr *{transition:none!important} }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ you may also like",
+  "class": "sjr-section",
+  "settings": []
+}
+{% endschema %}

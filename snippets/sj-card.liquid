@@ -1,0 +1,89 @@
+{%- comment -%}
+  SJ product card (Off Leesh, Nov 2026), approved collection mockup 10 to 12.
+  Brand, full name (2 lines), price with the real dollar saving, Free bat prep under the price on English
+  willow bats, sizes in stock, Best seller tag when the list is in Shopify's best-selling order.
+  No quick view, no image zoom. Params: product, rank (1 to 3 shows Best seller), eager.
+{%- endcomment -%}
+{%- liquid
+  assign p = product
+  assign v = p.selected_or_first_available_variant
+  assign t = p.type | downcase
+  assign tl = p.title | downcase
+  assign prep = false
+  if t contains 'cricket bat'
+    unless t contains 'batting' or t contains 'kashmir' or tl contains 'kashmir' or tl contains 'tennis'
+      assign prep = true
+    endunless
+  endif
+  assign cap3 = p.price | times: 3
+  assign save = 0
+  if p.compare_at_price > p.price and p.compare_at_price <= cap3
+    assign save = p.compare_at_price | minus: p.price | divided_by: 100 | times: 100
+  endif
+  assign sizes = ''
+  assign n_sizes = 0
+  for option in p.options_with_values
+    assign on = option.name | downcase
+    if on contains 'size'
+      for val in option.values
+        assign ok = false
+        for vv in p.variants
+          if vv.available and vv.options contains val
+            assign ok = true
+            break
+          endif
+        endfor
+        if ok and n_sizes < 4
+          assign lab = val
+          assign first = val | slice: 0
+          if '0123456789' contains first and val.size <= 2
+            assign lab = 'Size ' | append: val
+          endif
+          if sizes != ''
+            assign sizes = sizes | append: ', '
+          endif
+          assign sizes = sizes | append: lab
+          assign n_sizes = n_sizes | plus: 1
+        endif
+      endfor
+      break
+    endif
+  endfor
+  assign kind = 'other'
+  if t contains 'cricket bat'
+    unless t contains 'batting'
+      assign kind = 'bat'
+    endunless
+  endif
+  if tl contains 'bowling machine'
+    unless tl contains ' ball' or tl contains 'bucket'
+      assign kind = 'machine'
+    endunless
+  endif
+  assign best = false
+  if rank > 0 and rank <= 3
+    assign best = true
+  endif
+  if eager
+    assign ld = 'eager'
+  else
+    assign ld = 'lazy'
+  endif
+-%}
+<li class="sjc-card" data-kind="{{ kind }}" data-pid="{{ p.id }}">
+  <a class="sjc-card__img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+    {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 600 | image_tag: loading: ld, widths: '240, 360, 480, 600', sizes: '(min-width: 1025px) 22vw, (min-width: 768px) 30vw, 46vw', alt: '' }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
+    {%- if best or save > 0 -%}
+      <span class="sjc-badges">{% if best %}<span class="b-best">Best seller</span>{% endif %}{% if save > 0 %}<span class="b-save">Save {{ save | money_without_trailing_zeros }}</span>{% endif %}</span>
+    {%- endif -%}
+    {%- unless p.available -%}<span class="sjc-out">Sold out</span>{%- endunless -%}
+  </a>
+  <div class="sjc-card__bd">
+    <p class="sjc-card__brand">{{ p.vendor }}</p>
+    <a class="sjc-card__t" href="{{ p.url }}">{{ p.title }}</a>
+    <p class="sjc-card__price"><b>{% if p.price_varies %}From {% endif %}{{ p.price | money_without_trailing_zeros }}</b>{% if save > 0 %} <s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}</p>
+    {%- if prep or sizes != '' -%}
+      <p class="sjc-card__meta">{% if prep %}<span class="prep"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Free bat prep</span>{% endif %}{% if sizes != '' %}<span class="sz">{{ sizes }}</span>{% endif %}</p>
+    {%- endif -%}
+  </div>
+</li>

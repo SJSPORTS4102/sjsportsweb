@@ -1,0 +1,19 @@
+{%- comment -%}
+  SJ product row (Off Leesh, Nov 2026). Never placed on a page: the homepage fetches it with
+  /collections/<handle>?sort_by=best-selling&section_id=sj-card-row, so the cards come back in Shopify's
+  own best-selling order. 8 available products as SJ cards (snippets/sj-card).
+{%- endcomment -%}
+{%- if collection -%}
+  <ul class="sjh-cards" role="list">
+    {%- assign shown = 0 -%}
+    {%- for p in collection.products limit: 24 -%}
+      {%- if shown >= 8 %}{% break %}{% endif -%}
+      {%- unless p.available %}{% continue %}{% endunless -%}
+      {%- assign shown = shown | plus: 1 -%}
+      {%- render 'sj-card', product: p, rank: shown, eager: false -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+{% schema %}
+{ "name": "SJ product row", "settings": [] }
+{% endschema %}

@@ -6,6 +6,9 @@
   assign is_bat = false
   if product.type contains 'Cricket Bat'
     assign is_bat = true
+    if product.type contains 'Batting'
+      assign is_bat = false
+    endif
   endif
 -%}
 <ul class="sj-trust" role="list">

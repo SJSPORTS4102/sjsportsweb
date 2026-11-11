@@ -1,0 +1,224 @@
+{%- comment -%}
+  SJ footer (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/footer.md.
+  Replaces the Gecko footer and footer-bottom sections in layout/theme.liquid on the theme copy only
+  (the Gecko ones are kept there inside a comment, so they can come back with one edit).
+  Bands: help (call, visit, email), newsletter, links + opening hours, legal + payment icons.
+  Link columns are edited in the theme editor ("Label|/url" per line).
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign maps = 'https://www.google.com/maps/dir/?api=1&destination=SJ+Sports+60+Deshon+St+Woolloongabba+QLD+4102'
+-%}
+<footer class="sjf" aria-labelledby="sjf-h">
+  <h2 id="sjf-h" class="sjf-sr">SJ Sports, store information</h2>
+
+  <div class="sjf-wrap sjf-help">
+    <a class="sjf-card" href="tel:0423240478">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+      <span><b>Call the shop</b><span class="v">0423 240 478</span><small>Open 7 days</small></span>
+    </a>
+    <a class="sjf-card" href="{{ maps }}" target="_blank" rel="noopener">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>
+      <span><b>Visit us</b><span class="v">60 Deshon St, Woolloongabba</span><small>Get directions</small></span>
+    </a>
+    <a class="sjf-card" href="mailto:support@sjsports.com.au">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+      <span><b>Email us</b><span class="v">support@sjsports.com.au</span><small>Questions about gear or an order</small></span>
+    </a>
+  </div>
+
+  <div class="sjf-news">
+    <div class="sjf-wrap sjf-news-in">
+      <div>
+        <p class="sjf-kick">{{ s.news_kicker }}</p>
+        <p class="sjf-news-h">{{ s.news_heading }}</p>
+        <p class="sjf-news-p">{{ s.news_text }}</p>
+      </div>
+      {%- form 'customer', id: 'sjf-news-form', class: 'sjf-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter, footer">
+        {%- if form.posted_successfully? -%}
+          <p class="sjf-ok" role="status">Thanks, you're on the list. Watch your inbox for the next deal.</p>
+        {%- else -%}
+          <label class="sjf-label" for="sjf-email">Email address</label>
+          <div class="sjf-row">
+            <input id="sjf-email" type="email" name="contact[email]" autocomplete="email" inputmode="email" required placeholder="you@example.com" value="{{ form.email }}"{% if form.errors %} aria-invalid="true" aria-describedby="sjf-err"{% endif %}>
+            <button type="submit">Sign up</button>
+          </div>
+          {%- if form.errors -%}<p class="sjf-err" id="sjf-err" role="alert">{{ form.errors.messages['email'] | default: 'Please check your email address and try again.' }}</p>{%- endif -%}
+          <p class="sjf-fine">No spam. Unsubscribe any time.</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+
+  <div class="sjf-wrap sjf-main">
+    <div class="sjf-brand">
+      <a class="sjf-logo" href="{{ routes.root_url }}">
+        {%- if settings.logo != blank -%}{{ settings.logo | image_url: width: 160 | image_tag: width: 64, height: 64, alt: '', loading: 'lazy' }}{%- endif -%}
+        <span>SJ Sports</span>
+      </a>
+      <p>Brisbane's cricket specialist. Started in 2016 in a family garage, now a full shop in Woolloongabba.</p>
+      <ul class="sjf-social" role="list">
+        {%- if settings.social_instagram_link != blank -%}<li><a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" aria-label="SJ Sports on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg></a></li>{%- endif -%}
+        {%- if settings.social_facebook_link != blank -%}<li><a href="{{ settings.social_facebook_link }}" target="_blank" rel="noopener" aria-label="SJ Sports on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a></li>{%- endif -%}
+        {%- if settings.social_twitter_link != blank -%}<li><a href="{{ settings.social_twitter_link }}" target="_blank" rel="noopener" aria-label="SJ Sports on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg></a></li>{%- endif -%}
+      </ul>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign lines = block.settings.links | newline_to_br | split: '<br />' -%}
+      <details class="sjf-col" {{ block.shopify_attributes }} data-sjf-col open>
+        <summary><span>{{ block.settings.title }}</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ul role="list">
+          {%- for line in lines -%}
+            {%- assign parts = line | strip | split: '|' -%}
+            {%- if parts.size == 2 -%}<li><a href="{{ parts[1] | strip }}">{{ parts[0] | strip }}</a></li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </details>
+    {%- endfor -%}
+
+    <details class="sjf-col sjf-hours" data-sjf-col open>
+      <summary><span>Opening hours</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <dl>
+        <div><dt>Monday to Friday</dt><dd>10am to 6pm</dd></div>
+        <div><dt>Saturday</dt><dd>9am to 5pm</dd></div>
+        <div><dt>Sunday</dt><dd>9am to 3pm</dd></div>
+      </dl>
+      <p class="sjf-note">Closed public holidays unless we say otherwise.</p>
+      <a class="sjf-dir" href="{{ maps }}" target="_blank" rel="noopener">Get directions</a>
+    </details>
+  </div>
+
+  <div class="sjf-bottom">
+    <div class="sjf-wrap sjf-bottom-in">
+      <p class="sjf-copy">&copy; {{ 'now' | date: '%Y' }} SJ Sports Australia<span class="sjf-dot" aria-hidden="true">&middot;</span><span class="sjf-by">Designed by <a href="https://offleesh.com" target="_blank" rel="noopener">Off Leesh</a></span></p>
+      <ul class="sjf-legal" role="list">
+        {%- if shop.privacy_policy -%}<li><a href="{{ shop.privacy_policy.url }}">Privacy</a></li>{%- endif -%}
+        {%- if shop.refund_policy -%}<li><a href="{{ shop.refund_policy.url }}">Returns and refunds</a></li>{%- endif -%}
+        {%- if shop.shipping_policy -%}<li><a href="{{ shop.shipping_policy.url }}">Shipping policy</a></li>{%- endif -%}
+        {%- if shop.terms_of_service -%}<li><a href="{{ shop.terms_of_service.url }}">Terms</a></li>{%- endif -%}
+      </ul>
+      {%- if shop.enabled_payment_types.size > 0 -%}
+        <ul class="sjf-pay" role="list" aria-label="Payment methods we accept">
+          {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag: class: 'sjf-pay-ic' }}</li>{%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+<script>
+  /* Link columns: open on desktop, folded on phones (a tap opens one). */
+  (function () {
+    var mq = window.matchMedia('(max-width: 767px)');
+    function set() { document.querySelectorAll('[data-sjf-col]').forEach(function (d) { d.open = !mq.matches; }); }
+    set(); if (mq.addEventListener) mq.addEventListener('change', set);
+  })();
+</script>
+<style>
+  .sjf{--ink:#0F2236;--navy:#005186;--deep:#0A2E4D;--deeper:#06223A;--sun:#FFC72C;--txt:#DCE6F0;--muted:#A9BDD0;--line:rgba(255,255,255,.14);
+    background:var(--deep);color:var(--txt);font-family:'Barlow',system-ui,sans-serif;font-size:16px;line-height:1.5}
+  .sjf *,.sjf *::before,.sjf *::after{box-sizing:border-box}
+  .sjf :where(p,ul,li,dl,dt,dd,h2){margin:0;padding:0}
+  .sjf ul{list-style:none}
+  .sjf a{color:inherit;text-decoration:none}
+  .sjf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .sjf :focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+  .sjf-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .sjf-wrap{max-width:1464px;margin:0 auto;padding-left:16px;padding-right:16px}
+
+  .sjf-help{display:grid;gap:10px;padding-top:32px;padding-bottom:28px}
+  .sjf-card{display:grid;grid-template-columns:48px 1fr;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);transition:border-color .2s,background-color .2s}
+  .sjf-card:hover{border-color:var(--sun);background:rgba(255,255,255,.07)}
+  .sjf-card .ic{width:48px;height:48px;border-radius:12px;background:var(--sun);color:var(--deep);display:grid;place-items:center}
+  .sjf-card b{display:block;font-family:'Barlow Condensed',system-ui,sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.02em;color:#fff;line-height:1.1}
+  .sjf-card .v{display:block;font-weight:600;color:#fff;font-size:16px;word-break:break-word}
+  .sjf-card small{display:block;color:var(--muted);font-size:14px}
+
+  .sjf-news{background:var(--navy);padding:28px 0}
+  .sjf-news-in{display:grid;gap:16px;align-items:center}
+  .sjf-kick{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sun)}
+  .sjf-news-h{font-family:'Barlow Condensed',system-ui,sans-serif;font-weight:800;font-size:32px;line-height:1;text-transform:uppercase;color:#fff;margin-top:6px}
+  .sjf-news-p{color:#DCE6F0;margin-top:6px;max-width:52ch}
+  .sjf-label{display:block;font-size:14px;font-weight:600;color:#fff;margin-bottom:6px}
+  .sjf-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+  .sjf-row input{min-height:52px;height:52px;border:2px solid transparent!important;border-radius:8px!important;padding:0 14px!important;font:500 16px 'Barlow',system-ui,sans-serif!important;color:var(--ink)!important;background:#fff!important;width:100%;margin:0}
+  .sjf-row input:focus{border-color:var(--sun)!important;outline:none}
+  .sjf-row input[aria-invalid=true]{border-color:#FCA5A5!important}
+  .sjf-row button{min-height:52px;padding:0 22px;border:0;border-radius:8px;background:var(--sun);color:var(--deep);font:700 16px 'Barlow',system-ui,sans-serif;cursor:pointer;transition:background-color .2s;white-space:nowrap}
+  .sjf-row button:hover{background:#FFD45C}
+  .sjf-fine{font-size:13px;color:#C9D6E2;margin-top:8px}
+  .sjf-err{font-size:14px;color:#FECACA;margin-top:8px;font-weight:600}
+  .sjf-ok{font-weight:700;color:#fff;background:rgba(255,255,255,.1);border-radius:8px;padding:14px 16px}
+
+  .sjf-main{display:grid;gap:8px;padding-top:32px;padding-bottom:24px}
+  .sjf-brand{padding-bottom:16px}
+  .sjf-logo{display:inline-flex;align-items:center;gap:12px}
+  .sjf-logo img{width:56px;height:56px;border-radius:50%;background:#fff;padding:3px}
+  .sjf-logo span{font-family:'Barlow Condensed',system-ui,sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;text-transform:uppercase;color:#fff}
+  .sjf-brand p{color:var(--muted);margin-top:12px;max-width:36ch;font-size:15px}
+  .sjf-social{display:flex;gap:8px;margin-top:16px}
+  .sjf-social a{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:#fff;transition:background-color .2s,color .2s,border-color .2s}
+  .sjf-social a:hover{background:var(--sun);border-color:var(--sun);color:var(--deep)}
+  .sjf-col{border-top:1px solid var(--line)}
+  .sjf-col summary{list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:52px;cursor:pointer;font-family:'Barlow Condensed',system-ui,sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:#fff}
+  .sjf-col summary::-webkit-details-marker{display:none}
+  .sjf-col[open] .chev{transform:rotate(180deg)}
+  .sjf-col .chev{transition:transform .2s;color:var(--muted)}
+  .sjf-col ul{padding-bottom:14px}
+  .sjf-col li a{display:flex;align-items:center;min-height:44px;color:var(--txt);font-size:16px;transition:color .2s}
+  .sjf-col li a:hover{color:var(--sun);text-decoration:underline;text-underline-offset:3px}
+  .sjf-hours dl{display:grid;gap:0;padding-bottom:6px}
+  .sjf-hours dl div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .sjf-hours dd{font-weight:700;color:#fff}
+  .sjf-note{font-size:13.5px;color:var(--muted);margin-top:10px}
+  .sjf .sjf-hours a.sjf-dir{display:inline-flex;align-items:center;min-height:44px;margin:6px 0 14px;font-weight:700;color:var(--sun)!important;text-decoration:underline;text-underline-offset:3px}
+
+  .sjf-bottom{background:var(--deeper);padding:18px 0 calc(90px + env(safe-area-inset-bottom))}
+  .sjf-bottom-in{display:grid;gap:12px;justify-items:center;text-align:center}
+  .sjf-copy{font-size:14px;color:var(--muted)}
+  .sjf-dot{margin:0 8px;opacity:.6}
+  .sjf .sjf-by a{color:var(--txt);font-weight:600;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;min-height:44px}
+  .sjf .sjf-by a:hover{color:var(--sun)}
+  .sjf-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:0 18px}
+  .sjf-legal a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--txt)}
+  .sjf-legal a:hover{color:var(--sun)}
+  .sjf-pay{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  .sjf-pay-ic{width:38px;height:24px;display:block}
+
+  @media (min-width:768px){
+    .sjf-wrap{padding-left:24px;padding-right:24px}
+    .sjf-help{grid-template-columns:repeat(3,1fr);gap:16px;padding-top:44px}
+    .sjf-news-in{grid-template-columns:1.1fr 1fr;gap:40px}
+    .sjf-main{grid-template-columns:1.3fr repeat(4,1fr);gap:32px;padding-top:44px}
+    .sjf-brand{padding:0}
+    .sjf-col{border-top:0}
+    .sjf-col summary{pointer-events:none;min-height:0;margin-bottom:10px}
+    .sjf-col summary .chev{display:none}
+    .sjf-col li a{min-height:44px}
+    .sjf-bottom{padding:18px 0}
+    .sjf-bottom-in{grid-template-columns:auto 1fr auto;justify-items:start;text-align:left;align-items:center}
+    .sjf-legal{justify-content:center}
+  }
+  @media (min-width:1025px){ .sjf-wrap{padding-left:32px;padding-right:32px} .sjf-news-h{font-size:40px} }
+  @media (min-width:768px) and (max-width:1100px){ .sjf-main{grid-template-columns:repeat(3,1fr)} .sjf-brand{grid-column:1 / -1} }
+  @media (prefers-reduced-motion:reduce){ .sjf *{transition:none!important} }
+</style>
+
+{% schema %}
+{
+  "name": "SJ footer",
+  "class": "sjf-section",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "news_kicker", "label": "Newsletter small line", "default": "Black Friday deals first" },
+    { "type": "text", "id": "news_heading", "label": "Newsletter heading", "default": "Get the deals before anyone else" },
+    { "type": "text", "id": "news_text", "label": "Newsletter text", "default": "New stock, sale dates and bat drops, straight to your inbox." }
+  ],
+  "blocks": [
+    { "type": "links", "name": "Link column", "settings": [
+      { "type": "text", "id": "title", "label": "Heading", "default": "Shop" },
+      { "type": "textarea", "id": "links", "label": "Links", "info": "One per line: Label|/url" } ] }
+  ]
+}
+{% endschema %}

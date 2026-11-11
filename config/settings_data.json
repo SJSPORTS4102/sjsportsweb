@@ -67,7 +67,7 @@
     "swatch_item_style": "1",
     "show_color_type": "1",
     "enable_pr_size": false,
-    "pr_img_effect": "2",
+    "pr_img_effect": "0",
     "pr_curent": "3",
     "use_group_media": true,
     "show_first_media": false,
@@ -561,10 +561,10 @@
           "show_announcement": true,
           "effect": "1",
           "au_time": 3.5,
-          "height": 45,
-          "fontsize": 12,
+          "height": 40,
+          "fontsize": 13,
           "cl": "#ffffff",
-          "bg": "#e91e63",
+          "bg": "#0A2E4D",
           "bg_op": 100,
           "close": "1",
           "cl_btn": "#ffffff",
@@ -873,24 +873,24 @@
           "hover": "hover_sideup",
           "enable_active": true,
           "h_navmb": 70,
-          "bgnav": "#000000",
+          "bgnav": "#ffffff",
           "opnav": 100,
-          "clnav": "#ffffff",
-          "clnav_hover": "#e23181",
+          "clnav": "#0F2236",
+          "clnav_hover": "#A81C60",
           "h_icon": "kalles",
           "hover_icon": "2",
           "show_search": true,
           "show_acc": true,
           "show_wis": true,
           "cart_des": "1",
-          "bg_hc": "#000000",
+          "bg_hc": "#A81C60",
           "cl_hc": "#ffffff",
           "sticky_header": true,
           "scroll_header": false,
-          "bgnavst": "#000000",
+          "bgnavst": "#ffffff",
           "opnavst": 100,
-          "clnavst": "#ffffff",
-          "clnavst_hover": "#e23181",
+          "clnavst": "#0F2236",
+          "clnavst_hover": "#A81C60",
           "transparent_header": false,
           "space_transparent_header": false,
           "bgnavtr": "#000000",
@@ -1382,8 +1382,8 @@
               "border": false,
               "item_pd": 0,
               "item_rd": 0,
-              "img_effect": "zoom",
-              "b_effect": "plus-zoom-overlay",
+              "img_effect": "none",
+              "b_effect": "none",
               "image_ratio": "rationt",
               "image_size": "cover",
               "image_position": "8",
@@ -1909,28 +1909,33 @@
           "mini_cart-6": {
             "type": "btn",
             "settings": {
-              "title": "Return To Shop",
+              "title": "Start shopping",
               "url": "",
               "btn_icon": false,
               "button_style": "default",
               "btn_cl": "primary",
               "button_effect": "fade"
             }
+          },
+          "sjc_express": {
+            "type": "btnmr",
+            "settings": {}
           }
         },
         "block_order": [
           "mini_cart-0",
           "mini_cart-1",
-          "mini_cart-2",
-          "mini_cart-3",
           "mini_cart-4",
+          "sjc_express",
+          "mini_cart-3",
+          "mini_cart-2",
           "mini_cart-5",
           "mini_cart-6"
         ],
         "settings": {
           "style": "1",
           "pos": "2",
-          "enable_pr": true,
+          "enable_pr": false,
           "enable_calc_ship": true,
           "enable_note": true,
           "enable_rates": true,
@@ -3000,6 +3005,215 @@
           "mg_mb": ",,30px,",
           "pd_mb": ""
         }
+      },
+      "sj-mega-nav": {
+        "type": "sj-mega-nav",
+        "blocks": {
+          "sjn_1": {
+            "type": "cat",
+            "settings": {
+              "title": "Bats",
+              "url": "/collections/cricket-bat",
+              "best": "cricket-bat",
+              "g1_title": "Shop by size",
+              "g1_links": "Senior Short Handle|/collections/cricket-bat-cricket-bat-seniors\nLong handle|/collections/cricket-bat-senior-lb-lh-bats\nHarrow and small adult|/collections/cricket-bat-harrow-sm-bats\nJunior English willow|/collections/cricket-bat-cricket-bat-juniors\nJunior Kashmir willow|/collections/cricket-bat-junior-kashmir-willow",
+              "g2_title": "Shop by brand",
+              "g2_links": "Gray Nicolls|/collections/gray-nicolls-bat\nKookaburra|/collections/kookaburra-bat\nSS|/collections/ss\nGM|/collections/gm\nMRF|/collections/mrf\nDSC|/collections/dsc-bat",
+              "g3_title": "Look after it",
+              "g3_links": "Bat grips|/collections/bat-grips\nBat oil and mallets|/collections/bat-care\nBat repair and maintenance|/collections/bat-repair-maintenance\nFree bat prep service|/pages/free-bat-preparation-service\nTennis and tape ball bats|/collections/tennis-tape-ball-bats"
+            }
+          },
+          "sjn_2": {
+            "type": "cat",
+            "settings": {
+              "title": "Gloves",
+              "url": "/collections/cricket-batting-gloves",
+              "best": "cricket-batting-gloves",
+              "g1_title": "Shop by size",
+              "g1_links": "Senior|/collections/cricket-batting-gloves-senior-gloves\nYouth|/collections/cricket-batting-gloves-youth-gloves\nJunior|/collections/cricket-batting-gloves-junior-gloves\nBatting inners|/collections/batting-inners",
+              "g2_title": "Shop by brand",
+              "g2_links": "Gray Nicolls|/collections/gray-nicolls-gloves\nKookaburra|/collections/kookaburra-gloves\nGM|/collections/gm-gloves\nSS|/collections/ss-gloves\nMRF|/collections/mrf-gloves\nDSC|/collections/dsc-gloves\nSJ Sports|/collections/sj-sports-gloves",
+              "g3_title": "Keeping",
+              "g3_links": "Keeping gloves|/collections/keeper-cricket-wicket-keeping-gloves\nKeeping inners|/collections/keeping-inners"
+            }
+          },
+          "sjn_3": {
+            "type": "cat",
+            "settings": {
+              "title": "Pads",
+              "url": "/collections/cricket-batting-pads",
+              "best": "cricket-batting-pads",
+              "g1_title": "Shop by size",
+              "g1_links": "Senior|/collections/cricket-batting-pads-senior-pads\nYouth|/collections/cricket-batting-pads-youth-pads\nJunior|/collections/cricket-batting-pads-junior-pads",
+              "g2_title": "Shop by brand",
+              "g2_links": "Gray Nicolls|/collections/gray-nicolls-pads\nKookaburra|/collections/kookaburra-pads\nGM|/collections/gm-pads\nSS|/collections/ss-pads\nMRF|/collections/mrf-pads\nDSC|/collections/dsc-pads\nMasuri|/collections/masuri-pads",
+              "g3_title": "Goes with pads",
+              "g3_links": "Thigh guards|/collections/cricket-protectives-thigh-guards\nCombo thigh guards|/collections/cricket-protectives-combo-thigh-guards\nPad covers|/collections/clads-pad-cover"
+            }
+          },
+          "sjn_4": {
+            "type": "cat",
+            "settings": {
+              "title": "Helmets",
+              "url": "/collections/cricket-helmets",
+              "best": "cricket-helmets",
+              "g1_title": "Shop by size",
+              "g1_links": "Senior|/collections/cricket-helmets-senior-helmets\nYouth|/collections/youth-helmets\nJunior|/collections/cricket-helmets-junior-helmets",
+              "g2_title": "Shop by brand",
+              "g2_links": "Gray Nicolls|/collections/gray-nicolls-helmet\nMasuri|/collections/masuri-helmet\nShrey|/collections/shrey-helmet\nSS|/collections/ss-helmet",
+              "g3_title": "Extras",
+              "g3_links": "Neck guards|/collections/neck-protectors-stem-guard\nHelmet accessories|/collections/helmet-accessories"
+            }
+          },
+          "sjn_5": {
+            "type": "cat",
+            "settings": {
+              "title": "Protection",
+              "url": "/collections/cricket-protectives",
+              "best": "cricket-protectives",
+              "g1_title": "Guards",
+              "g1_links": "Abdominal guards|/collections/cricket-protectives-abdominal-guards\nThigh guards|/collections/cricket-protectives-thigh-guards\nCombo thigh guards|/collections/cricket-protectives-combo-thigh-guards\nArm guards|/collections/cricket-protectives-arm-guards\nChest guards|/collections/cricket-protectives-chest-guards",
+              "g2_title": "Base layers",
+              "g2_links": "Compression shorts|/collections/underwear-lower-compressions\nCompression tops|/collections/shirts-upper-body-compressions",
+              "g3_title": "",
+              "g3_links": ""
+            }
+          },
+          "sjn_6": {
+            "type": "cat",
+            "settings": {
+              "title": "Keeping",
+              "url": "/collections/keeper",
+              "best": "keeper",
+              "g1_title": "Keeping gear",
+              "g1_links": "Keeping gloves|/collections/keeper-cricket-wicket-keeping-gloves\nKeeping pads|/collections/keeping-pads-senior\nKeeping inners|/collections/keeping-inners\nKeeping helmets|/collections/keeping-helmets",
+              "g2_title": "Gloves by size",
+              "g2_links": "Senior|/collections/keeping-gloves-senior\nYouth|/collections/keeping-gloves-youth\nJunior|/collections/keeping-gloves-junior-small-juniors",
+              "g3_title": "Shop by brand",
+              "g3_links": "Kookaburra|/collections/kookaburra-keeping\nGray Nicolls|/collections/gray-nicolls-keeping\nSS|/collections/ss-keeping\nDSC|/collections/dsc-keeping\nMasuri|/collections/masuri-keeping"
+            }
+          },
+          "sjn_7": {
+            "type": "cat",
+            "settings": {
+              "title": "Balls",
+              "url": "/collections/cricket-balls",
+              "best": "cricket-balls",
+              "g1_title": "Shop by type",
+              "g1_links": "Senior 156g|/collections/senior-156gms-balls\nJunior 142g|/collections/junior-142gms-balls\nBowling machine balls|/collections/bowling-machine-balls\nTennis balls|/collections/cricket-tennis-balls\nSoft balls|/collections/soft-balls\nIndoor balls|/collections/indoor-cricket-balls",
+              "g2_title": "Shop by brand",
+              "g2_links": "Kookaburra|/collections/kookaburra-balls\nGray Nicolls|/collections/gray-nicolls-balls\nPaceman|/collections/paceman-balls\nSJ Sports|/collections/sj-sports-balls",
+              "g3_title": "",
+              "g3_links": ""
+            }
+          },
+          "sjn_8": {
+            "type": "cat",
+            "settings": {
+              "title": "Shoes",
+              "url": "/collections/cricket-shoes",
+              "best": "cricket-shoes",
+              "g1_title": "Shop by type",
+              "g1_links": "Spikes|/collections/spike-shoes\nRubber soles|/collections/rubber-shoes\nShoe accessories|/collections/shoes-accessories\nSocks|/collections/cricket-socks",
+              "g2_title": "Shop by brand",
+              "g2_links": "Asics|/collections/asics-shoes\nKookaburra|/collections/kookaburra-shoes\nGray Nicolls|/collections/gray-nicolls-shoes\nNew Balance|/collections/new-balance-shoes\nKelme|/collections/kelme-shoes",
+              "g3_title": "",
+              "g3_links": ""
+            }
+          },
+          "sjn_9": {
+            "type": "cat",
+            "settings": {
+              "title": "Kit bags",
+              "url": "/collections/kit-bags",
+              "best": "kit-bags",
+              "g1_title": "Shop by type",
+              "g1_links": "Wheelie bags|/collections/wheelie-bags\nDuffle bags|/collections/duffle-bags\nNon wheelie bags|/collections/non-wheelie-bags",
+              "g2_title": "Shop by brand",
+              "g2_links": "Gray Nicolls|/collections/gray-nicolls-bags\nKookaburra|/collections/kookaburra-bags\nGM|/collections/gm-bags\nSS|/collections/ss-bags\nMRF|/collections/mrf-bags\nDSC|/collections/dsc-bags\nSJ Sports|/collections/sj-sports-bags",
+              "g3_title": "",
+              "g3_links": ""
+            }
+          },
+          "sjn_10": {
+            "type": "cat",
+            "settings": {
+              "title": "Training",
+              "url": "/collections/cricket-training-aids",
+              "best": "cricket-training-aids",
+              "g1_title": "Shop by type",
+              "g1_links": "Bowling machines|/search?q=bowling+machine&type=product\nBatting aids|/collections/batting-aids\nBowling aids|/collections/bowling-aids\nFielding|/collections/fielding-aids\nCoaching aids|/collections/coaching-aids\nStumps|/collections/stumps",
+              "g2_title": "Backyard",
+              "g2_links": "Backyard bundles|/collections/backyard-bundles\nGround equipment|/collections/ground-equipment",
+              "g3_title": "",
+              "g3_links": ""
+            }
+          },
+          "sjn_11": {
+            "type": "cat",
+            "settings": {
+              "title": "More",
+              "url": "/collections/best-selling-collection",
+              "best": "best-selling-collection",
+              "g1_title": "Clothing",
+              "g1_links": "All clothing|/collections/clothing\nCompression tops|/collections/shirts-upper-body-compressions\nCompression shorts|/collections/underwear-lower-compressions\nTrousers|/collections/trousers\nCaps and hats|/collections/caps-hats\nSupporter's gear|/collections/supporters-gear",
+              "g2_title": "Kits and bundles",
+              "g2_links": "Senior kit|/collections/senior-kit\nYouth kit|/collections/youth-kit-1\nJunior kit|/collections/junior-small-junior-kit\nBackyard bundles|/collections/backyard-bundles",
+              "g3_title": "Everything else",
+              "g3_links": "Indoor cricket|/collections/indoor\nMore sports|/collections/more-sports\nGift cards|/collections/gift-vouchers\nClearance|/collections/clearance"
+            }
+          }
+        },
+        "block_order": [
+          "sjn_1",
+          "sjn_2",
+          "sjn_3",
+          "sjn_4",
+          "sjn_5",
+          "sjn_6",
+          "sjn_7",
+          "sjn_8",
+          "sjn_9",
+          "sjn_10",
+          "sjn_11"
+        ],
+        "settings": {}
+      },
+      "sj-footer": {
+        "type": "sj-footer",
+        "blocks": {
+          "sjf_1": {
+            "type": "links",
+            "settings": {
+              "title": "Shop",
+              "links": "Cricket bats|/collections/cricket-bat?sort_by=best-selling\nBatting gloves|/collections/cricket-batting-gloves?sort_by=best-selling\nBatting pads|/collections/cricket-batting-pads?sort_by=best-selling\nHelmets|/collections/cricket-helmets?sort_by=best-selling\nBowling machines|/search?q=bowling+machine&type=product\nJunior gear|/collections/junior-cricket-super-deals?sort_by=best-selling\nBlack Friday sale|/collections/black-friday-sale"
+            }
+          },
+          "sjf_2": {
+            "type": "links",
+            "settings": {
+              "title": "Help",
+              "links": "Contact us|/pages/contact-us\nShipping and delivery|/pages/shipping-delivery\nWarranty and exchange|/pages/warranty-exchange\nFree bat prep|/pages/free-bat-preparation-service\nBat size guide|/blogs/news/what-size-cricket-bat-for-my-child\nBowling machine guide|/blogs/news/how-to-choose-a-cricket-bowling-machine"
+            }
+          },
+          "sjf_3": {
+            "type": "links",
+            "settings": {
+              "title": "About",
+              "links": "About SJ Sports|/pages/about-us\nNews and guides|/blogs/news\nMy account|/account\nWishlist|/pages/wishlist"
+            }
+          }
+        },
+        "block_order": [
+          "sjf_1",
+          "sjf_2",
+          "sjf_3"
+        ],
+        "settings": {
+          "news_kicker": "Black Friday deals first",
+          "news_heading": "Get the deals before anyone else",
+          "news_text": "New stock, sale dates and bat drops, straight to your inbox."
+        }
       }
     },
     "content_for_index": [],
@@ -3080,7 +3294,8 @@
         "disabled": false,
         "settings": {}
       }
-    }
+    },
+    "enable_confetti": false
   },
   "platform_customizations": {
     "custom_css": [

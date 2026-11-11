@@ -48,8 +48,9 @@ else
    endif
 endif
 # SJ CRO 13: free bat prep badge on English willow and junior bats (not Kashmir willow)
+# ("Cricket Batting Pads" and "Cricket Batting Gloves" also contain "Cricket Bat", so skip anything with "Batting")
 if arr_badge == blank and product.type contains 'Cricket Bat' and product.type != 'Cricket Bat - Junior Kashmir Willow'
-   unless product.title contains 'Kashmir'
+   unless product.title contains 'Kashmir' or product.type contains 'Batting'
       assign arr_badge = 'Free bat prep' | split: 'nt-t4s'
       assign arr_badge_handle = 'free-bat-prep' | split: 'nt-t4s'
    endunless

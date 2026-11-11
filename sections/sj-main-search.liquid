@@ -1,0 +1,252 @@
+{%- comment -%}
+  SJ search results (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/search-results.md.
+  Theme copy only; replaces the Gecko top-collections, heading and main-search sections in templates/search.json
+  (switched off, not deleted). Reuses the collection page parts (sj-card, sj-collection.css/js): filters from
+  search.filters, sort, load more. The store uses Search & Discovery's broad matching (a two-word search can return
+  hundreds of loose matches, best ones first), so "Narrow it down" chips give one-tap product type filters.
+  No results and empty searches get suggestions, a new search box and best sellers instead of a dead end.
+{%- endcomment -%}
+{%- liquid
+  assign terms = search.terms | strip
+  assign q_url = search.terms | url_encode
+  assign sort = search.sort_by | default: search.default_sort_by
+  assign prod_only = false
+  if search.types.size == 1 and search.types.first == 'product'
+    assign prod_only = true
+  endif
+  assign noun = 'results'
+  if prod_only
+    assign noun = 'products'
+  endif
+  assign n = search.results_count
+  if n == 1
+    assign noun = noun | remove_last: 's'
+  endif
+  assign base = routes.search_url | append: '?q=' | append: q_url
+  if prod_only
+    assign base = base | append: '&type=product'
+  endif
+
+  assign active_n = 0
+  assign pt = nil
+  for f in search.filters
+    assign active_n = active_n | plus: f.active_values.size
+    if f.type == 'price_range'
+      if f.min_value.value != nil or f.max_value.value != nil
+        assign active_n = active_n | plus: 1
+      endif
+    endif
+    if f.param_name == 'filter.p.product_type'
+      assign pt = f
+    endif
+  endfor
+-%}
+{{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+{{ 'sj-search.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sj-collection.js' | asset_url }}" defer></script>
+
+<div class="sjcol sjsr" data-sjcol data-sjsr data-section="{{ section.id }}" data-terms="{{ terms | escape }}">
+  <div class="sjcol-wrap">
+    {%- if search.performed and n > 0 -%}
+      <div class="sjsr-head">
+        <h1 class="sjcol-title">Results for <span class="sjsr-q">&ldquo;{{ terms | escape }}&rdquo;</span></h1>
+        <p class="sjsr-sub">{{ n }} {{ noun }}{% if active_n == 0 and n > 24 %}, best matches first{% endif %}</p>
+      </div>
+
+      {%- if pt and pt.active_values.size == 0 -%}
+        {%- assign vals = pt.values | sort: 'count' | reverse -%}
+        {%- assign shown_chips = 0 -%}
+        <div class="sjsr-narrow">
+          <p class="sjsr-lab" id="sjsr-narrow-l">Narrow it down</p>
+          <div class="sjcol-chips" role="list" aria-labelledby="sjsr-narrow-l">
+            {%- for val in vals -%}
+              {%- if val.count == 0 %}{% continue %}{% endif -%}
+              {%- if shown_chips >= 8 %}{% break %}{% endif -%}
+              {%- assign shown_chips = shown_chips | plus: 1 -%}
+              {%- assign cl = val.label | split: ' - ' | last | remove: 'Cricket ' | strip -%}
+              <a role="listitem" href="{{ val.url_to_add }}">{{ cl }} <small>{{ val.count }}</small></a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="sjcol-layout{% if search.filters.size == 0 %} no-filters{% endif %}">
+        {%- if search.filters.size > 0 -%}
+          <aside class="sjcol-filters" id="sjcol-filters" aria-label="Filters" data-sjcol-filters>
+            <div class="fh"><p class="ft">Filter</p><button type="button" class="fx" data-sjcol-fclose aria-label="Close filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+            <form class="fbody" action="{{ routes.search_url }}" method="get" data-sjcol-form>
+              <input type="hidden" name="q" value="{{ terms | escape }}">
+              {%- if prod_only -%}<input type="hidden" name="type" value="product">{%- endif -%}
+              <input type="hidden" name="sort_by" value="{{ sort }}">
+              {%- for f in search.filters -%}
+                <fieldset class="fg">
+                  <legend>{{ f.label }}</legend>
+                  {%- case f.type -%}
+                    {%- when 'price_range' -%}
+                      <div class="price">
+                        <label><span>Min</span><input type="number" inputmode="numeric" name="{{ f.min_value.param_name }}" value="{{ f.min_value.value | money_without_currency | remove: ',' | remove: '.00' }}" placeholder="0" min="0"></label>
+                        <label><span>Max</span><input type="number" inputmode="numeric" name="{{ f.max_value.param_name }}" value="{{ f.max_value.value | money_without_currency | remove: ',' | remove: '.00' }}" placeholder="{{ f.range_max | money_without_currency | remove: ',' | remove: '.00' }}" min="0"></label>
+                      </div>
+                    {%- else -%}
+                      {%- for val in f.values limit: 30 -%}
+                        {%- if val.count == 0 and val.active == false %}{% continue %}{% endif -%}
+                        <label class="opt"><input type="checkbox" name="{{ val.param_name }}" value="{{ val.value }}"{% if val.active %} checked{% endif %}><span>{{ val.label }}</span><small>{{ val.count }}</small></label>
+                      {%- endfor -%}
+                  {%- endcase -%}
+                </fieldset>
+              {%- endfor -%}
+              <div class="fbtns"><button type="submit" class="apply">Show results</button>{% if active_n > 0 %}<a class="clear" href="{{ base }}">Clear all</a>{% endif %}</div>
+            </form>
+          </aside>
+          <div class="sjcol-fscrim" data-sjcol-fclose hidden></div>
+        {%- endif -%}
+
+        <div class="sjcol-main">
+          <div class="sjcol-bar">
+            {%- if search.filters.size > 0 -%}<button type="button" class="fbtn" data-sjcol-fopen aria-controls="sjcol-filters" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M21 12h-9"/><path d="M8 12H3"/><path d="M21 20h-5"/><path d="M12 20H3"/><path d="M14 2v4"/><path d="M8 10v4"/><path d="M16 18v4"/></svg>Filter{% if active_n > 0 %}<span class="n">{{ active_n }}</span>{% endif %}</button>{%- endif -%}
+            <span class="cnt" aria-live="polite">{{ n }} {{ noun }}</span>
+            <label class="sort"><span>Sort:</span>
+              <select data-sjcol-sort aria-label="Sort by">
+                {%- for o in search.sort_options -%}<option value="{{ o.value }}"{% if o.value == sort %} selected{% endif %}>{{ o.name }}</option>{%- endfor -%}
+              </select>
+            </label>
+          </div>
+
+          {%- if active_n > 0 -%}
+            <div class="sjcol-active">
+              {%- for f in search.filters -%}{%- for val in f.active_values -%}<a href="{{ val.url_to_remove }}">{{ val.label | split: ' - ' | last | remove: 'Cricket ' | strip }}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg><span class="sjn-sr">Remove filter</span></a>{%- endfor -%}{%- if f.type == 'price_range' -%}{%- if f.min_value.value != nil or f.max_value.value != nil -%}<a href="{{ f.url_to_remove }}">Price<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>{%- endif -%}{%- endif -%}{%- endfor -%}
+              <a class="clr" href="{{ base }}">Clear all</a>
+            </div>
+          {%- endif -%}
+
+          {%- paginate search.results by 24 -%}
+            {%- assign docs = '' -%}
+            <ul class="sjcol-grid" role="list" data-sjcol-grid>
+              {%- assign pi = 0 -%}
+              {%- for item in search.results -%}
+                {%- if item.object_type != 'product' -%}
+                  {%- capture d -%}<li><a href="{{ item.url }}"><b>{{ item.title }}</b><small>{% if item.object_type == 'article' %}Guide{% else %}Page{% endif %}{% assign ex = item.content | strip_html | strip | truncate: 110 %}{% if ex != blank %} &middot; {{ ex }}{% endif %}</small></a></li>{%- endcapture -%}
+                  {%- assign docs = docs | append: d -%}
+                  {%- continue -%}
+                {%- endif -%}
+                {%- liquid
+                  assign pi = pi | plus: 1
+                  assign eager = false
+                  if pi <= 4 and paginate.current_page == 1
+                    assign eager = true
+                  endif
+                -%}
+                {%- render 'sj-card', product: item, rank: 0, eager: eager -%}
+                {%- if paginate.current_page == 1 and pi == 4 -%}
+                  <li class="sjcol-tile tile-size">
+                    <p class="th">Can't find it?</p><p>Tell us what you're after and the team will check for you. Open 7 days in Woolloongabba.</p>
+                    <a href="tel:0423240478">Call 0423 240 478</a>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if pi == 0 and docs == '' -%}
+                <li class="sjcol-empty"><p class="th">Nothing matches those filters</p><p><a href="{{ base }}">Clear the filters</a> or call the shop on <a href="tel:0423240478">0423 240 478</a>.</p></li>
+              {%- endif -%}
+            </ul>
+            {%- if docs != '' -%}
+              <section class="sjsr-docs" aria-labelledby="sjsr-docs-h"><h2 id="sjsr-docs-h">Guides and pages</h2><ul role="list">{{ docs }}</ul></section>
+            {%- endif -%}
+            {%- liquid
+              assign shown = paginate.current_page | times: paginate.page_size
+              if shown > paginate.items
+                assign shown = paginate.items
+              endif
+              assign pct = 0
+              if paginate.items > 0
+                assign pct = shown | times: 100 | divided_by: paginate.items
+              endif
+            -%}
+            {%- if paginate.items > 24 -%}
+              <div class="sjcol-more" data-sjcol-more>
+                <p><span data-sjcol-shown>{{ shown }}</span> of {{ paginate.items }} {{ noun }}</p>
+                <div class="bar"><span style="width:{{ pct }}%"></span></div>
+                {%- if paginate.next -%}<a class="btn" href="{{ paginate.next.url }}" data-sjcol-next data-total="{{ paginate.items }}">Show {{ paginate.page_size }} more</a>{%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+
+    {%- else -%}
+      {%- comment -%} No results, or the search page opened with no words {%- endcomment -%}
+      <div class="sjsr-none">
+        {%- if search.performed -%}
+          <h1 class="sjcol-title">No results for <span class="sjsr-q">&ldquo;{{ terms | escape }}&rdquo;</span></h1>
+          <ul class="tips" role="list">
+            <li>Check the spelling, or try a brand like Kookaburra, MRF or Gray Nicolls.</li>
+            <li>Use fewer words: &ldquo;pads&rdquo; finds more than &ldquo;junior left hand batting pads&rdquo;.</li>
+          </ul>
+        {%- else -%}
+          <h1 class="sjcol-title">Search the store</h1>
+        {%- endif -%}
+        <form class="sjsr-form" action="{{ routes.search_url }}" method="get" role="search">
+          <label for="sjsr-q-{{ section.id }}" class="sjn-sr">Search the store</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="sjsr-q-{{ section.id }}" type="search" name="q" value="{{ terms | escape }}" placeholder="Search bats, gloves, pads, brands" enterkeyhint="search" autocomplete="off">
+          <input type="hidden" name="type" value="product">
+          <button type="submit">Search</button>
+        </form>
+        {%- assign lines = section.settings.popular | newline_to_br | split: '<br />' -%}
+        <p class="sjsr-lab" id="sjsr-pop-l">Popular right now</p>
+        <div class="sjcol-chips" role="list" aria-labelledby="sjsr-pop-l">
+          {%- for line in lines -%}
+            {%- assign parts = line | strip | split: '|' -%}
+            {%- if parts.size == 2 -%}<a role="listitem" href="{{ parts[1] | strip }}">{{ parts[0] | strip }}</a>{%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- assign bc = collections[section.settings.best] -%}
+      {%- if bc.products.size > 0 -%}
+        <section class="sjsr-best" aria-labelledby="sjsr-best-h">
+          <h2 id="sjsr-best-h">Best sellers</h2>
+          <ul class="sjcol-grid" role="list">
+            {%- assign bn = 0 -%}
+            {%- for p in bc.products -%}
+              {%- if bn >= 10 %}{% break %}{% endif -%}
+              {%- if p.available == false or p.featured_media == blank %}{% continue %}{% endif -%}
+              {%- assign bn = bn | plus: 1 -%}
+              {%- render 'sj-card', product: p, rank: bn, eager: false -%}
+            {%- endfor -%}
+          </ul>
+        </section>
+      {%- endif -%}
+    {%- endif -%}
+
+    <section class="sjcol-help" aria-labelledby="sjcol-help-h">
+      <div>
+        <h2 id="sjcol-help-h">Need a hand?</h2>
+        <div class="gl">
+          <a href="/blogs/news/what-size-cricket-bat-for-my-child"><span>Cricket bat size guide<small>Find the right size by height</small></span></a>
+          <a href="/pages/size-chart"><span>Size chart<small>Gloves, pads, helmets and shoes</small></span></a>
+          <a href="tel:0423240478"><span>Talk to the shop<small>0423 240 478, open 7 days</small></span></a>
+        </div>
+      </div>
+      <div class="rv">
+        <a class="sjcol-rev" href="https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba" target="_blank" rel="noopener"><span class="sc">4.9</span><span><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span><small>110 Google reviews of the shop</small></span><b>Read them</b></a>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+  /* keep the words in the header search boxes so shoppers can tweak them */
+  (function () {
+    var r = document.querySelector('[data-sjsr]'); if (!r || !r.dataset.terms) return;
+    document.querySelectorAll('form[role="search"] input[name="q"]').forEach(function (i) { if (!i.value && !i.closest('.sjsr-none')) i.value = r.dataset.terms; });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "SJ search results",
+  "class": "sjcol-section",
+  "settings": [
+    { "type": "textarea", "id": "popular", "label": "Popular links (no results and empty search)", "info": "One per line: Label|/url", "default": "English willow bats|/collections/cricket-bat\nBatting gloves|/collections/cricket-batting-gloves\nBatting pads|/collections/cricket-batting-pads\nHelmets|/collections/cricket-helmets\nBowling machines|/search?q=bowling+machine&type=product\nKit bags|/collections/kit-bags\nGriptec|/search?q=griptec&type=product\nBlack Friday sale|/collections/black-friday-sale" },
+    { "type": "text", "id": "best", "label": "Best sellers collection handle", "default": "best-selling-collection" }
+  ]
+}
+{% endschema %}
