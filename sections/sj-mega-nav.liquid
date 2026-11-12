@@ -61,11 +61,13 @@
                     assign u = parts[1] | strip
                     assign cnt = 0
                     if u contains '/collections/'
-                      assign h = u | split: '/collections/' | last | split: '?' | first | downcase
-                      assign col = collections[h]
-                      if col != blank
-                        assign cnt = col.products_count
-                      endif
+                      unless u contains 'filter.'
+                        assign h = u | split: '/collections/' | last | split: '?' | first | downcase
+                        assign col = collections[h]
+                        if col != blank
+                          assign cnt = col.products_count
+                        endif
+                      endunless
                     endif
                   -%}
                   <li><a href="{{ u }}"><span>{{ parts[0] | strip }}</span>{% if cnt > 0 %}<small>{{ cnt }}</small>{% endif %}<svg class="sjn-i sjn-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>

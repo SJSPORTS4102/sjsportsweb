@@ -59,7 +59,13 @@
     endif
   endif
   assign active_n = 0
+  assign active_v = '|'
   for f in collection.filters
+    if f.param_name == 'filter.p.vendor'
+      for av in f.active_values
+        assign active_v = active_v | append: av.value | append: '|'
+      endfor
+    endif
     assign active_n = active_n | plus: f.active_values.size
     if f.type == 'price_range'
       if f.min_value.value != nil or f.max_value.value != nil
@@ -111,9 +117,24 @@
         {%- for line in lines -%}
           {%- assign parts = line | strip | split: '|' -%}
           {%- if parts.size == 2 -%}
-            {%- assign u = parts[1] | strip -%}{%- assign up = u | split: '?' | first -%}
+            {%- liquid
+              assign u = parts[1] | strip
+              assign up = u | split: '?' | first
+              assign on = false
+              if up == collection.url
+                if u contains 'filter.p.vendor='
+                  assign fv = u | split: 'filter.p.vendor=' | last | split: '&' | first | replace: '+', ' ' | url_decode
+                  assign fvk = '|' | append: fv | append: '|'
+                  if active_v contains fvk
+                    assign on = true
+                  endif
+                elsif active_v == '|'
+                  assign on = true
+                endif
+              endif
+            -%}
             {%- if parts[0] == '---' -%}<span class="sep" role="presentation"></span>{%- else -%}
-            <a role="listitem" href="{{ u }}{% unless u contains '?' %}?sort_by=best-selling{% endunless %}"{% if up == collection.url %} class="on" aria-current="page"{% endif %}>{{ parts[0] | strip }}</a>
+            <a role="listitem" href="{{ u }}{% unless u contains '?' %}?sort_by=best-selling{% endunless %}"{% if on %} class="on" aria-current="page"{% endif %}>{{ parts[0] | strip }}</a>
             {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
