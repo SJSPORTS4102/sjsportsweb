@@ -183,7 +183,21 @@
         <div class="sjp-price" data-price>
           <span class="now" data-now>{{ cv.price | money_without_trailing_zeros }}</span>
           <span class="was" data-was{% unless cv.compare_at_price > cv.price %} hidden{% endunless %}>{{ cv.compare_at_price | money_without_trailing_zeros }}</span>
-          <span class="save" data-save{% unless cv.compare_at_price > cv.price %} hidden{% endunless %}>Save {{ cv.compare_at_price | minus: cv.price | money_without_trailing_zeros }}</span>
+          {%- liquid
+            # saving in whole dollars (cents only when it's under $1) plus % off, both rounded down so they never overstate.
+            # % is left off when the was price is over 3x the price (same rule the product cards use for suspect was prices).
+            assign sv_diff = cv.compare_at_price | minus: cv.price
+            assign sv = sv_diff
+            if sv_diff >= 100
+              assign sv = sv_diff | divided_by: 100 | times: 100
+            endif
+            assign sv_pct = 0
+            assign sv_cap = cv.price | times: 3
+            if cv.compare_at_price > cv.price and cv.compare_at_price <= sv_cap
+              assign sv_pct = sv_diff | times: 100 | divided_by: cv.compare_at_price
+            endif
+          -%}
+          <span class="save" data-save{% unless cv.compare_at_price > cv.price %} hidden{% endunless %}>Save {{ sv | money_without_trailing_zeros }}{% if sv_pct > 0 %} ({{ sv_pct }}% off){% endif %}</span>
         </div>
 
         {%- form 'product', product, id: form_id, class: 'sjp-form', novalidate: 'novalidate', data-sjp-form: '' -%}

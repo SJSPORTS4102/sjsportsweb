@@ -1,0 +1,15 @@
+{%- comment -%}
+  SJ mega nav brand counts (Off Leesh, Nov 2026). Never placed on a page: the nav fetches it with
+  /collections/<handle>?section_id=sj-nav-counts and reads the category's own Brand filter counts
+  (Search & Discovery), so each brand link's number matches what that link shows.
+  Output: {"GRAY NICOLLS":6,"Masuri":15,...}. Liquid can't read another collection's filters, so this has to be fetched.
+{%- endcomment -%}
+{%- if collection -%}
+<script type="application/json" data-sjn-counts>{
+{%- assign first = true -%}
+{%- for f in collection.filters -%}{%- if f.param_name == 'filter.p.vendor' -%}{%- for v in f.values -%}{%- unless first %},{% endunless -%}{{ v.value | json }}:{{ v.count }}{%- assign first = false -%}{%- endfor -%}{%- endif -%}{%- endfor -%}
+}</script>
+{%- endif -%}
+{% schema %}
+{ "name": "SJ nav brand counts", "settings": [] }
+{% endschema %}

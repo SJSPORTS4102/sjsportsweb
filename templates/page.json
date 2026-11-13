@@ -9,6 +9,10 @@
  */
 {
   "sections": {
+    "sj_bat_prep": {
+      "type": "sj-bat-prep",
+      "settings": {}
+    },
     "heading": {
       "type": "heading-static",
       "blocks": {
@@ -102,6 +106,7 @@
     }
   },
   "order": [
+    "sj_bat_prep",
     "heading",
     "main",
     "sidebar-page"

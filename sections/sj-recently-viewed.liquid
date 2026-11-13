@@ -1,0 +1,170 @@
+{%- comment -%}
+  SJ "Recently viewed" (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/recently-viewed.md.
+  Replaces the Gecko recently_viewed section in templates/product.json on the theme copy (that one is switched off).
+  History is the same localStorage list the Gecko section kept ("nt_recent", "id:123,id:456", newest first),
+  so shoppers keep what they viewed before. The product page asks the store search for those IDs
+  (/search?q=id:1 OR id:2&type=product&section_id=sj-recently-viewed) and this file returns compact tiles.
+  Nothing shows for a shopper with no history. "Clear" wipes the list.
+{%- endcomment -%}
+{%- if search.performed -%}
+  {%- comment -%} Fetched by the product page: just the tiles. The page puts them back in viewed order. {%- endcomment -%}
+  <ul class="sjrv-track" role="list" data-sjrv-cards>
+    {%- for p in search.results limit: 15 -%}
+      {%- if p.object_type != 'product' %}{% continue %}{% endif -%}
+      {%- liquid
+        assign cap3 = p.price | times: 3
+        assign was = 0
+        if p.compare_at_price > p.price and p.compare_at_price <= cap3
+          assign was = p.compare_at_price
+        endif
+      -%}
+      <li class="sjrv-tile{% unless p.available %} is-out{% endunless %}" data-pid="{{ p.id }}">
+        <a href="{{ p.url }}">
+          <span class="im">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 180, 240', sizes: '96px', alt: '' }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}</span>
+          <span class="bd">
+            <span class="t">{{ p.title }}</span>
+            <span class="pr"><b>{% if p.price_varies %}From {% endif %}{{ p.price | money_without_trailing_zeros }}</b>{% if was > 0 %} <s><span class="vh">Was </span>{{ was | money_without_trailing_zeros }}</s>{% endif %}{% unless p.available %} <em>Sold out</em>{% endunless %}</span>
+          </span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- elsif template.name == 'product' -%}
+  <section class="sjrv" data-sjrv data-pid="{{ product.id }}" hidden aria-labelledby="sjrv-h">
+    <div class="sjrv-wrap">
+      <div class="sjrv-head">
+        <div>
+          <h2 class="sjrv-h" id="sjrv-h">Recently <span>viewed</span></h2>
+          <p class="sjrv-sub">Pick up where you left off.</p>
+        </div>
+        <div class="sjrv-tools">
+          <button type="button" class="sjrv-clear" data-sjrv-clear><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>Clear<span class="vh"> recently viewed</span></button>
+          <div class="sjrv-nav">
+            <button type="button" data-sjrv-prev aria-label="Previous products" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button type="button" data-sjrv-next aria-label="More products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="sjrv-viewport" data-sjrv-viewport>
+        <ul class="sjrv-track" role="list" aria-busy="true">
+          {%- for i in (1..4) -%}<li class="sjrv-skel" aria-hidden="true"><span class="im"></span><span class="ln"><i></i><i></i><i></i></span></li>{%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <script>
+    (function () {
+      var root = document.querySelector('[data-sjrv]'); if (!root) return;
+      var KEY = 'nt_recent', MAX_KEEP = 15, MAX_SHOW = 12, me = 'id:' + root.dataset.pid, list = [];
+      try { list = (localStorage.getItem(KEY) || '').split(',').filter(function (x) { return /^id:\d+$/.test(x); }); } catch (e) { return; }
+      var others = list.filter(function (x) { return x !== me; });
+      /* save this product as the newest view (same format the Gecko section used) */
+      try { localStorage.setItem(KEY, [me].concat(others).slice(0, MAX_KEEP).join(',')); } catch (e) {}
+      var want = others.slice(0, MAX_SHOW);
+      if (!want.length) { root.remove(); return; }
+      root.hidden = false;
+      var vp = root.querySelector('[data-sjrv-viewport]'), prev = root.querySelector('[data-sjrv-prev]'), next = root.querySelector('[data-sjrv-next]');
+      function edges() {
+        var max = vp.scrollWidth - vp.clientWidth - 2;
+        prev.disabled = vp.scrollLeft <= 2; next.disabled = vp.scrollLeft >= max;
+        root.classList.toggle('no-scroll', max <= 0);
+      }
+      function step(dir) { vp.scrollBy({ left: dir * vp.clientWidth * 0.9, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+      prev.addEventListener('click', function () { step(-1); }); next.addEventListener('click', function () { step(1); });
+      vp.addEventListener('scroll', function () { window.requestAnimationFrame(edges); }, { passive: true });
+      window.addEventListener('resize', edges);
+      root.querySelector('[data-sjrv-clear]').addEventListener('click', function () {
+        try { localStorage.setItem(KEY, ''); } catch (e) {}
+        root.remove();
+      });
+      function load() {
+        var url = '{{ routes.search_url }}?type=product&options%5Bunavailable_products%5D=last&section_id=sj-recently-viewed&q=' + encodeURIComponent(want.join(' OR '));
+        fetch(url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html'), cards = doc.querySelector('[data-sjrv-cards]');
+          if (!cards || !cards.children.length) { root.remove(); return; }
+          var byId = {};
+          [].slice.call(cards.children).forEach(function (c) { byId['id:' + c.dataset.pid] = c; });
+          var ul = document.createElement('ul'); ul.className = 'sjrv-track'; ul.setAttribute('role', 'list');
+          want.forEach(function (id) { if (byId[id]) ul.appendChild(document.importNode(byId[id], true)); });
+          if (!ul.children.length) { root.remove(); return; }
+          root.classList.toggle('is-few', ul.children.length < 3);
+          vp.querySelector('.sjrv-track').replaceWith(ul); edges();
+        }).catch(function () { root.remove(); });
+      }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+        io.observe(root);
+      } else { load(); }
+    })();
+  </script>
+  <style>
+    .sjrv{--navy:#005186;--cta:#A81C60;--ink:#0F2236;--muted:#475569;--line:#DCE3EB;--soft:#F4F7FA;--soft-2:#EAF1F7;
+      font-family:'Barlow',system-ui,sans-serif;color:var(--ink);background:var(--soft);padding:28px 0 32px}
+    .sjrv[hidden]{display:none}
+    .sjrv *,.sjrv *::before,.sjrv *::after{box-sizing:border-box}
+    .sjrv :where(h2,p,ul,li){margin:0;padding:0}
+    .sjrv ul{list-style:none}
+    .sjrv .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .sjrv-wrap{max-width:1464px;margin:0 auto;padding:0 16px}
+    .sjrv-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .sjrv-h{font-family:'Barlow Condensed',system-ui,sans-serif!important;font-weight:800!important;font-size:26px!important;line-height:1!important;text-transform:uppercase;letter-spacing:.01em!important;color:var(--ink)!important}
+    .sjrv-h span{color:var(--cta)}
+    .sjrv-sub{margin-top:5px!important;font-size:15px;line-height:1.4;color:var(--muted)}
+    .sjrv-tools{display:flex;align-items:center;gap:8px}
+    .sjrv-clear{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:600 15px/1 'Barlow',system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .2s}
+    .sjrv-clear:hover{color:var(--ink)}
+    .sjrv-clear svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+    .sjrv-nav{display:none;gap:8px}
+    .sjrv-nav button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:border-color .2s,background-color .2s}
+    .sjrv-nav button:hover:not([disabled]){border-color:var(--navy);background:var(--soft-2)}
+    .sjrv-nav button[disabled]{opacity:.35;cursor:default}
+    .sjrv-nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .sjrv.no-scroll .sjrv-nav{visibility:hidden}
+    .sjrv :focus-visible{outline:3px solid #FFC72C;outline-offset:2px}
+    .sjrv-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:2px 16px 4px;scroll-padding:0 16px}
+    .sjrv-viewport::-webkit-scrollbar{display:none}
+    /* phones: two rows that scroll sideways, next column peeks in */
+    .sjrv-track{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:84%;gap:10px}
+    .sjrv.is-few .sjrv-track{grid-template-rows:auto}
+    .sjrv-track > *{scroll-snap-align:start;min-width:0}
+    .sjrv-tile a{display:grid;grid-template-columns:80px 1fr;gap:12px;align-items:center;height:100%;padding:8px 12px 8px 8px;background:#fff;border:1px solid var(--line);border-radius:12px;color:inherit;text-decoration:none;transition:border-color .2s,box-shadow .2s}
+    .sjrv-tile a:hover{border-color:var(--navy);box-shadow:0 4px 14px rgba(15,34,54,.08)}
+    .sjrv-tile .im{position:relative;display:block;aspect-ratio:1;border-radius:8px;background:var(--soft);overflow:hidden}
+    .sjrv-tile .im img,.sjrv-tile .im svg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6px;mix-blend-mode:multiply}
+    .sjrv-tile.is-out .im img{opacity:.55}
+    .sjrv-tile .bd{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .sjrv-tile .t{font-size:15px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .sjrv-tile a:hover .t{color:var(--navy)}
+    .sjrv-tile .pr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin-top:2px}
+    .sjrv-tile .pr b{font-size:16px;font-weight:700}
+    .sjrv-tile .pr s{font-size:14px;color:var(--muted)}
+    .sjrv-tile .pr em{font-style:normal;font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+    .sjrv-skel{display:grid;grid-template-columns:80px 1fr;gap:12px;align-items:center;padding:8px;background:#fff;border:1px solid var(--line);border-radius:12px}
+    .sjrv-skel .im{display:block;aspect-ratio:1;border-radius:8px;background:var(--soft)}
+    .sjrv-skel .ln i{display:block;height:11px;border-radius:6px;background:var(--soft);margin:7px 0}
+    .sjrv-skel .ln i:nth-child(1){width:35%}.sjrv-skel .ln i:nth-child(2){width:90%}.sjrv-skel .ln i:nth-child(3){width:45%}
+    @media (min-width:768px){
+      .sjrv-wrap{padding:0 24px}
+      .sjrv-viewport{margin:0 -24px;padding:2px 24px 4px;scroll-padding:0 24px}
+      .sjrv-track{grid-auto-columns:calc((100% - 10px) / 2.15)}
+    }
+    @media (min-width:1025px){
+      .sjrv{padding:36px 0 40px}
+      .sjrv-wrap{padding:0 32px}
+      .sjrv-h{font-size:30px!important}
+      .sjrv-nav{display:flex}
+      .sjrv-viewport{margin:0;padding:2px 0 4px;scroll-padding:0}
+      .sjrv-track{grid-template-rows:auto;grid-auto-columns:calc((100% - 48px) / 4);gap:16px}
+    }
+    @media (min-width:1440px){ .sjrv-track{grid-auto-columns:calc((100% - 64px) / 5)} }
+    @media (prefers-reduced-motion:reduce){ .sjrv *{transition:none!important} }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ recently viewed",
+  "class": "sjrv-section",
+  "settings": []
+}
+{% endschema %}

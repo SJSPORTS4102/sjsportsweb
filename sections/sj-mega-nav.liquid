@@ -7,10 +7,26 @@
   Phones: a search row under the header and a drawer menu (opens from the theme's menu button) with
   a best sellers row and categories that drill down. Links are edited in the theme editor
   ("Label|/url" per line).
+  Sale link (13 Nov 2026): section settings add a highlighted link (Black Friday) first in the desktop row and a
+  card at the top of the phone menu, with the collection's live product count. Untick it after the sale.
 {%- endcomment -%}
 {%- liquid
   assign path = request.path
   assign groups_html = ''
+  assign sale_url = section.settings.sale_url | strip
+  assign sale_on = false
+  if section.settings.sale_on and sale_url != blank and section.settings.sale_title != blank
+    assign sale_on = true
+    assign sale_path = sale_url | split: '?' | first
+    assign sale_n = 0
+    if sale_url contains '/collections/'
+      assign sale_h = sale_path | split: '/collections/' | last | downcase
+      assign sale_col = collections[sale_h]
+      if sale_col != blank
+        assign sale_n = sale_col.products_count
+      endif
+    endif
+  endif
 -%}
 <div class="sjn" data-sjn>
   <form class="sjn-msearch" action="{{ routes.search_url }}" method="get" role="search">
@@ -24,6 +40,7 @@
   <nav class="sjn-bar" aria-label="Shop by category">
     <div class="sjn-wrap">
       <ul class="sjn-list" role="list">
+        {%- if sale_on -%}<li class="sjn-sale"><a href="{{ sale_url }}"{% if path == sale_path %} class="is-active" aria-current="page"{% endif %}><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg>{{ section.settings.sale_title }}</a></li>{%- endif -%}
         <li class="sjn-hot"><a class="sjn-top" href="{{ routes.collections_url }}/best-selling-collection?sort_by=best-selling" aria-expanded="false" aria-controls="sjn-p-best" data-sjn-open="best"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></svg>Best sellers</a></li>
         {%- for block in section.blocks -%}
           {%- assign bu = block.settings.url | split: '?' | first -%}
@@ -98,6 +115,7 @@
       <div class="sjn-dh"><p class="sjn-dt">Menu</p><button type="button" class="sjn-x" data-sjn-close aria-label="Close menu"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       <div class="sjn-db">
         <form action="{{ routes.search_url }}" method="get" role="search"><label class="sjn-search"><span class="sjn-sr">Search the store</span><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" name="q" placeholder="Search bats, gloves, pads, brands" enterkeyhint="search" autocomplete="off"><input type="hidden" name="type" value="product"></label></form>
+        {%- if sale_on -%}<a class="sjn-salecard" href="{{ sale_url }}"><svg class="sjn-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg><span><b>{{ section.settings.sale_title }}</b>{% if sale_n > 0 %}<small>{{ sale_n }} deals on now</small>{% endif %}</span><svg class="sjn-i sjn-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>{%- endif -%}
         <p class="sjn-h2"><svg class="sjn-i sjn-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.2l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.7a2.1 2.1 0 0 0-.6 1.9l.9 5.2a.5.5 0 0 1-.8.6l-4.6-2.5a2.1 2.1 0 0 0-2 0l-4.6 2.5a.5.5 0 0 1-.8-.6l.9-5.2a2.1 2.1 0 0 0-.6-1.9L2.1 9.9a.5.5 0 0 1 .3-.9l5.2-.8a2.1 2.1 0 0 0 1.6-1.2z"/></svg>Best sellers</p>
         <div class="sjn-best sjn-best--row" data-sjn-best="best-selling-collection" data-limit="6" aria-live="polite"></div>
         <p class="sjn-h2">Shop by category</p>
@@ -135,7 +153,11 @@
   "name": "SJ mega nav",
   "class": "sjn-section",
   "max_blocks": 16,
-  "settings": [],
+  "settings": [
+    { "type": "checkbox", "id": "sale_on", "label": "Show the sale link", "default": true, "info": "First in the desktop row and at the top of the phone menu. Untick it when the sale ends." },
+    { "type": "text", "id": "sale_title", "label": "Sale link name", "default": "Black Friday" },
+    { "type": "text", "id": "sale_url", "label": "Sale link", "default": "/collections/black-friday-sale" }
+  ],
   "blocks": [
     {
       "type": "cat",

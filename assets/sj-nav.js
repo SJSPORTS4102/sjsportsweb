@@ -20,7 +20,7 @@
   function pump() {
     while (running < 4 && queue.length) {
       var job = queue.shift(); running++;
-      fetch('/collections/' + job.h + '?sort_by=best-selling&section_id=sj-nav-best')
+      fetch(job.url || ('/collections/' + job.h + '?sort_by=best-selling&section_id=sj-nav-best'))
         .then(function (r) { return r.ok ? r.text() : ''; })
         .then(function (job) { return function (txt) { running--; if (txt) toStore(job.h, txt); job.res(txt); pump(); }; }(job))
         .catch(function (job) { return function () { running--; job.res(''); pump(); }; }(job));
@@ -43,7 +43,29 @@
       el.innerHTML = ''; el.appendChild(cards);
     });
   }
-  function warm(scope, urgent) { (scope || root).querySelectorAll('[data-sjn-best]').forEach(function (el) { loadBest(el, urgent); }); }
+  /* ---------- brand links: product count from the category's own Brand filter (sections/sj-nav-counts), same cache ---------- */
+  var cmap = {};
+  function parseCounts(txt) { var m = /data-sjn-counts>([\s\S]*?)<\/script>/.exec(txt || ''); try { return m ? JSON.parse(m[1]) : {}; } catch (e) { return {}; } }
+  function getCounts(h) {
+    if (cmap[h]) return cmap[h];
+    var key = 'cnt:' + h, hit = fromStore(key);
+    if (hit !== null) return (cmap[h] = Promise.resolve(parseCounts(hit)));
+    return (cmap[h] = new Promise(function (res) {
+      queue.push({ h: key, url: '/collections/' + h + '?section_id=sj-nav-counts', res: function (txt) { res(parseCounts(txt)); } }); pump();
+    }));
+  }
+  function countBrands(scope) {
+    (scope || root).querySelectorAll('.sjn-links a[href*="filter.p.vendor="]').forEach(function (a) {
+      if (a.dataset.cnt) return; a.dataset.cnt = '1';
+      var h = (a.pathname.split('/collections/')[1] || '').split('/')[0];
+      var vals = new URLSearchParams(a.search).getAll('filter.p.vendor'); if (!h || !vals.length) return;
+      getCounts(h).then(function (map) {
+        var n = 0; vals.forEach(function (v) { n += map[v] || 0; });
+        if (n > 0 && !a.querySelector('small')) { var sm = document.createElement('small'); sm.textContent = n; a.insertBefore(sm, a.querySelector('.sjn-chev')); }
+      });
+    });
+  }
+  function warm(scope, urgent) { (scope || root).querySelectorAll('[data-sjn-best]').forEach(function (el) { loadBest(el, urgent); }); countBrands(scope); }
   function idle(fn, ms) { if ('requestIdleCallback' in window) requestIdleCallback(fn, { timeout: ms }); else setTimeout(fn, ms); }
   /* desktop: everything in the panels loads in the background after the page, so panels open with images ready */
   window.addEventListener('load', function () {

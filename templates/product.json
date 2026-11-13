@@ -464,6 +464,7 @@
     },
     "recently-viewed-products": {
       "type": "recently_viewed",
+      "disabled": true,
       "settings": {
         "show": true,
         "design_heading": "1",
@@ -628,6 +629,10 @@
     "sj_recs": {
       "type": "sj-recommendations",
       "settings": {}
+    },
+    "sj_rv": {
+      "type": "sj-recently-viewed",
+      "settings": {}
     }
   },
   "order": [
@@ -639,6 +644,7 @@
     "sj_recs",
     "product-recommendations",
     "recently-viewed-products",
+    "sj_rv",
     "1775978883c56159df"
   ]
 }

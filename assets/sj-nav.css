@@ -52,6 +52,13 @@ html body section#shopify-section-custom-html{margin-top:0!important}
 .sjn-quick a{display:flex;align-items:baseline;gap:8px;min-height:44px;padding:10px 0;text-decoration:none;color:var(--ink);font-size:15px}
 .sjn-quick b{font-weight:600}
 .sjn-quick small{color:var(--muted)}
+/* sale card at the top of the phone menu (section setting "Show the sale link") */
+.sjn-salecard{display:flex;align-items:center;gap:12px;min-height:68px;margin:14px 0 4px;padding:12px 12px 12px 14px;border-radius:12px;background:#0A2E4D;color:#fff!important;text-decoration:none}
+.sjn-salecard>.sjn-i{width:22px;height:22px;color:#FFC72C}
+.sjn-salecard span{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.sjn-salecard b{font-family:var(--head);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.sjn-salecard small{font-size:14px;color:#DCE6F0}
+.sjn-salecard .sjn-go{width:36px;height:36px;padding:8px;border-radius:999px;background:#FFC72C;color:#0A2E4D;stroke-width:2.4}
 .sjn-all{display:flex;align-items:center;justify-content:center;min-height:52px;margin-top:18px;border-radius:8px;background:var(--cta);color:#fff!important;font:600 16px var(--body);text-decoration:none}
 
 /* best seller cards */
@@ -89,6 +96,11 @@ body.sjn-lock .sjs-bnav{display:none!important}
   .sjn-prep{margin-left:auto;display:flex;align-items:center}
   .sjn-prep a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:var(--soft-2);color:var(--navy);font:600 15px var(--body);text-decoration:none;white-space:nowrap}
   .sjn-prep a:hover{background:#DCE8F3}
+  /* sale link: first in the row, solid pill so it reads as its own thing */
+  .sjn-sale{display:flex;align-items:center;padding-right:8px}
+  .sjn-sale a{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 15px 0 12px;border-radius:999px;background:#0A2E4D;color:#fff;font:700 15px var(--body);text-decoration:none;white-space:nowrap;transition:background-color .2s}
+  .sjn-sale a:hover,.sjn-sale a.is-active{background:var(--navy)}
+  .sjn-sale .sjn-i{width:16px;height:16px;color:#FFC72C}
   .sjn-panel{position:absolute;left:0;right:0;top:100%;z-index:470;background:#fff;border-top:1px solid var(--line);box-shadow:0 24px 40px rgba(10,46,77,.16)}
   .sjn-panel[hidden]{display:none}
   .sjn-in{display:grid;grid-template-columns:repeat(3,minmax(0,.8fr)) minmax(0,2.4fr);gap:36px;padding-top:26px;padding-bottom:24px;max-height:calc(100vh - 200px);overflow-y:auto}
@@ -118,6 +130,19 @@ body.sjn-lock .sjs-bnav{display:none!important}
   /* the header search box replaces the old menu links; the search icon is no longer needed on desktop */
   .t4s-section-header .t4s-site-nav__search{display:none!important}
 }
+/* narrower desktops: the row has to fit without spilling off the screen */
+@media (min-width:1025px) and (max-width:1439px){
+  .sjn-wrap{padding:0 24px}
+  .sjn-top{padding:0 8px}
+}
+@media (min-width:1025px) and (max-width:1365px){.sjn-prep{display:none}}
+@media (min-width:1025px) and (max-width:1279px){
+  .sjn-wrap{padding:0 16px}
+  .sjn-top{padding:0 6px;font-size:14.5px}
+  .sjn-sale{padding-right:4px}
+  .sjn-sale a{padding:0 12px 0 10px;font-size:14.5px}
+}
+@media (min-width:1025px) and (max-width:1179px){.sjn-top .sjn-dn{display:none}}
 @media (prefers-reduced-motion:reduce){.sjn *{transition:none!important;animation:none!important}.sjn-drawer,.t4s-section-header,#shopify-section-sj-mega-nav{transition:none!important}}
 
 /* (old Gecko footer restyle removed: the SJ footer section replaces it) */

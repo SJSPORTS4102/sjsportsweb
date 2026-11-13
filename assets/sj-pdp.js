@@ -87,7 +87,15 @@
       if (now) now.textContent = money(current.price);
       var onSale = current.compare > current.price;
       if (was) { was.hidden = !onSale; if (onSale) was.textContent = money(current.compare); }
-      if (save) { save.hidden = !onSale; if (onSale) save.textContent = 'Save ' + money(current.compare - current.price); }
+      if (save) {
+        save.hidden = !onSale;
+        if (onSale) {
+          /* whole dollars (cents only under $1) plus % off, both rounded down; no % when the was price is over 3x the price */
+          var diff = current.compare - current.price, sv = diff >= 100 ? Math.floor(diff / 100) * 100 : diff;
+          var pct = current.compare <= current.price * 3 ? Math.floor(diff * 100 / current.compare) : 0;
+          save.textContent = 'Save ' + money(sv) + (pct > 0 ? ' (' + pct + '% off)' : '');
+        }
+      }
       var st = root.querySelector('[data-stock]');
       if (st) {
         st.classList.toggle('is-out', !current.available);

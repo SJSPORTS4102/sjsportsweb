@@ -1,0 +1,287 @@
+{%- comment -%}
+  SJ "Free bat prep" page (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/bat-prep.md.
+  Lives in templates/page.json (the default page template) and only draws on the page whose handle is set below,
+  so the page itself in Online Store > Pages needs no change (no new template to assign). On that page it hides the
+  theme's own heading and body sections; every other page is untouched.
+  Facts come from the old page and the product page: oiled, machine knocked (variable speed, thousands of knocks),
+  edges by hand, Extratec face sheet, edge tape, up to 3 days, a few face marks are normal, free on English willow bats,
+  "Ship it unprepared" option with 30-day returns if unused.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign handle = s.handle | default: 'free-bat-preparation-service'
+-%}
+{%- if collection -%}
+  {%- comment -%} Fetched by the page as /collections/cricket-bat?sort_by=best-selling&section_id=sj-bat-prep: best-selling bats that get free prep (same rule as the product page). {%- endcomment -%}
+  <ul data-sjbp-cards>
+    {%- assign n = 0 -%}
+    {%- for p in collection.products -%}
+      {%- if n >= 8 %}{% break %}{% endif -%}
+      {%- liquid
+        assign t = p.type | downcase
+        assign tl = p.title | downcase
+        assign ok = true
+        unless t contains 'cricket bat'
+          assign ok = false
+        endunless
+        if t contains 'batting' or t contains 'kashmir' or tl contains 'kashmir' or tl contains 'tennis'
+          assign ok = false
+        endif
+        if p.available == false or p.featured_media == blank
+          assign ok = false
+        endif
+      -%}
+      {%- unless ok %}{% continue %}{% endunless -%}
+      {%- assign n = n | plus: 1 -%}
+      {%- render 'sj-card', product: p, rank: n, eager: false -%}
+    {%- endfor -%}
+  </ul>
+{%- elsif template.name == 'page' and page.handle == handle -%}
+  {{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+  <style>
+    /* this page only: hide the theme's banner heading and page body */
+    .shopify-section[id^="shopify-section-template--"][id$="__heading"],
+    .shopify-section[id^="shopify-section-template--"][id$="__main"]{display:none!important}
+  </style>
+  {%- liquid
+    assign shop_url = s.shop_url | default: '/collections/cricket-bat?sort_by=best-selling'
+    assign bats = s.bats | default: 'cricket-bat'
+  -%}
+  <div class="sjbp">
+    {%- render 'sj-home-sprite' -%}
+
+    {%- comment -%} 1 hero {%- endcomment -%}
+    <section class="sjbp-hero" aria-labelledby="sjbp-h1">
+      <div class="in">
+        <div class="txt">
+          <p class="eye">Free with every English willow bat</p>
+          <h1 id="sjbp-h1">Free bat prep. <span>Ready to play when it lands.</span></h1>
+          <p class="lede">Our team preps every English willow bat by hand and machine in our Woolloongabba workshop. It costs nothing extra and it's already ticked when you add a bat to your cart.</p>
+          <div class="ctas">
+            <a class="btn sun" href="{{ shop_url }}">Shop English willow bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+            <a class="btn ghost" href="#sjbp-incl">What's included</a>
+          </div>
+          <ul class="facts" role="list">
+            <li><b>$0</b><span>Free on English willow bats</span></li>
+            <li><b>5 steps</b><span>Oil, knock, edges, sheet, tape</span></li>
+            <li><b>Up to 3 days</b><span>Then it's on its way</span></li>
+          </ul>
+        </div>
+        <div class="media">
+          {%- if s.video != blank -%}
+            {{ s.video | video_tag: controls: true, playsinline: true, muted: true, preload: 'metadata' }}
+          {%- elsif s.image != blank -%}
+            {{ s.image | image_url: width: 1200 | image_tag: loading: 'eager', widths: '600, 900, 1200', sizes: '(min-width: 1025px) 46vw, 100vw', alt: s.image.alt | default: 'Cricket bats in the SJ Sports workshop' }}
+          {%- else -%}
+            <img src="{{ 'sj-home-prep.webp' | asset_url }}" alt="Cricket bats on the rack in the SJ Sports shop" width="978" height="591" loading="eager">
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 2 what's included {%- endcomment -%}
+    <section class="sjbp-sec" id="sjbp-incl" aria-labelledby="sjbp-incl-h">
+      <div class="in">
+        <p class="eye">What's included</p>
+        <h2 class="h2" id="sjbp-incl-h">Five steps, <span>done for you</span></h2>
+        <p class="sub">Each bat gets the full process, so it lasts longer and plays better from the first session.</p>
+        <ol class="steps" role="list">
+          <li><span class="no">1</span><h3>Oiling</h3><p>Conditions the willow and helps protect it.</p></li>
+          <li><span class="no">2</span><h3>Machine knocking-in</h3><p>Variable speed: slow to start, then faster after thousands of knocks to open up the fibres.</p></li>
+          <li><span class="no">3</span><h3>Edges by hand</h3><p>Manual edge preparation to toughen the edges for match play.</p></li>
+          <li><span class="no">4</span><h3>Extratec face sheet</h3><p>Fitted to the face to protect it from surface cracks.</p></li>
+          <li><span class="no">5</span><h3>Edge tape</h3><p>An extra layer of protection during play.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    {%- comment -%} 3 how to get it {%- endcomment -%}
+    <section class="sjbp-sec soft" aria-labelledby="sjbp-how-h">
+      <div class="in">
+        <p class="eye">How to get it</p>
+        <h2 class="h2" id="sjbp-how-h">Nothing to <span>sign up for</span></h2>
+        <ol class="how" role="list">
+          <li><span class="ic"><svg class="i"><use href="#sjh-cbat"/></svg></span><div><h3>Pick an English willow bat</h3><p>Every one we sell comes with free prep.</p></div></li>
+          <li><span class="ic"><svg class="i"><use href="#sjh-check"/></svg></span><div><h3>Leave "Prepare my bat" ticked</h3><p>It's already selected on the product page. Add to cart as normal.</p></div></li>
+          <li><span class="ic"><svg class="i"><use href="#sjh-truck"/></svg></span><div><h3>We prep it and send it</h3><p>Prep takes up to 3 days, then your bat ships ready for the nets.</p></div></li>
+        </ol>
+        <div class="notes">
+          <div class="note"><h3>A few marks on the face are normal</h3><p>Knocking-in can leave light marks on the face. It means the bat is nearly match ready.</p></div>
+          <div class="note"><h3>Rather do it yourself?</h3><p>Choose "Ship it unprepared" on the product page. Unused bats can be returned within 30 days.</p></div>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 4 bats that come with it {%- endcomment -%}
+    <section class="sjbp-sec" data-sjbp-bats data-url="{{ routes.collections_url }}/{{ bats }}?sort_by=best-selling&section_id=sj-bat-prep" aria-labelledby="sjbp-bats-h">
+      <div class="in">
+        <div class="row-head">
+          <div><p class="eye">Best sellers</p><h2 class="h2" id="sjbp-bats-h">Bats that come <span>with free prep</span></h2></div>
+          <a class="more" href="{{ shop_url }}">See all bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="sjcol sjbp-rail"><ul class="sjcol-grid" role="list" aria-busy="true">
+          {%- for i in (1..4) -%}<li class="sjbp-skel" aria-hidden="true"><span class="im"></span><span class="l"></span><span class="l s"></span></li>{%- endfor -%}
+        </ul></div>
+      </div>
+    </section>
+    <script>
+      (function () {
+        var sec = document.querySelector('[data-sjbp-bats]'); if (!sec) return;
+        function load() {
+          fetch(sec.dataset.url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+            var ul = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-sjbp-cards]');
+            if (!ul || ul.children.length < 2) { sec.remove(); return; }
+            var grid = sec.querySelector('.sjcol-grid'); grid.innerHTML = ''; grid.removeAttribute('aria-busy');
+            [].slice.call(ul.children).forEach(function (c) { grid.appendChild(document.importNode(c, true)); });
+          }).catch(function () { sec.remove(); });
+        }
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+          io.observe(sec);
+        } else { load(); }
+      })();
+    </script>
+
+    {%- comment -%} 5 questions {%- endcomment -%}
+    <section class="sjbp-sec soft" aria-labelledby="sjbp-faq-h">
+      <div class="in">
+        <p class="eye">Questions</p>
+        <h2 class="h2" id="sjbp-faq-h">Bat prep, <span>answered</span></h2>
+        <div class="faq">
+          <details><summary>Does bat prep cost extra?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>No. It's free with every English willow bat we sell.</p></details>
+          <details><summary>How long does it take?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Up to 3 days. Your bat ships as soon as it's done.</p></details>
+          <details><summary>Which bats get free prep?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>English willow bats. Kashmir willow bats aren't included.</p></details>
+          <details><summary>Why are there marks on my new bat?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Light marks on the face are a normal part of knocking-in. They show the bat is nearly match ready.</p></details>
+          <details><summary>Can I skip the prep?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Yes. Choose "Ship it unprepared" on the product page. Unused bats can be returned within 30 days.</p></details>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 6 close {%- endcomment -%}
+    <section class="sjbp-end" aria-labelledby="sjbp-end-h">
+      <div class="in">
+        <div><h2 id="sjbp-end-h">Find your bat. <span>We'll get it ready.</span></h2><p>Not sure on size or weight? Call the shop on <a href="tel:0423240478">0423 240 478</a>, open 7 days.</p></div>
+        <a class="btn sun" href="{{ shop_url }}">Shop English willow bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .sjbp{--navy:#005186;--navy-deep:#0A2E4D;--cta:#A81C60;--sun:#FFC72C;--ink:#0F2236;--muted:#475569;--line:#E1E7EE;--soft:#F4F7FA;--soft-2:#EAF1F7;
+      --head:'Barlow Condensed',system-ui,sans-serif;--body:'Barlow',system-ui,sans-serif;font-family:var(--body);color:var(--ink);font-size:16px;line-height:1.55;background:#fff}
+    .sjbp *,.sjbp *::before,.sjbp *::after{box-sizing:border-box}
+    .sjbp :where(h1,h2,h3,p,ol,ul,li){margin:0;padding:0}
+    .sjbp :where(ol,ul){list-style:none}
+    .sjbp .i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+    .sjbp :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+    .sjbp .in{max-width:1464px;margin:0 auto;padding:0 16px}
+    .sjbp .eye{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+    .sjbp .h2{font-family:var(--head)!important;font-weight:800!important;font-size:32px!important;line-height:1.02!important;text-transform:uppercase;letter-spacing:.01em!important;color:var(--ink)!important;margin-top:6px!important}
+    .sjbp .h2 span{color:var(--cta)}
+    .sjbp .sub{margin-top:10px!important;max-width:60ch;color:var(--muted);font-size:17px}
+    .sjbp h3{font-family:var(--body)!important;font-size:18px!important;font-weight:700!important;line-height:1.3!important;letter-spacing:0!important;text-transform:none!important;color:var(--ink)!important}
+    .sjbp .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:10px;font:700 16px/1 var(--body);text-decoration:none;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+    .sjbp .btn.sun{background:var(--sun);color:var(--navy-deep)}
+    .sjbp .btn.sun:hover{background:#FFD65E}
+    .sjbp .btn.ghost{border:1.5px solid rgba(255,255,255,.5);color:#fff}
+    .sjbp .btn.ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+    .sjbp .more{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;color:var(--navy);text-decoration:none}
+    .sjbp .more:hover{text-decoration:underline;text-underline-offset:3px}
+
+    /* hero */
+    .sjbp-hero{background:var(--navy-deep);color:#fff;padding:28px 0 32px;overflow:hidden}
+    .sjbp-hero .in{display:grid;gap:24px}
+    .sjbp-hero .eye{color:var(--sun)}
+    .sjbp-hero h1{font-family:var(--head)!important;font-weight:800!important;font-size:42px!important;line-height:.98!important;text-transform:uppercase;letter-spacing:.01em!important;color:#fff!important;margin-top:8px!important}
+    .sjbp-hero h1 span{display:block;color:var(--sun)}
+    .sjbp-hero .lede{margin-top:14px!important;font-size:17px;line-height:1.55;color:#D9E4EF;max-width:56ch}
+    .sjbp-hero .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .sjbp-hero .ctas .btn{flex:1 1 220px}
+    .sjbp-hero .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px;border-top:1px solid rgba(255,255,255,.16);padding-top:16px}
+    .sjbp-hero .facts b{display:block;font-family:var(--head);font-weight:800;font-size:21px;white-space:nowrap;line-height:1;text-transform:uppercase;color:#fff}
+    .sjbp-hero .facts span{display:block;margin-top:4px;font-size:13.5px;line-height:1.35;color:#C3D2E0}
+    .sjbp-hero .media{border-radius:14px;overflow:hidden;background:#0F3A5F;aspect-ratio:978/591}
+    .sjbp-hero .media img,.sjbp-hero .media video{display:block;width:100%;height:100%;object-fit:cover}
+
+    /* sections */
+    .sjbp-sec{padding:40px 0}
+    .sjbp-sec.soft{background:var(--soft)}
+    .sjbp .steps{display:grid;gap:12px;margin-top:22px;counter-reset:s}
+    .sjbp .steps li{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 18px 72px;min-height:96px}
+    .sjbp .steps .no{position:absolute;left:18px;top:18px;width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font:800 20px/1 var(--head)}
+    .sjbp .steps p{margin-top:4px!important;color:var(--muted)}
+    .sjbp .how{display:grid;gap:12px;margin-top:22px}
+    .sjbp .how li{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+    .sjbp .how .ic{width:48px;height:48px;border-radius:12px;background:var(--soft-2);color:var(--navy);display:grid;place-items:center;flex:none}
+    .sjbp .how .ic .i{width:24px;height:24px}
+    .sjbp .how p{margin-top:4px!important;color:var(--muted)}
+    .sjbp .notes{display:grid;gap:12px;margin-top:12px}
+    .sjbp .note{border-left:4px solid var(--navy);background:#fff;border-radius:0 12px 12px 0;padding:14px 16px}
+    .sjbp .note p{margin-top:4px!important;color:var(--muted)}
+    .sjbp .row-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .sjbp .row-head .more{flex:none}
+    .sjbp-rail{padding:0!important;margin-top:18px}
+    .sjbp-rail .sjcol-grid{display:grid;grid-auto-flow:column;grid-auto-columns:44%;grid-template-columns:none;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px!important;padding:0 16px 4px!important;scroll-padding:0 16px}
+    .sjbp-rail .sjcol-grid::-webkit-scrollbar{display:none}
+    .sjbp-rail .sjc-card{scroll-snap-align:start}
+    .sjbp-skel .im{display:block;aspect-ratio:1;border-radius:12px;background:var(--soft)}
+    .sjbp-skel .l{display:block;height:12px;width:85%;border-radius:6px;background:var(--soft);margin-top:12px}
+    .sjbp-skel .l.s{width:45%}
+    .sjbp .faq{margin-top:18px;border-top:1px solid var(--line);max-width:880px}
+    .sjbp .faq details{border-bottom:1px solid var(--line)}
+    .sjbp .faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:12px 0;font-weight:700;font-size:17px;cursor:pointer;list-style:none}
+    .sjbp .faq summary::-webkit-details-marker{display:none}
+    .sjbp .faq summary .i{transition:transform .2s;color:var(--navy)}
+    .sjbp .faq details[open] summary .i{transform:rotate(90deg)}
+    .sjbp .faq details p{padding:0 0 16px!important;color:var(--muted);max-width:65ch}
+    .sjbp-end{background:var(--navy);color:#fff;padding:32px 0}
+    .sjbp-end .in{display:grid;gap:18px}
+    .sjbp-end h2{font-family:var(--head)!important;font-weight:800!important;font-size:32px!important;line-height:1!important;text-transform:uppercase;color:#fff!important;letter-spacing:.01em!important}
+    .sjbp-end h2 span{color:var(--sun)}
+    .sjbp-end p{margin-top:8px!important;color:#D9E4EF}
+    .sjbp-end a[href^="tel"]{color:#fff;font-weight:700;white-space:nowrap}
+
+    @media (min-width:768px){
+      .sjbp .in{padding:0 24px}
+      .sjbp .steps{grid-template-columns:repeat(2,1fr)}
+      .sjbp .how,.sjbp .notes{grid-template-columns:repeat(3,1fr)}
+      .sjbp .notes{grid-template-columns:repeat(2,1fr)}
+      .sjbp-rail .sjcol-grid{grid-auto-columns:calc((100% - 36px) / 3.3);margin:0 -24px!important;padding:0 24px 4px!important;scroll-padding:0 24px}
+    }
+    @media (min-width:1025px){
+      .sjbp .in{padding:0 32px}
+      .sjbp .h2{font-size:44px!important}
+      .sjbp-hero{padding:56px 0}
+      .sjbp-hero .in{grid-template-columns:1.05fr 1fr;align-items:center;gap:56px}
+      .sjbp-hero h1{font-size:64px!important}
+      .sjbp-hero .lede{font-size:19px}
+      .sjbp-hero .ctas .btn{flex:0 0 auto}
+      .sjbp-hero .facts b{font-size:30px}
+      .sjbp-hero .facts span{font-size:14.5px}
+      .sjbp-sec{padding:64px 0}
+      .sjbp .steps{grid-template-columns:repeat(5,1fr);gap:16px}
+      .sjbp .steps li{padding:22px 20px;min-height:0}
+      .sjbp .steps .no{position:static;margin-bottom:14px}
+      .sjbp-rail .sjcol-grid{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(4,1fr);gap:20px;overflow:visible;margin:0!important;padding:0!important}
+      .sjbp-end{padding:48px 0}
+      .sjbp-end .in{grid-template-columns:1fr auto;align-items:center;gap:32px}
+      .sjbp-end h2{font-size:44px!important}
+    }
+    @media (min-width:1440px){ .sjbp-rail .sjc-card:nth-child(n+9){display:none} }
+    @media (prefers-reduced-motion:reduce){ .sjbp *{transition:none!important} }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ bat prep page",
+  "class": "sjbp-section",
+  "settings": [
+    { "type": "text", "id": "handle", "label": "Page handle this shows on", "default": "free-bat-preparation-service" },
+    { "type": "video", "id": "video", "label": "Bat prep video", "info": "Shows in the top block instead of the photo once the store shoot is edited." },
+    { "type": "image_picker", "id": "image", "label": "Photo", "info": "Leave empty to use the shop photo of bats on the rack." },
+    { "type": "text", "id": "shop_url", "label": "Shop bats link", "default": "/collections/cricket-bat?sort_by=best-selling" },
+    { "type": "text", "id": "bats", "label": "Bats collection handle (best sellers come from here)", "default": "cricket-bat" }
+  ]
+}
+{% endschema %}
