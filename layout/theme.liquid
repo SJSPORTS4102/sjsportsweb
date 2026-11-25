@@ -59,6 +59,45 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
   {% include 'avada-seo' %}
 	<!-- /Added by APP PLAZA -->
 	<meta charset="utf-8">
+    {%- comment -%} Off Leesh 25 Nov 2026: cart remove / quantity fix. The CR Store Pickup/Delivery app adds its own properties to a cart line just after it is added, which gives the line a new key. The cart drawer can still hold the old key, and Shopify then answers "no valid id or line parameter". When that happens, find the line's current key (same variant) and send the change once more. {%- endcomment -%}
+    <script>
+      (function () {
+        if (!window.fetch || window.__sjCartKeyFix) return;
+        window.__sjCartKeyFix = true;
+        var nativeFetch = window.fetch.bind(window);
+        var isChange = function (u) { return /\/cart\/change(\.js)?(\?|$)/.test(u); };
+        window.fetch = function (input, init) {
+          var url = typeof input === 'string' ? input : (input && input.url) || '';
+          if (!isChange(url) || !init || typeof init.body !== 'string') return nativeFetch(input, init);
+          return nativeFetch(input, init).then(function (res) {
+            if (res.status !== 400) return res;
+            return res.clone().json().then(function (err) {
+              var msg = (err && (err.description || err.message)) || '';
+              if (!/no valid id or line/i.test(msg)) return res;
+              var body;
+              try { body = JSON.parse(init.body); } catch (e) { return res; }
+              if (!body || !body.id) return res;
+              var variant = String(body.id).split(':')[0];
+              var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+              return nativeFetch(root + 'cart.js', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (cart) {
+                  var items = (cart && cart.items) || [];
+                  var hits = items.filter(function (it) { return String(it.variant_id) === variant || String(it.key).split(':')[0] === variant; });
+                  if (hits.length > 1) {
+                    var shown = {};
+                    document.querySelectorAll('[data-cart-remove][data-id]').forEach(function (a) { shown[a.getAttribute('data-id')] = 1; });
+                    hits = hits.filter(function (it) { return !shown[it.key]; });
+                  }
+                  if (hits.length !== 1) return res;
+                  body.id = hits[0].key;
+                  return nativeFetch(input, Object.assign({}, init, { body: JSON.stringify(body) }));
+                });
+            }).catch(function () { return res; });
+          });
+        };
+      })();
+    </script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta
       name="viewport"
