@@ -1,0 +1,527 @@
+{%- comment -%}
+  SJ bat size guide (Off Leesh, Nov 2026). Planned with ui-ux-pro-max: design-system/sj-sports/pages/bat-size-guide.md.
+  Covers every bat size, junior to adult (Harrison, 14 Nov 2026). Adult rows: Short Handle 175 to 182 cm and Long Blade /
+  Long Handle about 183 cm and over, from Kookaburra's size chart (brands differ; Vik to confirm). SJ's tall bats are size LB.
+  Used by templates/article.sj-size-guide.json, which is assigned to the article "What size cricket bat for my child?"
+  (Online Store > Blog posts > the post > Theme template). Other blog posts keep the normal article template.
+  Copy comes from the article (en dashes rewritten as "to"). Edits to the post body in Shopify admin do not change this
+  page, so keep the two in step. The dead Kookaburra Kahuna Pro 9.0 link is replaced by the Kookaburra Empower Pro 9.0.
+  Size finder: height in cm picks the row in the chart (between sizes it picks the smaller one, as the article says) and
+  links to the bat collection filtered to that size, best sellers first.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign rows = 'Size 0|Under 120 cm|4 to 5 years|size 0|119.9|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=0|Junior;Size 1|120 to 129 cm|5 to 6 years|size 1|129|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=1|Junior;Size 2|129 to 137 cm|6 to 7 years|size 2|137|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=2|Junior;Size 3|137 to 144 cm|8 to 9 years|size 3|144|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=3|Junior;Size 4|144 to 150 cm|9 to 10 years|size 4|150|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=4|Junior;Size 5|150 to 157 cm|10 to 11 years|size 5|157|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=5|Junior;Size 6|157 to 163 cm|11 to 13 years|size 6|163|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=6|Junior;Harrow|163 to 168 cm|12 to 14 years|Harrow|168|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=H|Teens and smaller adults;Small Adult (SM / Academy)|168 to 175 cm|14 years and over|Small Adult|174.9|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=SM&filter.v.option.size=Small+Adult&filter.v.option.size=Academy|Teens and smaller adults;Short Handle (SH, full size)|175 to 182 cm|Most adults|Short Handle|182.9|/collections/cricket-bat?sort_by=best-selling&filter.v.option.size=SH|Adults;Long Blade or Long Handle (LB / LH)|About 183 cm and over|Taller adults|Long Blade|999|/collections/cricket-bat-senior-lb-lh-bats?sort_by=best-selling|Adults' | split: ';'
+  assign start = s.start | default: 140
+  assign heading = s.heading | default: 'Cricket bat size chart'
+-%}
+{%- if collection -%}
+  {%- comment -%} Fetched as /collections/cricket-bat-cricket-bat-seniors?sort_by=best-selling&section_id=sj-size-guide {%- endcomment -%}
+  <ul data-sjsg-cards>
+    {%- assign n = 0 -%}
+    {%- for p in collection.products -%}
+      {%- if n >= 4 %}{% break %}{% endif -%}
+      {%- if p.available == false or p.featured_media == blank %}{% continue %}{% endif -%}
+      {%- assign n = n | plus: 1 -%}
+      {%- render 'sj-card', product: p, rank: n, eager: false -%}
+    {%- endfor -%}
+  </ul>
+{%- else -%}
+{{ 'sj-collection.css' | asset_url | stylesheet_tag }}
+<div class="sjsg" data-sjsg>
+  {%- render 'sj-home-sprite' -%}
+
+  {%- comment -%} 1 hero with the size finder {%- endcomment -%}
+  <section class="sjsg-hero" aria-labelledby="sjsg-h1">
+    <div class="in">
+      <div class="txt">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">/</span><a href="{{ blog.url }}">{{ blog.title }}</a><span aria-hidden="true">/</span><span aria-current="page">Bat size guide</span></nav>
+        <p class="eye">Bat size guide, junior to adult</p>
+        <h1 id="sjsg-h1">{{ heading }}</h1>
+        <p class="lede"><b>Quick answer:</b> choose a cricket bat by height, not age. Use the chart below. If you fall between two sizes, pick the smaller, lighter bat: players learn better technique with a bat they can control. Never buy a junior a bat to "grow into".</p>
+        <ul class="facts" role="list">
+          <li><svg class="i"><use href="#sjh-ruler"/></svg><span>Sized by height, not age</span></li>
+          <li><svg class="i"><use href="#sjh-cbat"/></svg><span>Size 0 to long blade</span></li>
+          <li><svg class="i"><use href="#sjh-store"/></svg><span>Try sizes in Woolloongabba</span></li>
+        </ul>
+      </div>
+
+      {%- liquid
+        assign first = ''
+        for r in rows
+          assign c = r | split: '|'
+          assign mx = c[4] | plus: 0
+          if start <= mx
+            assign first = c
+            break
+          endif
+        endfor
+      -%}
+      <div class="finder" data-sjsg-finder>
+        <h2 class="ft">Find the right size</h2>
+        <label class="fl" for="sjsg-h">Player's height in bare feet</label>
+        <div class="hrow">
+          <input id="sjsg-h" class="num" type="number" inputmode="numeric" min="80" max="210" step="1" value="{{ start }}" data-sjsg-num aria-describedby="sjsg-res">
+          <span class="unit">cm</span>
+        </div>
+        <input class="rng" type="range" min="100" max="200" step="1" value="{{ start }}" aria-label="Player's height in centimetres" data-sjsg-rng>
+        <div class="scale" aria-hidden="true"><span>100 cm</span><span>200 cm</span></div>
+        <div class="res" id="sjsg-res" aria-live="polite">
+          <span class="rl">Bat size</span>
+          <b data-sjsg-size>{{ first[0] }}</b>
+          <span class="rm" data-sjsg-meta>{{ first[1] }}, usually {{ first[2] | downcase }}</span>
+        </div>
+        <a class="btn cta" href="{{ first[5] }}" data-sjsg-shop><span>Shop {{ first[3] }} bats</span><svg class="i"><use href="#sjh-arrow"/></svg></a>
+        <p class="tip"><svg class="i"><use href="#sjh-info"/></svg>Between sizes? Pick the smaller one.</p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="sjsg-jump" aria-label="On this page">
+    <div class="in"><ul role="list">
+      <li><a href="#sjsg-chart">Size chart</a></li>
+      <li><a href="#sjsg-check">Check at home</a></li>
+      <li><a href="#sjsg-adult">Teen and adult bats</a></li>
+      <li><a href="#sjsg-willow">Kashmir or English willow</a></li>
+      <li><a href="#sjsg-bats">Popular bats</a></li>
+      <li><a href="#sjsg-kit">Junior kit sizes</a></li>
+      <li><a href="#sjsg-faq">Questions</a></li>
+    </ul></div>
+  </nav>
+
+  {%- comment -%} 2 chart {%- endcomment -%}
+  <section class="sjsg-sec" id="sjsg-chart" aria-labelledby="sjsg-chart-h">
+    <div class="in">
+      <p class="eye">Size chart</p>
+      <h2 class="h2" id="sjsg-chart-h">Cricket bat size chart <span>(by height)</span></h2>
+      <div class="chart-wrap">
+        <table class="chart">
+          <caption class="sr">Cricket bat sizes by the player's height, junior to adult, with a typical age as a guide</caption>
+          <thead><tr><th scope="col">Bat size</th><th scope="col">Player's height</th><th scope="col">Typical age <small>(guide only)</small></th><th scope="col"><span class="sr">Shop this size</span></th></tr></thead>
+          <tbody>
+            {%- assign grp = '' -%}
+            {%- for r in rows -%}
+              {%- assign c = r | split: '|' -%}
+              {%- if c[6] != grp -%}{%- assign grp = c[6] -%}<tr class="grp"><th colspan="4" scope="colgroup">{{ grp }}</th></tr>{%- endif -%}
+              <tr data-sjsg-row data-max="{{ c[4] }}" data-name="{{ c[0] | escape }}" data-meta="{{ c[1] }}, usually {{ c[2] | downcase }}" data-short="{{ c[3] }}" data-url="{{ c[5] }}"{% if c[0] == first[0] %} class="is-on"{% endif %}>
+                <th scope="row"><span class="tag">Best match</span>{{ c[0] }}</th>
+                <td>{{ c[1] }}</td>
+                <td>{{ c[2] }}</td>
+                <td class="go"><a href="{{ c[5] }}" aria-label="Shop {{ c[3] }} bats"><span>Shop</span><svg class="i"><use href="#sjh-arrow"/></svg></a></td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+      <p class="fine">Sizes vary slightly between brands, so treat the chart as a starting point. Long blade and long handle sizes vary the most.</p>
+    </div>
+  </section>
+
+  {%- comment -%} 3 check at home {%- endcomment -%}
+  <section class="sjsg-sec soft" id="sjsg-check" aria-labelledby="sjsg-check-h">
+    <div class="in">
+      <p class="eye">At home</p>
+      <h2 class="h2" id="sjsg-check-h">How to check the size <span>at home</span></h2>
+      <ol class="steps" role="list">
+        <li><span class="no">1</span><h3>Measure height</h3><p>In bare feet, standing against a wall.</p></li>
+        <li><span class="no">2</span><h3>Stand the bat beside the player</h3><p>Toe of the bat on the floor beside their foot. The top of the handle should sit just below the hip joint. If it reaches their waist or higher, the bat is too long.</p></li>
+        <li><span class="no">3</span><h3>Do the one-hand test</h3><p>Hold the bat by the handle in their top hand, arm straight out in front, for a few seconds. If the bat drops or wobbles, it's too heavy.</p></li>
+        <li><span class="no">4</span><h3>Take a stance</h3><p>In their batting stance the bat should rest comfortably next to their back foot, without them bending over or choking down the handle.</p></li>
+      </ol>
+      <div class="note">
+        <h3>Between sizes? Go smaller</h3>
+        <p>A bat that's too big or heavy pulls players, especially kids, into bad habits: a slow backlift, dropping the shoulder and swinging across the line. A lighter bat lets them play straight, react quickly and enjoy batting. Juniors will have a better season with the right size now than with a bigger bat they "grow into".</p>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 4 teen and adult bats {%- endcomment -%}
+  <section class="sjsg-sec" id="sjsg-adult" aria-labelledby="sjsg-adult-h">
+    <div class="in">
+      <p class="eye">Teens and adults</p>
+      <h2 class="h2" id="sjsg-adult-h">Teen and <span>adult bats</span></h2>
+      <div class="kit">
+        <div class="kc">
+          <h3>Harrow and Small Adult</h3>
+          <p class="how">For teens and smaller adults. Harrow suits about 163 to 168 cm, Small Adult (SM or Academy) about 168 to 175 cm.</p>
+          <a class="more" href="/collections/cricket-bat-harrow-sm-bats?sort_by=best-selling">Shop Harrow and SM bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="kc">
+          <h3>Short Handle (SH)</h3>
+          <p class="how">The standard full-size bat that most adults use, about 175 to 182 cm.</p>
+          <a class="more" href="/collections/cricket-bat-cricket-bat-seniors?sort_by=best-selling">Shop senior bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="kc">
+          <h3>Long Blade or Long Handle</h3>
+          <p class="how">A longer blade or handle for taller players, about 183 cm and over. Brands size these differently, so it's worth trying one in store.</p>
+          <a class="more" href="/collections/cricket-bat-senior-lb-lh-bats?sort_by=best-selling">Shop long blade bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 4 willow {%- endcomment -%}
+  <section class="sjsg-sec" id="sjsg-willow" aria-labelledby="sjsg-willow-h">
+    <div class="in">
+      <p class="eye">Which willow</p>
+      <h2 class="h2" id="sjsg-willow-h">Kashmir willow or <span>English willow?</span></h2>
+      <div class="willow">
+        <div class="wc">
+          <h3>Kashmir willow</h3>
+          <ul class="pts" role="list"><li>Best for beginners</li><li>Most durable</li><li>Much cheaper</li></ul>
+          <p>Kashmir willow is harder, more durable and much cheaper. It's the best choice for beginners, backyard cricket and kids who are growing fast. Most young players are perfectly served by a Kashmir bat.</p>
+          <a class="more" href="/collections/cricket-bat-junior-kashmir-willow?sort_by=best-selling">Shop junior Kashmir willow bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="wc">
+          <h3>English willow</h3>
+          <ul class="pts" role="list"><li>Lighter for its size</li><li>More ping</li><li>Club cricket</li></ul>
+          <p>English willow is lighter for its size and gives more "ping" off the middle, so it suits keen players, juniors included, playing club cricket with a hard ball. It needs knocking in and occasional oiling before use.</p>
+          <p class="prep"><svg class="i"><use href="#sjh-check"/></svg><span>We oil and knock in every English willow bat for free before it ships. <a href="/pages/free-bat-preparation-service">About free bat prep</a></span></p>
+          <a class="more" href="/collections/cricket-bat-cricket-bat-juniors?sort_by=best-selling">Shop junior English willow bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+          <a class="more" href="/collections/cricket-bat-cricket-bat-seniors?sort_by=best-selling">Shop senior English willow bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 5 popular junior bats {%- endcomment -%}
+  <section class="sjsg-sec soft" id="sjsg-bats" aria-labelledby="sjsg-bats-h">
+    <div class="in">
+      <div class="row-head">
+        <div><p class="eye">Popular at SJ Sports</p><h2 class="h2" id="sjsg-bats-h">Popular <span>junior bats</span></h2></div>
+        <a class="more" href="/collections/cricket-bat-cricket-bat-juniors?sort_by=best-selling">See all junior bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+      </div>
+      <div class="sjcol sjsg-rail"><ul class="sjcol-grid" role="list">
+        {%- if s.products != blank -%}
+          {%- for p in s.products -%}{%- render 'sj-card', product: p, rank: 0, eager: false -%}{%- endfor -%}
+        {%- else -%}
+          {%- assign picks = 'gray-nicolls-vapour-strike-junior-kashmir-willow-cricket-bat,kookaburra-empower-pro-9-0-junior-kashmir-willow-bat-2,gray-nicolls-nova-4-0-1200-english-willow-junior-cricket-bat,gray-nicolls-cricket-set-small-junior-ambidextrous-2026' | split: ',' -%}
+          {%- for h in picks -%}{%- assign p = all_products[h] -%}{%- if p != blank and p.available -%}{%- render 'sj-card', product: p, rank: 0, eager: false -%}{%- endif -%}{%- endfor -%}
+        {%- endif -%}
+      </ul></div>
+      <div class="row-head adult" data-sjsg-adult data-url="/collections/cricket-bat-cricket-bat-seniors?sort_by=best-selling&section_id=sj-size-guide">
+        <div><h2 class="h2">Best-selling <span>adult bats</span></h2></div>
+        <a class="more" href="/collections/cricket-bat-cricket-bat-seniors?sort_by=best-selling">See all senior bats<svg class="i"><use href="#sjh-arrow"/></svg></a>
+      </div>
+      <div class="sjcol sjsg-rail" data-sjsg-adult-grid><ul class="sjcol-grid" role="list" aria-busy="true">
+        {%- for i in (1..4) -%}<li class="sjsg-skel" aria-hidden="true"><span class="im"></span><span class="l"></span><span class="l s"></span></li>{%- endfor -%}
+      </ul></div>
+      <div class="bigger">
+        <span>More sizes:</span>
+        <a href="/collections/cricket-bat-harrow-sm-bats?sort_by=best-selling">Harrow bats</a>
+        <a href="/collections/small-adult-bats">Small Adult bats</a>
+        <a href="/collections/cricket-bat-senior-lb-lh-bats?sort_by=best-selling">Long blade bats</a>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 6 rest of the kit {%- endcomment -%}
+  <section class="sjsg-sec" id="sjsg-kit" aria-labelledby="sjsg-kit-h">
+    <div class="in">
+      <p class="eye">Junior kit sizes</p>
+      <h2 class="h2" id="sjsg-kit-h">Sizing the rest of <span>a junior's kit</span></h2>
+      <div class="kit">
+        <div class="kc">
+          <h3>Batting gloves</h3>
+          <p class="how"><b>How to measure:</b> wrist crease to tip of middle finger.</p>
+          <dl><div><dt>Small Junior</dt><dd>about 16.5 cm</dd></div><div><dt>Junior</dt><dd>about 17.5 cm</dd></div><div><dt>Youth</dt><dd>about 19 cm</dd></div></dl>
+          <a class="more" href="/collections/cricket-batting-gloves-junior-gloves">Shop junior gloves<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="kc">
+          <h3>Helmet</h3>
+          <p class="how"><b>How to measure:</b> head circumference with a soft tape, just above the eyebrows.</p>
+          <dl><div><dt>Junior Small</dt><dd>51 to 52 cm</dd></div><div><dt>Junior</dt><dd>53 to 54 cm</dd></div><div><dt>Youth</dt><dd>54 to 56 cm</dd></div></dl>
+          <a class="more" href="/collections/cricket-helmets-junior-helmets">Shop junior helmets<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+        <div class="kc">
+          <h3>Batting pads</h3>
+          <p class="how"><b>How to measure:</b> centre of kneecap to top of foot.</p>
+          <dl><div><dt>Small Junior</dt><dd>30 to 32 cm</dd></div><div><dt>Junior</dt><dd>32 to 34 cm</dd></div><div><dt>Youth</dt><dd>34 to 37 cm</dd></div></dl>
+          <a class="more" href="/collections/cricket-batting-pads-junior-pads">Shop junior pads<svg class="i"><use href="#sjh-arrow"/></svg></a>
+        </div>
+      </div>
+      <p class="kits"><b>Starting from scratch?</b> A cricket kit has the bat, gloves, pads and more in one box. <a href="/collections/cricket-kits">Shop cricket kits</a></p>
+    </div>
+  </section>
+
+  {%- comment -%} 7 questions {%- endcomment -%}
+  <section class="sjsg-sec soft" id="sjsg-faq" aria-labelledby="sjsg-faq-h">
+    <div class="in">
+      <p class="eye">Questions</p>
+      <h2 class="h2" id="sjsg-faq-h">Frequently asked <span>questions</span></h2>
+      <div class="faq">
+        <details><summary>What size cricket bat does an 8-year-old need?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Most 8-year-olds use a size 3 (for a height of about 137 to 144 cm). A smaller 8-year-old may need a size 2. Always check their height against the chart.</p></details>
+        <details><summary>What size cricket bat for a 10-year-old?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Usually a size 4 or size 5, depending on height: size 4 for 144 to 150 cm, size 5 for 150 to 157 cm.</p></details>
+        <details><summary>What size cricket bat for a 12-year-old?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Usually a size 6 (157 to 163 cm). Taller 12-year-olds may be ready for a Harrow (163 to 168 cm).</p></details>
+        <details><summary>When should my child move to a Harrow or full-size bat?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Move to a Harrow at about 163 cm, a Small Adult at about 168 cm, and a full-size Short Handle at about 175 cm.</p></details>
+        <details><summary>What size cricket bat does an adult need?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Most adults use a Short Handle (SH), about 175 to 182 cm. Taller players, about 183 cm and over, may suit a long blade or long handle. Teens and smaller adults often use a Harrow or Small Adult.</p></details>
+        <details><summary>Should I buy a bigger bat so they can grow into it?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>No. An oversized bat is heavier and longer, which makes good technique harder and can put kids off batting. Buy the size that fits now.</p></details>
+        <details><summary>Can left-handed kids use any bat?<svg class="i"><use href="#sjh-chev"/></svg></summary><p>Yes, bats themselves aren't left- or right-handed. Starter kits like the Gray-Nicolls Junior Cricket Set are ambidextrous, so the gloves and pads suit both.</p></details>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 8 close {%- endcomment -%}
+  <section class="sjsg-end" aria-labelledby="sjsg-end-h">
+    <div class="in">
+      <div><h2 id="sjsg-end-h">Still not sure? <span>Try sizes in store</span></h2><p>Come in to SJ Sports, 60 Deshon Street, Woolloongabba (Brisbane), and we'll help you or your young cricketer find the right bat and gear.</p></div>
+      <div class="ctas">
+        <a class="btn sun" href="https://www.google.com/maps/search/?api=1&query=SJ+Sports+60+Deshon+St+Woolloongabba" target="_blank" rel="noopener"><svg class="i"><use href="#sjh-pin"/></svg>Get directions</a>
+        <a class="btn ghost" href="tel:0423240478"><svg class="i"><use href="#sjh-phone"/></svg>Call 0423 240 478</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector('[data-sjsg]'); if (!root) return;
+    var num = root.querySelector('[data-sjsg-num]'), rng = root.querySelector('[data-sjsg-rng]');
+    var rows = [].slice.call(root.querySelectorAll('[data-sjsg-row]'));
+    var size = root.querySelector('[data-sjsg-size]'), meta = root.querySelector('[data-sjsg-meta]'), shop = root.querySelector('[data-sjsg-shop]');
+    if (!num || !rng || !rows.length) return;
+    function pick(h) { for (var i = 0; i < rows.length; i++) { if (h <= +rows[i].dataset.max) return rows[i]; } return rows[rows.length - 1]; }
+    function fill() { var mn = +rng.min, mx = +rng.max; rng.style.setProperty('--p', ((+rng.value - mn) / (mx - mn) * 100) + '%'); }
+    var last = null;
+    function update(h, from) {
+      if (isNaN(h) || h < 50 || h > 250) return;
+      if (from !== 'num') num.value = Math.round(h);
+      if (from !== 'rng') rng.value = Math.min(Math.max(Math.round(h), +rng.min), +rng.max);
+      fill();
+      var r = pick(h); if (r === last) return; last = r;
+      rows.forEach(function (x) { x.classList.toggle('is-on', x === r); });
+      size.textContent = r.dataset.name; meta.textContent = r.dataset.meta;
+      shop.href = r.dataset.url; shop.querySelector('span').textContent = 'Shop ' + r.dataset.short + ' bats';
+    }
+    num.addEventListener('input', function () { update(parseFloat(num.value), 'num'); });
+    rng.addEventListener('input', function () { update(+rng.value, 'rng'); });
+    last = root.querySelector('[data-sjsg-row].is-on'); fill();
+  })();
+  (function () {
+    var head = document.querySelector('[data-sjsg-adult]'), wrap = document.querySelector('[data-sjsg-adult-grid]'); if (!head || !wrap) return;
+    function gone() { head.remove(); wrap.remove(); }
+    function load() {
+      fetch(head.dataset.url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+        var ul = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-sjsg-cards]');
+        if (!ul || ul.children.length < 2) { gone(); return; }
+        var grid = wrap.querySelector('.sjcol-grid'); grid.innerHTML = ''; grid.removeAttribute('aria-busy');
+        [].slice.call(ul.children).forEach(function (c) { grid.appendChild(document.importNode(c, true)); });
+      }).catch(gone);
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+      io.observe(wrap);
+    } else { load(); }
+  })();
+</script>
+
+<style>
+  .sjsg{--navy:#005186;--navy-deep:#0A2E4D;--cta:#A81C60;--sun:#FFC72C;--ink:#0F2236;--muted:#475569;--line:#E1E7EE;--soft:#F4F7FA;--soft-2:#EAF1F7;
+    --head:'Barlow Condensed',system-ui,sans-serif;--body:'Barlow',system-ui,sans-serif;font-family:var(--body);color:var(--ink);font-size:16px;line-height:1.55;background:#fff}
+  .sjsg *,.sjsg *::before,.sjsg *::after{box-sizing:border-box}
+  .sjsg :where(h1,h2,h3,p,ol,ul,li,dl,dt,dd){margin:0;padding:0}
+  .sjsg :where(ol,ul){list-style:none}
+  .sjsg .i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .sjsg :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+  .sjsg .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .sjsg .in{max-width:1464px;margin:0 auto;padding:0 16px}
+  .sjsg .eye{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+  .sjsg .h2{font-family:var(--head)!important;font-weight:800!important;font-size:32px!important;line-height:1.02!important;text-transform:uppercase;letter-spacing:.01em!important;color:var(--ink)!important;margin-top:6px!important}
+  .sjsg .h2 span{color:var(--cta)}
+  .sjsg h3{font-family:var(--body)!important;font-size:18px!important;font-weight:700!important;line-height:1.3!important;letter-spacing:0!important;text-transform:none!important;color:var(--ink)!important}
+  .sjsg .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:10px;font:700 16px/1 var(--body);text-decoration:none;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+  .sjsg .btn.sun{background:var(--sun);color:var(--navy-deep)}
+  .sjsg .btn.sun:hover{background:#FFD65E}
+  .sjsg .btn.cta{background:var(--cta);color:#fff}
+  .sjsg .btn.cta:hover{background:#8E1650}
+  .sjsg .btn.ghost{border:1.5px solid rgba(255,255,255,.5);color:#fff}
+  .sjsg .btn.ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+  .sjsg .more{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;color:var(--navy);text-decoration:none}
+  .sjsg .more:hover{text-decoration:underline;text-underline-offset:3px}
+
+  /* hero */
+  .sjsg-hero{background:var(--navy-deep);color:#fff;padding:18px 0 28px;overflow:hidden}
+  .sjsg-hero .in{display:grid;gap:22px}
+  .sjsg .crumbs{display:flex;flex-wrap:wrap;gap:6px;font-size:14px;color:#AFC1D3;margin-bottom:14px}
+  .sjsg .crumbs a{color:#DCE6F0;text-decoration:none}
+  .sjsg .crumbs a:hover{text-decoration:underline}
+  .sjsg-hero .eye{color:var(--sun)}
+  .sjsg-hero h1{font-family:var(--head)!important;font-weight:800!important;font-size:42px!important;line-height:.98!important;text-transform:uppercase;letter-spacing:.01em!important;color:#fff!important;margin-top:8px!important}
+  .sjsg-hero .lede{margin-top:14px!important;font-size:17px;line-height:1.55;color:#D9E4EF;max-width:58ch}
+  .sjsg-hero .lede b{color:#fff}
+  .sjsg-hero .facts{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px}
+  .sjsg-hero .facts li{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#DCE6F0}
+  .sjsg-hero .facts .i{color:var(--sun)}
+
+  /* finder */
+  .sjsg .finder{background:#fff;color:var(--ink);border-radius:16px;padding:20px 18px 18px;box-shadow:0 24px 48px rgba(0,0,0,.22)}
+  .sjsg .finder .ft{font-family:var(--head)!important;font-weight:800!important;font-size:26px!important;line-height:1!important;text-transform:uppercase;color:var(--ink)!important;letter-spacing:.01em!important}
+  .sjsg .finder .fl{display:block;margin-top:12px;font-size:15px;font-weight:600;color:var(--muted)}
+  .sjsg .finder .hrow{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+  .sjsg .finder .num{width:120px!important;height:56px!important;min-height:0!important;padding:0 12px!important;margin:0!important;border:1.5px solid var(--line)!important;border-radius:10px!important;background:var(--soft)!important;font:800 30px/1 var(--head)!important;color:var(--ink)!important;box-shadow:none!important}
+  .sjsg .finder .num:focus{border-color:var(--navy)!important;box-shadow:0 0 0 3px #00518633!important;outline:none}
+  /* beats the site-wide 16px phone rule for inputs (sj-cro.css); 30px is bigger, so no iOS zoom either */
+  .sjsg .finder .hrow input.num[type=number]{font-size:30px!important}
+  .sjsg .finder .unit{font:700 20px var(--head);text-transform:uppercase;color:var(--muted)}
+  .sjsg .rng{-webkit-appearance:none;appearance:none;display:block;width:100%;height:44px;margin:6px 0 0;padding:0;background:transparent;cursor:pointer;border:0}
+  .sjsg .rng::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--navy) var(--p,50%),var(--line) var(--p,50%))}
+  .sjsg .rng::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:0 2px 8px rgba(10,46,77,.28)}
+  .sjsg .rng::-moz-range-track{height:8px;border-radius:99px;background:var(--line)}
+  .sjsg .rng::-moz-range-progress{height:8px;border-radius:99px;background:var(--navy)}
+  .sjsg .rng::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--navy)}
+  .sjsg .rng:focus-visible{outline-offset:4px}
+  .sjsg .scale{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:-2px}
+  .sjsg .res{display:flex;flex-direction:column;gap:2px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--soft-2)}
+  .sjsg .res .rl{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+  .sjsg .res b{font-family:var(--head);font-weight:800;font-size:34px;line-height:1.02;text-transform:uppercase;color:var(--ink)}
+  .sjsg .res .rm{font-size:15.5px;color:var(--muted)}
+  .sjsg .finder .btn{width:100%;margin-top:14px}
+  .sjsg .finder .tip{display:flex;align-items:center;gap:8px;margin-top:12px!important;font-size:14.5px;color:var(--muted)}
+  .sjsg .finder .tip .i{width:18px;height:18px;color:var(--navy)}
+
+  /* on this page */
+  .sjsg-jump{border-bottom:1px solid var(--line);background:#fff}
+  .sjsg-jump ul{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px 0!important;margin:0 -16px!important;padding-left:16px!important;padding-right:16px!important}
+  .sjsg-jump ul::-webkit-scrollbar{display:none}
+  .sjsg-jump a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);color:var(--ink);font-weight:600;font-size:15px;text-decoration:none;white-space:nowrap;transition:border-color .2s,color .2s}
+  .sjsg-jump a:hover{border-color:var(--navy);color:var(--navy)}
+
+  /* sections */
+  .sjsg-sec{padding:40px 0;scroll-margin-top:var(--sjn-stack,80px)}
+  .sjsg-sec.soft{background:var(--soft)}
+  .sjsg .row-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .sjsg .row-head .more{flex:none}
+
+  /* chart */
+  .sjsg .chart-wrap{margin-top:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:980px}
+  .sjsg table.chart{width:100%;border-collapse:collapse;border-spacing:0;margin:0!important;font-size:15.5px;table-layout:auto}
+  .sjsg .chart th,.sjsg .chart td{border:0!important;padding:12px 10px!important;text-align:left;vertical-align:middle;background:none}
+  .sjsg .chart thead th{background:var(--navy)!important;color:#fff!important;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1.25}
+  .sjsg .chart thead small{display:block;font-weight:500;letter-spacing:0;text-transform:none;opacity:.85}
+  .sjsg .chart tbody tr{border-top:1px solid var(--line);transition:background-color .2s}
+  .sjsg .chart tbody tr:nth-child(even){background:#FAFBFC}
+  .sjsg .chart tbody th{font-weight:700;color:var(--ink);font-size:16px;line-height:1.3}
+  .sjsg .chart tbody td{color:var(--ink)}
+  .sjsg .chart .tag{display:none}
+  .sjsg .chart tr.grp th{background:var(--soft-2)!important;color:var(--navy)!important;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 10px!important}
+  .sjsg .chart tr.is-on{background:var(--soft-2)!important;box-shadow:inset 4px 0 0 var(--navy)}
+  .sjsg .chart tr.is-on .tag{display:inline-block;margin:0 0 4px;padding:2px 8px;border-radius:999px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;width:max-content}
+  .sjsg .chart tr.is-on th{display:flex;flex-direction:column;align-items:flex-start}
+  .sjsg .chart td.go{width:1%;white-space:nowrap;text-align:right;padding-right:6px!important}
+  .sjsg .chart td.go a{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:0 10px;border-radius:8px;color:var(--navy);font-weight:700;text-decoration:none}
+  .sjsg .chart td.go a span{display:none}
+  .sjsg .chart td.go a:hover{background:#fff}
+  .sjsg .fine{margin-top:12px!important;font-size:14.5px;color:var(--muted)}
+
+  /* check at home */
+  .sjsg .steps{display:grid;gap:12px;margin-top:22px}
+  .sjsg .steps li{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 18px 72px;min-height:96px}
+  .sjsg .steps .no{position:absolute;left:18px;top:18px;width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font:800 20px/1 var(--head)}
+  .sjsg .steps p{margin-top:4px!important;color:var(--muted)}
+  .sjsg .note{margin-top:14px;border-left:4px solid var(--cta);background:#fff;border-radius:0 12px 12px 0;padding:16px 18px}
+  .sjsg .note p{margin-top:6px!important;color:var(--muted);max-width:75ch}
+
+  /* willow */
+  .sjsg .willow{display:grid;gap:12px;margin-top:22px}
+  .sjsg .wc{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .sjsg .wc h3{font-family:var(--head)!important;font-weight:800!important;font-size:26px!important;text-transform:uppercase!important;line-height:1!important}
+  .sjsg .wc .pts{display:flex;flex-wrap:wrap;gap:6px}
+  .sjsg .wc .pts li{padding:4px 10px;border-radius:999px;background:var(--soft-2);color:var(--navy);font-size:14px;font-weight:600}
+  .sjsg .wc p{color:var(--muted)}
+  .sjsg .wc .prep{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--soft);color:var(--ink);font-size:15px}
+  .sjsg .wc .prep .i{color:var(--navy);margin-top:2px}
+  .sjsg .wc .prep a{color:var(--navy);font-weight:700}
+  .sjsg .wc .more:first-of-type{margin-top:auto}
+
+  /* bats */
+  .sjsg-rail{padding:0!important;margin-top:18px}
+  .sjsg-rail .sjcol-grid{display:grid;grid-auto-flow:column;grid-auto-columns:44%;grid-template-columns:none;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px!important;padding:0 16px 4px!important;scroll-padding:0 16px}
+  .sjsg-rail .sjcol-grid::-webkit-scrollbar{display:none}
+  .sjsg-rail .sjc-card{scroll-snap-align:start}
+  .sjsg .row-head.adult{margin-top:40px}
+  .sjsg-skel .im{display:block;aspect-ratio:1;border-radius:12px;background:#fff}
+  .sjsg-skel .l{display:block;height:12px;width:85%;border-radius:6px;background:#fff;margin-top:12px}
+  .sjsg-skel .l.s{width:45%}
+  .sjsg .bigger{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px}
+  .sjsg .bigger span{font-weight:700;margin-right:4px}
+  .sjsg .bigger a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line);color:var(--ink);font-weight:600;font-size:15px;text-decoration:none}
+  .sjsg .bigger a:hover{border-color:var(--navy);color:var(--navy)}
+
+  /* kit */
+  .sjsg .kit{display:grid;gap:12px;margin-top:22px}
+  .sjsg .kc{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:14px;padding:20px}
+  .sjsg .kc .how{color:var(--muted)}
+  .sjsg .kc .how b{color:var(--ink)}
+  .sjsg .kc dl{border-top:1px solid var(--line)}
+  .sjsg .kc dl div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .sjsg .kc dt{font-weight:600}
+  .sjsg .kc dd{color:var(--muted);font-variant-numeric:tabular-nums}
+  .sjsg .kc .more{margin-top:auto}
+  .sjsg .kits{margin-top:16px!important;color:var(--muted)}
+  .sjsg .kits b{color:var(--ink)}
+  .sjsg .kits a{color:var(--navy);font-weight:700}
+
+  /* faq */
+  .sjsg .faq{margin-top:18px;border-top:1px solid var(--line);max-width:880px}
+  .sjsg .faq details{border-bottom:1px solid var(--line)}
+  .sjsg .faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:12px 0;font-weight:700;font-size:17px;cursor:pointer;list-style:none}
+  .sjsg .faq summary::-webkit-details-marker{display:none}
+  .sjsg .faq summary .i{transition:transform .2s;color:var(--navy)}
+  .sjsg .faq details[open] summary .i{transform:rotate(90deg)}
+  .sjsg .faq details p{padding:0 0 16px!important;color:var(--muted);max-width:65ch}
+
+  /* end band */
+  .sjsg-end{background:var(--navy);color:#fff;padding:32px 0}
+  .sjsg-end .in{display:grid;gap:18px}
+  .sjsg-end h2{font-family:var(--head)!important;font-weight:800!important;font-size:32px!important;line-height:1!important;text-transform:uppercase;color:#fff!important;letter-spacing:.01em!important}
+  .sjsg-end h2 span{color:var(--sun)}
+  .sjsg-end p{margin-top:8px!important;color:#D9E4EF;max-width:60ch}
+  .sjsg-end .ctas{display:flex;flex-wrap:wrap;gap:10px}
+  .sjsg-end .ctas .btn{flex:1 1 220px}
+
+  @media (min-width:768px){
+    .sjsg .in{padding:0 24px}
+    .sjsg-jump ul{margin:0 -24px!important;padding-left:24px!important;padding-right:24px!important}
+    .sjsg .chart td.go a span{display:inline}
+    .sjsg .chart th,.sjsg .chart td{padding:13px 18px!important}
+    .sjsg .steps{grid-template-columns:repeat(2,1fr)}
+    .sjsg .willow{grid-template-columns:repeat(2,1fr)}
+    .sjsg .kit{grid-template-columns:repeat(3,1fr)}
+    .sjsg-rail .sjcol-grid{grid-auto-columns:calc((100% - 36px) / 3.3);margin:0 -24px!important;padding:0 24px 4px!important;scroll-padding:0 24px}
+    .sjsg-hero .in{grid-template-columns:1fr 360px;align-items:center;gap:32px}
+  }
+  @media (min-width:1025px){
+    .sjsg .in{padding:0 32px}
+    .sjsg-jump ul{margin:0!important;padding-left:0!important;padding-right:0!important}
+    .sjsg .h2{font-size:44px!important}
+    .sjsg-hero{padding:28px 0 56px}
+    .sjsg-hero .in{grid-template-columns:1.2fr 420px;gap:72px}
+    .sjsg-hero h1{font-size:64px!important}
+    .sjsg-hero .lede{font-size:19px}
+    .sjsg .finder{padding:26px 26px 22px}
+    .sjsg-sec{padding:64px 0}
+    .sjsg .steps{grid-template-columns:repeat(4,1fr);gap:16px}
+    .sjsg .steps li{padding:22px 20px;min-height:0}
+    .sjsg .steps .no{position:static;margin-bottom:14px}
+    .sjsg-rail .sjcol-grid{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(4,1fr);gap:20px;overflow:visible;margin:0!important;padding:0!important}
+    .sjsg-end{padding:48px 0}
+    .sjsg-end .in{grid-template-columns:1fr auto;align-items:center;gap:32px}
+    .sjsg-end h2{font-size:44px!important}
+    .sjsg-end .ctas .btn{flex:0 0 auto}
+  }
+  @media (prefers-reduced-motion:reduce){ .sjsg *{transition:none!important} html{scroll-behavior:auto} }
+</style>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ bat size guide",
+  "class": "sjsg-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Cricket bat size chart" },
+    { "type": "range", "id": "start", "label": "Height the finder starts at (cm)", "min": 100, "max": 200, "step": 1, "default": 140 },
+    { "type": "product_list", "id": "products", "label": "Popular junior bats", "limit": 8, "info": "Leave empty to use the four from the article." }
+  ]
+}
+{% endschema %}

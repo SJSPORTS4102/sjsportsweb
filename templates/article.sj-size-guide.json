@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "sj-size-guide",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
