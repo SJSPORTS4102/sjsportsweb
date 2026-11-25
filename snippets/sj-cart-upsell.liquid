@@ -16,7 +16,7 @@
        protect  -> underwear-lower-compressions, abdominal guards           (up to $60)
        other    -> Griptec, bat-grips, cricket-balls                        (up to $40, always last)
   3. Skips anything sold out, already in the cart, another bat or machine, services and gift items.
-  4. Under the $200 free shipping line, items that take the cart over $200 go first.
+  4. Under the $250 free shipping line, items that take the cart over $250 go first.
   5. Up to 2 from each collection, mixed so a bat gets a grip and bat care, not three grips.
   6. Takes one from each matching kind in turn until it has 3. The general list (Griptec, grips,
      balls) only fills slots the matching kinds could not.
@@ -71,7 +71,7 @@
   assign kind_list = kinds | split: ','
 
   # candidates per kind, max 2 from each source collection, interleaved so a bat gets a grip AND bat care,
-  # then items that take the cart over $200 move to the front. Refs are "collection:index:product_id:price".
+  # then items that take the cart over $250 move to the front. Refs are "collection:index:product_id:price".
   assign lists = ''
   assign other_list = ''
   for k in kind_list
@@ -233,7 +233,7 @@
           <div class="sjc-up__info">
             <a class="sjc-up__t" href="{{ p.url }}">{{ p.title }}</a>
             <span class="sjc-up__p">{{ v.price | money_without_trailing_zeros }}</span>
-            {%- if gap > 0 and v.price >= gap -%}<span class="sjc-up__ship">Takes you over $200</span>{%- endif -%}
+            {%- if gap > 0 and v.price >= gap -%}<span class="sjc-up__ship">Takes you over $250</span>{%- endif -%}
             {%- unless p.has_only_default_variant -%}
               {%- assign sel_id = 'sjc-up-v-' | append: p.id -%}
               <label class="sjc-up__lab" for="{{ sel_id }}">{{ p.options.first }}</label>

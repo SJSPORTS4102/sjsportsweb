@@ -9,8 +9,8 @@
   assign cart_change_url  = routes.cart_change_url
   assign min_qty          = settings.min_qty | plus: 0
   assign compare_tt_price = 0
-  # SJ CRO 21: $200 free standard shipping when the threshold product is missing
-  assign shipping_amount  = settings.free_ship_pr.metafields.theme.shipping_money.value | default: settings.free_ship_pr.price | default: 20000
+  # SJ CRO 21: $250 free standard shipping when the threshold product is missing (was $200 until 25 Nov 2026)
+  assign shipping_amount  = settings.free_ship_pr.metafields.theme.shipping_money.value | default: settings.free_ship_pr.price | default: 25000
   assign total_price    = cart.total_price
   # SJ cart drawer v3: what the shopper saves (sale prices plus discounts)
   assign sjc_save = 0
@@ -220,7 +220,7 @@
                <div class="t4s-mini_cart__emty sjc-empty">
                   <span class="sjc-empty__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
                   <p class="sjc-empty__h">Your cart is empty</p>
-                  <p class="sjc-empty__p">Free bat prep on English willow bats, and free standard shipping over $200.</p>
+                  <p class="sjc-empty__p">Free bat prep on English willow bats, and free standard shipping over $250.</p>
                   {%- assign sjc_cols = 'cricket-bat,cricket-batting-pads,cricket-batting-gloves,cricket-helmets' | split: ',' -%}
                   <ul class="sjc-empty__links">
                     {%- for h in sjc_cols -%}

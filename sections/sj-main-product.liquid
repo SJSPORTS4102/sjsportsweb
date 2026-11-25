@@ -306,7 +306,7 @@
 
         <ul class="sjp-trust" role="list">
           <li><span class="ic"><svg class="i"><use href="#sjp-clock"/></svg></span><span>{% if has_prep %}<b>Prepped and sent in up to 3 business days</b>{% else %}<b>Sent in 1 to 3 business days</b>{% endif %}</span></li>
-          <li><span class="ic"><svg class="i"><use href="#sjp-truck"/></svg></span><span><b>Free standard shipping</b> on orders over $200 <span class="m">(bulky items excluded)</span></span></li>
+          <li><span class="ic"><svg class="i"><use href="#sjp-truck"/></svg></span><span><b>Free standard shipping</b> on orders over $250 <span class="m">(bulky items excluded)</span></span></li>
           <li><span class="ic"><svg class="i"><use href="#sjp-pin"/></svg></span><span><b>Or pick up</b> at 60 Deshon St, Woolloongabba. <span class="m">Open 7 days</span></span></li>
           <li><span class="ic"><svg class="i"><use href="#sjp-shield"/></svg></span><span><b>Warranty and exchange</b> <a href="/pages/warranty-exchange">What's covered</a></span></li>
         </ul>
@@ -462,7 +462,7 @@
         {%- if product.description != blank -%}
           <details><summary>Full description<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte">{{ product.description }}</div></details>
         {%- endif -%}
-        <details><summary>Shipping and returns<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte"><p>Free standard shipping on orders over $200, bulky items excluded. Or pick up free from 60 Deshon St, Woolloongabba, open 7 days.</p><p><a href="/pages/shipping-delivery">Shipping and delivery</a> &middot; <a href="/policies/refund-policy">Returns policy</a></p></div></details>
+        <details><summary>Shipping and returns<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte"><p>Free standard shipping on orders over $250, bulky items excluded. Or pick up free from 60 Deshon St, Woolloongabba, open 7 days.</p><p><a href="/pages/shipping-delivery">Shipping and delivery</a> &middot; <a href="/policies/refund-policy">Returns policy</a></p></div></details>
         {%- assign why = pages['why-buy-from-us'] -%}
         {%- if why != blank and why.content != blank -%}
           <details><summary>Why buy from SJ Sports<svg class="i"><use href="#sjp-down"/></svg></summary><div class="rte">{{ why.content }}</div></details>

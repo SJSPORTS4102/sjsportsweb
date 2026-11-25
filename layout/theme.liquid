@@ -130,10 +130,16 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
       >
     {%- endif -%}
 
-    {%- comment -%} Off Leesh 25 Nov 2026: the uninstalled Avada SEO app left old collection titles behind that beat the title set in Shopify admin. When a collection has a Shopify SEO title, use it. {%- endcomment -%}
+    {%- comment -%} Off Leesh 25 Nov 2026: the Avada SEO Suite app holds its own per-collection titles and descriptions (set long ago) that beat the ones in Shopify admin. When a collection has a Shopify SEO title or description, use it, so admin is the one place to edit them. {%- endcomment -%}
     {%- if request.page_type == 'collection' -%}
       {%- assign sj_seo_title = collection.metafields.global.title_tag.value | default: collection.metafields.global.title_tag -%}
       {%- if sj_seo_title != blank -%}{%- assign page_title = sj_seo_title -%}{%- endif -%}
+      {%- assign sj_seo_desc = collection.metafields.global.description_tag.value | default: collection.metafields.global.description_tag -%}
+      {%- if sj_seo_desc != blank -%}{%- assign page_description = sj_seo_desc -%}{%- endif -%}
+    {%- elsif request.page_type == 'product' -%}
+      {%- comment -%} Products: a description written in Shopify admin wins over the Avada template and Avada's own per-product text. {%- endcomment -%}
+      {%- assign sj_seo_desc = product.metafields.global.description_tag.value | default: product.metafields.global.description_tag -%}
+      {%- if sj_seo_desc != blank -%}{%- assign page_description = sj_seo_desc -%}{%- endif -%}
     {%- endif -%}
     {%- if t_name != 'list-collections' -%}
       {%- capture seo_title -%}
