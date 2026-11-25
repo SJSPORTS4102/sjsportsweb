@@ -66,6 +66,11 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
     >
     <meta name="theme-color" content="{{ settings.body_bg }}">
     <link rel="canonical" href="{{ canonical_url }}">
+    {%- comment -%} Off Leesh 25 Nov 2026: keep leftover catch-all collections out of Google and its sitelinks. The pages stay on the site and their links are still followed. {%- endcomment -%}
+    {%- assign sj_noindex = 'all,frontpage,sj-sports-best-sellers,avada-best-sellers' | split: ',' -%}
+    {%- if request.page_type == 'collection' and sj_noindex contains collection.handle -%}
+      <meta name="robots" content="noindex, follow">
+    {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     {%- if settings.font_source == '1' -%}
       {%- unless settings.fnt_fm_sp1.system? and settings.fnt_fm_sp2.system? and settings.fnt_fm_sp3.system? -%}
@@ -78,6 +83,7 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
     {%- endif -%}
     {%- render 'head_assets', t_name: t_name, isRTL: isRTL -%}
     {%- render 'avada-customize' -%}
+    {%- comment -%} Off Leesh 13 Nov 2026: Google Merchant Center store badge (bottom right) removed on Harrison's say-so. Kept here so it can be put back.
     <!-- BEGIN MerchantWidget Code -->
 
 <script id='merchantWidgetScript'
@@ -103,6 +109,7 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
 </script>
 
 <!-- END MerchantWidget Code -->
+    {%- endcomment -%}
     <!-- Google Tag Manager -->
     <script>
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -123,6 +130,11 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
       >
     {%- endif -%}
 
+    {%- comment -%} Off Leesh 25 Nov 2026: the uninstalled Avada SEO app left old collection titles behind that beat the title set in Shopify admin. When a collection has a Shopify SEO title, use it. {%- endcomment -%}
+    {%- if request.page_type == 'collection' -%}
+      {%- assign sj_seo_title = collection.metafields.global.title_tag.value | default: collection.metafields.global.title_tag -%}
+      {%- if sj_seo_title != blank -%}{%- assign page_title = sj_seo_title -%}{%- endif -%}
+    {%- endif -%}
     {%- if t_name != 'list-collections' -%}
       {%- capture seo_title -%}
       {%- if template == 'search' and search.performed == true -%}{{ 'search.general.heading' | t: count: search.results_count }}: {{ 'search.results_with_count_and_term' | t: terms: search.terms, count: search.results_count }}{%- elsif template == 'search.wishlist' %}{{ 'wishlist_page.meta' | t }}{%- elsif template == 'search.compare' %}{{ 'compare_page.meta' | t }}{%- else -%}{{ page_title }}{%- endif -%}
@@ -201,6 +213,8 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
       ></iframe
     ></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    {%- comment -%} Off Leesh 13 Nov 2026: hand-built phone bottom bar (Home, Menu, Search, Account, Cart) and its menu drawer removed on Harrison's say-so.
+    Every item is already in the header; Account moved into the SJ phone menu (sections/sj-mega-nav). Kept here so it can be put back.
     <!-- SJ Sports: Mobile Bottom Nav v5 + Accordion Sub-menus -->
 <style>
 /* ── Bottom Nav Bar ── */
@@ -464,5 +478,6 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
 })();
 </script>
 <!-- End SJ Sports Mobile Bottom Nav v5 -->
+    {%- endcomment -%}
   </body>
 </html>
