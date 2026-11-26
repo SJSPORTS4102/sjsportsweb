@@ -163,11 +163,17 @@
     add(btn, { id: id, quantity: 1, properties: sel.props });
   }
 
+  /* ignore clicks while an add is running or showing "Added" (about 2 seconds), so a second click doesn't add another */
+  function locked(el) {
+    var q = el.closest('[data-sjq]');
+    return el.classList.contains('is-busy') || el.classList.contains('is-done') || !!(q && q.querySelector('.is-busy, .is-done'));
+  }
+
   document.addEventListener('click', function (e) {
     var a = e.target.closest('[data-sjq-add]');
-    if (a) { e.preventDefault(); if (!a.classList.contains('is-busy')) add(a); return; }
+    if (a) { e.preventDefault(); if (!locked(a)) add(a); return; }
     var pk = e.target.closest('[data-sjq-pick]');
-    if (pk) { e.preventDefault(); if (!pk.classList.contains('is-busy')) pick(pk, e.detail === 0); return; }
+    if (pk) { e.preventDefault(); if (!locked(pk)) pick(pk, e.detail === 0); return; }
     var bk = e.target.closest('[data-sjq-back]');
     if (bk) {
       e.preventDefault();
