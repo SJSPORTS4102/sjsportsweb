@@ -159,3 +159,87 @@
 
 /* white page behind the collection (the theme body is grey) */
 .sjcol-section{background:#fff}
+
+/* Quick add on the product card (Off Leesh 25 Nov 2026), snippets/sj-card.liquid + assets/sj-quick-add.js.
+   Computers: shows when the card is hovered or reached by keyboard. Phones and tablets: a round bag button
+   on the photo. z-index 3 sits above the badges (2) and below the sticky bar (20). */
+.sjc-card__media{position:relative}
+.sjq{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;padding:8px;pointer-events:none;font-family:var(--body,'Barlow',system-ui,sans-serif)}
+.sjq>*{pointer-events:auto}
+.sjq button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;margin:0}
+.sjq svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sjq-btn{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line,#E1E7EE);border-radius:50%;padding:0;background:#fff;color:var(--cta,#A81C60);text-decoration:none;box-shadow:0 2px 8px rgba(15,34,54,.14);transition:background-color .2s,color .2s,opacity .18s,transform .18s}
+.sjq-btn:active{background:var(--cta,#A81C60);color:#fff}
+.sjq-btn .sjq-l{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sjq-btn svg{width:20px;height:20px}
+.sjq .sjq-ok{display:none}
+.sjq .is-done .sjq-i{display:none}
+.sjq .is-done .sjq-ok{display:block;stroke-width:3}
+.sjq .is-busy,.sjq-sheet .is-busy{opacity:.6;pointer-events:none}
+.sjq .is-done,.sjq-sheet .is-done{background:var(--ok,#147A4B)!important;border-color:var(--ok,#147A4B)!important;color:#fff!important}
+.sjq-panel{position:absolute;left:8px;right:8px;bottom:8px;max-height:calc(100% - 16px);overflow:auto;background:#fff;border:1px solid var(--line,#E1E7EE);border-radius:10px;padding:10px;box-shadow:0 8px 24px rgba(15,34,54,.14);visibility:hidden;opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s,visibility 0s .18s}
+.sjq.is-open .sjq-panel{visibility:visible;opacity:1;transform:none;transition:opacity .18s,transform .18s}
+.sjq.is-open .sjq-btn--open{visibility:hidden}
+.sjq-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.sjq-h{margin:0!important;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--navy,#005186)}
+.sjq-x{display:grid;place-items:center;width:32px;height:32px;margin:-6px -6px -6px 0!important;border:0;border-radius:50%;background:transparent;color:var(--muted,#475569)}
+.sjq-x:hover{background:var(--soft,#F4F7FA);color:var(--ink,#0F2236)}
+.sjq-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sjq-chip{min-width:44px;height:40px;padding:0 10px;border:1px solid #CBD5E1;border-radius:8px;background:#fff;color:var(--ink,#0F2236);font-size:14px!important;font-weight:600;line-height:1.1;transition:background-color .15s,border-color .15s,color .15s}
+.sjq-chip:hover{border-color:var(--navy,#005186);background:var(--navy,#005186);color:#fff}
+.sjq-chip:disabled{cursor:not-allowed;background:var(--soft,#F4F7FA);border-color:var(--line,#E1E7EE);color:#94A3B8;text-decoration:line-through}
+/* bat picker: size, preferred weight, bat prep, one step at a time */
+.sjq-step[hidden]{display:none}
+.sjq-top .sjq-h{flex:1;display:flex;align-items:baseline;gap:8px}
+.sjq-n{margin-left:auto;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted,#475569)}
+.sjq-back{display:grid;place-items:center;width:28px;height:28px;margin:-4px 0 -4px -6px!important;padding:0;border:0;border-radius:50%;background:transparent;color:var(--navy,#005186);flex:none}
+.sjq-back:hover{background:var(--soft,#F4F7FA)}
+.sjq-chips--two{display:grid;grid-template-columns:1fr 1fr}
+.sjq-chips--one{display:grid;grid-template-columns:1fr}
+.sjq-chips--two .sjq-chip,.sjq-chips--one .sjq-chip{width:100%;padding:0 8px}
+.sjq-chip[aria-pressed="true"]{border-color:var(--navy,#005186);background:var(--navy,#005186);color:#fff}
+.sjq-note{margin:8px 0 0!important;font-size:12px;line-height:1.35;color:var(--muted,#475569)}
+.sjq-err{margin:8px 0 0!important;font-size:13px;line-height:1.35;color:#B42318;background:#fff;border-radius:8px}
+.sjq>.sjq-err{padding:6px 8px;box-shadow:0 2px 8px rgba(15,34,54,.18);order:-1;margin:0 0 6px!important}
+.sjq :focus-visible{outline:3px solid #FFC72C;outline-offset:2px}
+
+@media (hover:hover) and (pointer:fine){
+  /* computers: full-width bar for one-variant products, size chips straight on hover */
+  .sjq-btn{width:100%;height:44px;border:0;border-radius:10px;background:var(--cta,#A81C60);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;letter-spacing:.01em;opacity:0;transform:translateY(6px)}
+  .sjq-btn .sjq-l{position:static;width:auto;height:auto;overflow:visible;clip:auto}
+  .sjq-btn svg{width:18px;height:18px}
+  .sjq-btn:hover{background:#8E1650;color:#fff}
+  .sjc-card:hover .sjq-btn,.sjq-btn:focus-visible,.sjq-btn.is-busy,.sjq-btn.is-done{opacity:1;transform:none}
+  .sjc-card:hover .sjq-btn.is-busy{opacity:.6}
+  .sjc-card:hover .sjq-btn--open{visibility:hidden}
+  .sjc-card:hover .sjq-panel{visibility:visible;opacity:1;transform:none;transition:opacity .18s,transform .18s}
+  .sjq-x{display:none}
+  .sjq.is-open .sjq-x{display:grid}
+  .sjq-chip{height:36px}
+}
+
+/* phones and tablets: one bottom sheet for the whole page, built by sj-quick-add.js on first use.
+   Sits under the theme's cart drawer, which opens straight after an add. */
+.sjq-back-drop{position:fixed;inset:0;z-index:1098;background:rgba(15,34,54,.45);opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
+.sjq-back-drop.is-open{opacity:1;visibility:visible;transition:opacity .2s}
+.sjq-sheet{position:fixed;left:0;right:0;bottom:0;z-index:1099;max-height:75vh;overflow:auto;background:#fff;border-radius:16px 16px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(15,34,54,.18);font-family:'Barlow',system-ui,sans-serif;color:#0F2236;line-height:1.4;transform:translateY(100%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s}
+.sjq-sheet.is-open{transform:none;visibility:visible;transition:transform .25s ease}
+.sjq-sheet *{box-sizing:border-box}
+.sjq-sheet p{margin:0}
+.sjq-sheet button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sjq-sheet svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sjq-sheet__hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.sjq-sheet__t{font-size:17px;font-weight:600;margin-top:4px!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sjq-sheet__p{font-size:17px;font-weight:700;margin-top:2px!important}
+.sjq-sheet .sjq-x{width:44px;height:44px;margin:-10px -10px 0 0!important;flex:none}
+.sjq-sheet .sjq-top{margin-bottom:12px}
+.sjq-sheet .sjq-back{width:40px;height:40px;margin:-8px 0 -8px -10px!important}
+.sjq-sheet .sjq-n{font-size:14px}
+.sjq-sheet .sjq-note{font-size:14px;margin-top:12px!important}
+.sjq-sheet .sjq-chip[aria-pressed="true"]{border-color:var(--navy,#005186);background:var(--navy,#005186);color:#fff}
+.sjq-sheet .sjq-chips{gap:8px}
+.sjq-sheet .sjq-chip{min-width:64px;height:48px;padding:0 16px;font-size:16px!important;white-space:nowrap}
+.sjq-sheet .sjq-chip:hover{border-color:#CBD5E1;background:#fff;color:var(--ink,#0F2236)}
+.sjq-sheet .sjq-chip:active{border-color:var(--navy,#005186);background:var(--navy,#005186);color:#fff}
+.sjq-sheet :focus-visible{outline:3px solid #FFC72C;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sjq-btn,.sjq-panel,.sjq-sheet,.sjq-back-drop{transition:none!important}.sjq-btn,.sjq-panel{transform:none!important}}

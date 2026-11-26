@@ -3,6 +3,9 @@
   Brand, full name (2 lines), price with the real dollar saving, Free bat prep under the price on English
   willow bats, sizes in stock, Best seller tag when the list is in Shopify's best-selling order.
   No quick view, no image zoom. Params: product, rank (1 to 3 shows Best seller), eager.
+  Quick add (Off Leesh 25 Nov 2026): one-variant products add straight away, one-option products (size)
+  pick a chip. English willow bats step through size, preferred weight and bat prep (same values as the
+  product page), and the last pick adds to cart (Harrison, 25 Nov 2026). Only in-stock options show as chips. Script: assets/sj-quick-add.js, styles: sj-collection.css.
 {%- endcomment -%}
 {%- liquid
   assign p = product
@@ -64,6 +67,57 @@
   if rank > 0 and rank <= 3
     assign best = true
   endif
+  # quick add: same bat prep rule as the product page (sections/sj-main-product.liquid has_prep); these bats get the 3-step picker
+  assign qa_prep = false
+  if t contains 'cricket bat'
+    unless t contains 'batting' or t contains 'kashmir' or tl contains 'kashmir'
+      assign qa_prep = true
+    endunless
+  endif
+  # quick add chips only name the options that vary across the in-stock variants (many shoes and helmets have
+  # Size plus a single Colour in stock). With one in-stock variant left, fall back to the options that vary at all.
+  assign qa_idx = ','
+  assign qa_names = ''
+  assign qa_vary = 0
+  for pass in (1..2)
+    for o in p.options_with_values
+      assign i = forloop.index0
+      assign seen = '|'
+      assign nseen = 0
+      for vv in p.variants
+        if vv.available or pass == 2
+          assign key = '|' | append: vv.options[i] | append: '|'
+          unless seen contains key
+            assign seen = seen | append: vv.options[i] | append: '|'
+            assign nseen = nseen | plus: 1
+          endunless
+        endif
+      endfor
+      if nseen > 1
+        assign on = o.name | downcase
+        if qa_names != ''
+          assign qa_names = qa_names | append: ' and '
+        endif
+        assign qa_names = qa_names | append: on
+        assign qa_idx = qa_idx | append: i | append: ','
+        assign qa_vary = qa_vary | plus: 1
+      endif
+    endfor
+    if qa_vary > 0
+      break
+    endif
+  endfor
+  if qa_names == 'size'
+    assign qa_head = 'Choose a size'
+  else
+    assign qa_head = 'Choose ' | append: qa_names
+  endif
+  assign qa_n = 0
+  for vv in p.variants
+    if vv.available
+      assign qa_n = qa_n | plus: 1
+    endif
+  endfor
   if eager
     assign ld = 'eager'
   else
@@ -71,6 +125,7 @@
   endif
 -%}
 <li class="sjc-card" data-kind="{{ kind }}" data-pid="{{ p.id }}">
+  <div class="sjc-card__media">
   <a class="sjc-card__img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
     {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 600 | image_tag: loading: ld, widths: '240, 360, 480, 600', sizes: '(min-width: 1025px) 22vw, (min-width: 768px) 30vw, 46vw', alt: '' }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
     {%- if best or save > 0 -%}
@@ -78,6 +133,86 @@
     {%- endif -%}
     {%- unless p.available -%}<span class="sjc-out">Sold out</span>{%- endunless -%}
   </a>
+  {%- if p.available -%}
+    {%- capture qa_bag -%}<svg class="sjq-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><svg class="sjq-ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{%- endcapture -%}
+    {%- capture qa_x -%}<button type="button" class="sjq-x" data-sjq-close aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>{%- endcapture -%}
+    {%- capture qa_back -%}<button type="button" class="sjq-back" data-sjq-back aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>{%- endcapture -%}
+    {%- capture qa_sizes -%}
+      {%- for vv in p.variants -%}
+        {%- unless vv.available %}{% continue %}{% endunless -%}
+        {%- liquid
+          assign lab = ''
+          for o in p.options_with_values
+            assign ik = ',' | append: forloop.index0 | append: ','
+            if qa_idx contains ik
+              if lab != ''
+                assign lab = lab | append: ' / '
+              endif
+              assign lab = lab | append: vv.options[forloop.index0]
+            endif
+          endfor
+        -%}
+        {%- if qa_prep -%}
+          <button type="button" class="sjq-chip" data-sjq-pick="id" data-v="{{ vv.id }}">{{ lab }}</button>
+        {%- else -%}
+          <button type="button" class="sjq-chip" data-sjq-add="{{ vv.id }}" aria-label="Add {{ lab | escape }} to cart">{{ lab }}</button>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    <div class="sjq" data-sjq{% if qa_prep and qa_n == 1 %} data-sjq-vid="{{ v.id }}"{% endif %}>
+      {%- if qa_prep -%}
+        {%- liquid
+          if qa_n > 1
+            assign qa_total = 3
+          else
+            assign qa_total = 2
+          endif
+          assign qa_step = 0
+          assign weights = 'Lighter end,Middle,Heavier end,No preference' | split: ','
+        -%}
+        <button type="button" class="sjq-btn sjq-btn--open" data-sjq-toggle aria-expanded="false" aria-label="Quick add {{ p.title | escape }}">{{ qa_bag }}<span class="sjq-l">Quick add</span></button>
+        <div class="sjq-panel" role="group" aria-label="Quick add {{ p.title | escape }}">
+          {%- if qa_n > 1 -%}
+            {%- assign qa_step = qa_step | plus: 1 -%}
+            <div class="sjq-step">
+              <div class="sjq-top"><p class="sjq-h">{{ qa_head }}<span class="sjq-n">{{ qa_step }} of {{ qa_total }}</span></p>{{ qa_x }}</div>
+              <div class="sjq-chips">{{ qa_sizes }}</div>
+            </div>
+          {%- endif -%}
+          {%- assign qa_step = qa_step | plus: 1 -%}
+          <div class="sjq-step"{% if qa_step > 1 %} hidden{% endif %}>
+            <div class="sjq-top">{% if qa_step > 1 %}{{ qa_back }}{% endif %}<p class="sjq-h">Preferred weight<span class="sjq-n">{{ qa_step }} of {{ qa_total }}</span></p>{{ qa_x }}</div>
+            <div class="sjq-chips sjq-chips--two">
+              {%- for w in weights -%}<button type="button" class="sjq-chip" data-sjq-pick="Preferred weight" data-v="{{ w }}">{{ w }}</button>{%- endfor -%}
+            </div>
+          </div>
+          {%- assign qa_step = qa_step | plus: 1 -%}
+          <div class="sjq-step" hidden>
+            <div class="sjq-top">{{ qa_back }}<p class="sjq-h">Bat prep<span class="sjq-n">{{ qa_step }} of {{ qa_total }}</span></p>{{ qa_x }}</div>
+            <div class="sjq-chips sjq-chips--one">
+              <button type="button" class="sjq-chip" data-sjq-pick="Bat prep" data-v="Prepare my bat for free (ready in up to 3 days)">Prepare my bat (free)</button>
+              <button type="button" class="sjq-chip" data-sjq-pick="Bat prep" data-v="Ship it unprepared (30-day returns if unused)">Ship it unprepared</button>
+            </div>
+            <p class="sjq-note">Free prep adds up to 3 days. Your pick adds the bat to your cart.</p>
+          </div>
+          <p class="sjq-err" data-sjq-err role="alert" hidden></p>
+        </div>
+      {%- elsif p.variants.size == 1 or qa_vary == 0 -%}
+        <button type="button" class="sjq-btn" data-sjq-add="{{ v.id }}" aria-label="Add {{ p.title | escape }} to cart">{{ qa_bag }}<span class="sjq-l">Add to cart</span></button>
+        <p class="sjq-err" data-sjq-err role="alert" hidden></p>
+      {%- elsif p.variants.size <= 24 -%}
+        <button type="button" class="sjq-btn sjq-btn--open" data-sjq-toggle aria-expanded="false" aria-label="Quick add {{ p.title | escape }}">{{ qa_bag }}<span class="sjq-l">Quick add</span></button>
+        <div class="sjq-panel" role="group" aria-label="{{ qa_head }}">
+          <div class="sjq-top"><p class="sjq-h">{{ qa_head }}</p>{{ qa_x }}</div>
+          <div class="sjq-chips">{{ qa_sizes }}</div>
+          <p class="sjq-err" data-sjq-err role="alert" hidden></p>
+        </div>
+      {%- else -%}
+        <a class="sjq-btn" href="{{ p.url }}" aria-label="Choose options for {{ p.title | escape }}">{{ qa_bag }}<span class="sjq-l">Choose options</span></a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  </div>
   <div class="sjc-card__bd">
     <p class="sjc-card__brand">{{ p.vendor }}</p>
     <a class="sjc-card__t" href="{{ p.url }}">{{ p.title }}</a>

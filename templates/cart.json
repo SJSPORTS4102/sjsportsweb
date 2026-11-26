@@ -11,6 +11,7 @@
   "sections": {
     "heading": {
       "type": "heading-dynamic",
+      "disabled": true,
       "blocks": {
         "61658221-289a-451c-832e-472e370318ff": {
           "type": "1",
@@ -132,6 +133,7 @@
     },
     "recently-viewed-products": {
       "type": "recently_viewed",
+      "disabled": true,
       "settings": {
         "show": true,
         "design_heading": "1",
@@ -188,11 +190,16 @@
         "mg_mb": ",,30px,",
         "pd_mb": ""
       }
+    },
+    "sj_crv": {
+      "type": "sj-cart-recently-viewed",
+      "settings": {}
     }
   },
   "order": [
     "heading",
     "main",
+    "sj_crv",
     "recently-viewed-products"
   ]
 }

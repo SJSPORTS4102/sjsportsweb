@@ -174,7 +174,12 @@
   .sjf-note{font-size:13.5px;color:var(--muted);margin-top:10px}
   .sjf .sjf-hours a.sjf-dir{display:inline-flex;align-items:center;min-height:44px;margin:6px 0 14px;font-weight:700;color:var(--sun)!important;text-decoration:underline;text-underline-offset:3px}
 
-  .sjf-bottom{background:var(--deeper);padding:18px 0 calc(90px + env(safe-area-inset-bottom))}
+  /* Page end (Harrison, 25 Nov 2026): the page stops at the footer on phones. The colour behind the page is the
+     footer navy, so pulling past the end on an iPhone shows navy, not the grey page colour. The 90px under the
+     payment icons is only kept on product pages, where the sticky Add to cart bar sits over the bottom. */
+  html{background-color:#06223A}
+  .sjf-bottom{background:var(--deeper);padding:18px 0 calc(18px + env(safe-area-inset-bottom))}
+  @media (max-width:767px){ .template-product .sjf-bottom{padding-bottom:calc(90px + env(safe-area-inset-bottom))} }
   .sjf-bottom-in{display:grid;gap:12px;justify-items:center;text-align:center}
   .sjf-copy{font-size:14px;color:var(--muted)}
   .sjf-dot{margin:0 8px;opacity:.6}

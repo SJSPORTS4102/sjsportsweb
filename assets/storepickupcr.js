@@ -2,9 +2,9 @@
 document.addEventListener('crPickupActivated', function (e) { 
     console.log('____ activated _____');
   
-    disableCheckoutButton2();
+    if (pickupChosen()) disableCheckoutButton2();
     var tt = setInterval(function(){
-      disableCheckoutButton2();
+      if (pickupChosen()) disableCheckoutButton2();
       //console.log('check.............')
       var fieldsCorrect = checkPickupFields();
       //console.log({fieldsCorrect})
@@ -41,7 +41,14 @@ var trackChange = function(element) {
   });
 }
 
+/* Off Leesh 25 Nov 2026: only hold Checkout while Pickup In Store is the chosen option. Before this, once a
+   shopper clicked Pickup the timer above kept disabling Checkout every second, even after they went back to Shipping. */
+function pickupChosen(){
+  return !!document.querySelector('.js-toggle-pickup.selected, .pickup-button.selected');
+}
+
 function checkPickupFields(){
+    if (!pickupChosen()) { activateCheckoutButton2(); return true; }
   	var pickupDate = jqCR('#pickup-date-start').val();
     var firstName = jqCR('#pickup-first-name').val();
     var lastName = jqCR('#pickup-last-name').val();
@@ -57,9 +64,9 @@ function checkPickupFields(){
 
 function activateCheckoutButton2(){
   //console.log('Activate')
-      document.querySelector('#checkout').disabled = false;
+      var ck = document.querySelector('#checkout'); if (ck) ck.disabled = false;
   }
 
 function disableCheckoutButton2(){    
-    document.querySelector('#checkout').disabled = true;
+    var ck = document.querySelector('#checkout'); if (ck) ck.disabled = true;
 }

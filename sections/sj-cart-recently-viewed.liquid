@@ -1,0 +1,117 @@
+{%- comment -%}
+  SJ cart page "Recently viewed" (Off Leesh, 26 Nov 2026). Planned with ui-ux-pro-max:
+  design-system/sj-sports/pages/cart-recently-viewed.md (on top of MASTER.md and pages/cart-page.md).
+  Replaces the Gecko recently_viewed section in templates/cart.json (that one is switched off, not deleted).
+  Same history as the product page (sections/sj-recently-viewed): localStorage "nt_recent" = "id:123,id:456",
+  newest first. This page only reads it. It asks the store search for those IDs
+  (/search?q=id:1 OR id:2&type=product&section_id=sj-cart-recently-viewed) and this file returns SJ cards
+  (snippets/sj-card) with quick add, so they match the homepage and collections.
+  Skips sold-out products and anything already in the cart. Nothing shows for a shopper with no history.
+  A quick add here redraws the cart above in place (assets/sj-quick-add.js) and the added card leaves the row.
+  Styles: assets/sj-cart-page.css (.sjcrv), cards: assets/sj-collection.css.
+{%- endcomment -%}
+{%- if search.performed -%}
+  {%- comment -%} Fetched by the cart page: just the cards. The page puts them back in viewed order. {%- endcomment -%}
+  <ul class="sjcrv-track" role="list" data-sjcrv-cards>
+    {%- for p in search.results limit: 15 -%}
+      {%- if p.object_type != 'product' or p.available == false %}{% continue %}{% endif -%}
+      {%- render 'sj-card', product: p, rank: 0, eager: false -%}
+    {%- endfor -%}
+  </ul>
+{%- elsif template.name == 'cart' -%}
+  <link rel="stylesheet" href="{{ 'sj-collection.css' | asset_url }}" media="print" onload="this.media='all'">
+  <section class="sjcrv" data-sjcrv data-in-cart="{{ cart.items | map: 'product_id' | uniq | join: ',' }}" hidden aria-labelledby="sjcrv-h">
+    <div class="sjcrv-in">
+      <div class="sjcrv-card">
+        <div class="sjcrv-head">
+          <div>
+            <h2 class="sjcrv-h" id="sjcrv-h">Recently viewed</h2>
+            <p class="sjcrv-sub">Still keen? Add them to this order.</p>
+          </div>
+          <div class="sjcrv-tools">
+            <button type="button" class="sjcrv-clear" data-sjcrv-clear><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>Clear<span class="sjcrv-vh"> recently viewed</span></button>
+            <div class="sjcrv-nav">
+              <button type="button" data-sjcrv-prev aria-label="Previous products" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button type="button" data-sjcrv-next aria-label="More products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="sjcrv-viewport" data-sjcrv-viewport>
+          <ul class="sjcrv-track" role="list" aria-busy="true">
+            {%- for i in (1..5) -%}<li class="sjcrv-skel" aria-hidden="true"><span class="im"></span><span class="l1"></span><span class="l2"></span><span class="l3"></span></li>{%- endfor -%}
+          </ul>
+        </div>
+        <p class="sjcrv-vh" aria-live="polite" data-sjcrv-live></p>
+      </div>
+    </div>
+  </section>
+  <script>
+    (function () {
+      var root = document.querySelector('[data-sjcrv]'); if (!root) return;
+      var KEY = 'nt_recent', MAX_SHOW = 12, list = [];
+      try { list = (localStorage.getItem(KEY) || '').split(',').filter(function (x) { return /^id:\d+$/.test(x); }); } catch (e) { root.remove(); return; }
+      var inCart = {};
+      (root.dataset.inCart || '').split(',').forEach(function (id) { if (id) inCart['id:' + id] = 1; });
+      var want = list.filter(function (x) { return !inCart[x]; }).slice(0, MAX_SHOW);
+      if (!want.length) { root.remove(); return; }
+      root.hidden = false;
+      var vp = root.querySelector('[data-sjcrv-viewport]'), prev = root.querySelector('[data-sjcrv-prev]'), next = root.querySelector('[data-sjcrv-next]');
+      var live = root.querySelector('[data-sjcrv-live]');
+      var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      function edges() {
+        var max = vp.scrollWidth - vp.clientWidth - 2;
+        prev.disabled = vp.scrollLeft <= 2; next.disabled = vp.scrollLeft >= max;
+        root.classList.toggle('no-scroll', max <= 0);
+      }
+      function step(dir) { vp.scrollBy({ left: dir * vp.clientWidth * 0.9, behavior: calm.matches ? 'auto' : 'smooth' }); }
+      prev.addEventListener('click', function () { step(-1); }); next.addEventListener('click', function () { step(1); });
+      vp.addEventListener('scroll', function () { window.requestAnimationFrame(edges); }, { passive: true });
+      window.addEventListener('resize', edges);
+      root.querySelector('[data-sjcrv-clear]').addEventListener('click', function () {
+        try { localStorage.setItem(KEY, ''); } catch (e) {}
+        root.remove();
+      });
+      /* a quick add from this row: the cart above redraws (sj-quick-add.js), the card leaves the row */
+      document.addEventListener('sj:cart-page-added', function (e) {
+        var card = e.detail && e.detail.card;
+        if (!card || !root.contains(card)) return;
+        var name = card.querySelector('.sjc-card__t');
+        if (live) live.textContent = (name ? name.textContent.trim() + ' ' : '') + 'added to your cart';
+        setTimeout(function () {
+          var li = card.closest('li') || card;
+          li.classList.add('is-leaving');
+          setTimeout(function () {
+            li.remove();
+            if (!root.querySelector('.sjcrv-track .sjc-card')) root.remove(); else edges();
+          }, calm.matches ? 0 : 220);
+        }, 1400);
+      });
+      function load() {
+        var url = '{{ routes.search_url }}?type=product&section_id=sj-cart-recently-viewed&q=' + encodeURIComponent(want.join(' OR '));
+        fetch(url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html'), cards = doc.querySelector('[data-sjcrv-cards]');
+          if (!cards || !cards.children.length) { root.remove(); return; }
+          var byId = {};
+          [].slice.call(cards.children).forEach(function (c) { byId['id:' + c.dataset.pid] = c; });
+          var ul = document.createElement('ul'); ul.className = 'sjcrv-track'; ul.setAttribute('role', 'list');
+          want.forEach(function (id) { if (byId[id]) ul.appendChild(document.importNode(byId[id], true)); });
+          if (!ul.children.length) { root.remove(); return; }
+          root.classList.toggle('is-few', ul.children.length < 3);
+          vp.querySelector('.sjcrv-track').replaceWith(ul); edges();
+        }).catch(function () { root.remove(); });
+      }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+        io.observe(root);
+      } else { load(); }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "SJ cart recently viewed",
+  "class": "sjcrv-section",
+  "settings": []
+}
+{% endschema %}

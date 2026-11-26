@@ -54,6 +54,21 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
   {% endif %}
 >
   <head>
+    {%- if template.name == 'cart' -%}
+    {%- comment -%} Off Leesh 26 Nov 2026: the Avada SEO app holds back listed scripts until the first mouse move, scroll or tap. On the cart page that hid the Shipping / Pickup In Store choice, so the store pickup app (its app.min.js) loads straight away here. Avada rewrites its own snippet every couple of weeks, so this lives in the theme instead: it drops only the pattern that matches the pickup app from Avada's list. {%- endcomment -%}
+    <script>
+      (function () {
+        var v, cr = 'https://cdn.shopify.com/extensions/x/draft-order-pickup/assets/app.min.js';
+        try {
+          Object.defineProperty(window, 'AVADA_SPEED_BLACKLIST', {
+            configurable: true,
+            get: function () { return v; },
+            set: function (x) { v = Array.isArray(x) ? x.filter(function (r) { return !(r && r.test && r.test(cr)); }) : x; }
+          });
+        } catch (e) {}
+      })();
+    </script>
+    {%- endif -%}
     	<!-- Added by APP PLAZA -->
 	{% include 'app-plaza' %}
   {% include 'avada-seo' %}
@@ -215,6 +230,8 @@ t4sp-theme t4s-wrapper__{{ settings.general_layout }} rtl_{{ isRTL }} swatch_col
 {{ 'sj-cart.css' | asset_url | stylesheet_tag }}
 {{ 'sj-nav.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'sj-nav.js' | asset_url }}" defer></script>
+<script>window.sjCartType = {{ settings.cart_type | default: 'drawer' | json }};</script>
+<script src="{{ 'sj-quick-add.js' | asset_url }}" defer></script>
   </head>
   <body
     class="
